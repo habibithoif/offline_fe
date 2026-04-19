@@ -1,0 +1,49 @@
+<?php
+
+namespace App\Http\Controllers\Fasop\StatusRealtime;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use App\Services\ApiService;
+use App\Services\ApplicationService;
+use Carbon\Carbon;
+
+class SoeAlarmProteksiController extends Controller
+{
+    protected $apiService;
+    protected $applicationService;
+    private $data;
+    public $userAccess;
+
+    public function __construct(ApiService $apiService, ApplicationService $applicationService)
+    {
+        $this->apiService = $apiService;
+        $this->applicationService = $applicationService;
+
+        // Initialize the data by calling the service method
+        $this->data = $this->applicationService->initializeData(request()->path());
+        $this->userAccess = $this->data->accesses;
+    }
+
+    private function apiRequest($method, $endpoint, $data = [])
+    {
+        $headers = ['Content-Type' => 'application/json'];
+        $accessToken = session()->get('access_token');
+
+        return $this->apiService->$method($endpoint, $data, $headers, $accessToken);
+    }
+
+    public function index()
+    {
+        return view('fasop.realtime.soe-alarm-proteksi.index', ['data' => $this->data]);
+    }
+
+    public function read(Request $request)
+    {
+        $payload = $request->all();
+        $payload['jenispoint'] = 'RTU';
+        $response = $this->apiRequest('get', 'fasop/realtime/soe-alarm-proteksi', $payload);
+        
+        return $response;
+    }
+}
