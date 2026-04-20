@@ -60,25 +60,24 @@ class MasterDataTelemeteringController extends Controller
 
     public function store(Request $request) {
         $data = $request->all();
-        $data['hitung_kinerja'] = $request->hitung_kinerja ? 1 : 0;
+        $data['kinerja'] = $request->hitung_kinerja ? 1 : 0;
         
-        $response = $this->apiRequest('post', 'cpoint', $data);
+        $response = $this->apiRequest('post', 'master-data/telemetering', $data);
         
         return $response;
     }
 
     public function update(Request $request) {
         $data = $request->all();
-        $data['hitung_kinerja'] = $request->hitung_kinerja ? 1 : 0;
-
-        $response = $this->apiRequest('put', 'cpoint/'.$request->id, $data);
+        $data['kinerja'] = $request->hitung_kinerja ? 1 : 0;
+        $response = $this->apiRequest('put', 'master-data/telemetering/'.$request->id, $data);
         return $response;
     }
 
     public function destroy($id) {
         $data = [];
 
-        $response = $this->apiRequest('delete', 'cpoint/'.$id, $data);
+        $response = $this->apiRequest('delete', 'master-data/telemeteing/'.$id, $data);
 
         return $response;
     }
@@ -86,7 +85,7 @@ class MasterDataTelemeteringController extends Controller
     public function findValueBy(Request $request)
     {
         $payload = $request->all();
-        $response = $this->apiRequest('get', 'cpoint/findValueBy', $payload);
+        $response = $this->apiRequest('get', 'master-data/telemeteing/findValueBy', $payload);
         
         return $response;
     }

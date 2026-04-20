@@ -269,7 +269,7 @@
                     { text: 'Normal Time', datafield: 'normaltime', width: 100 },
                     { text: 'Up Time', datafield: 'uptime', width: 100 },
                     { text: 'Down Time', datafield: 'downtime', width: 100 },
-                    { text: 'Ava', datafield: 'ava', width: 100 },
+                    { text: 'Ava(%)', datafield: 'ava', width: 100 },
                     { text: 'Kinerja', datafield: 'kinerja', width: 100 }
                 ],
                 pagermode: 'default',

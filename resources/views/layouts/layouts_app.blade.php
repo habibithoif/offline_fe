@@ -230,6 +230,7 @@
       .card-footer-filter{
         padding: .5rem 1.25rem;
       }
+      .text-xxs { font-size: 12px !important; }
 
   
   </style>
@@ -288,8 +289,13 @@
   <aside class="main-sidebar sidebar-light-danger elevation-4">
     <!-- Brand Logo -->
     <a href="#" class="brand-link">
-      <img src="{{ asset('template_app') }}/dist/img/pln.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
-      <span class="brand-text font-weight-light text-lg">UIP2B JAMALI OFFLINE</span>
+      <img src="{{ asset('template_app') }}/dist/img/pln.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8; height:50px">
+      <!-- <span class="brand-text font-weight-light text-md">OFFLINE DATABASE MCC</span>
+      <span class="brand-text font-weight-light text-sm">UIP2B JAMALI</span> -->
+      <div class="d-flex flex-column">
+        <span class="brand-text font-weight-light text-md" style="margin-top:-10px">OFFLINE DATABASE MCC</span>
+        <span class="brand-text font-weight-light text-xxs">UIP2B JAWA MADURA DAN BALI</span>
+      </div>
     </a>
 
     <!-- Sidebar -->

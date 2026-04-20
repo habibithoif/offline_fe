@@ -169,8 +169,8 @@
                 <!-- <div class="form-group col-6">
                     <label for="point_number">Point Number</label>
                     <input type="number" class="form-control form-control-sm" name="point_number" id="point_number" required>
-                </div> -->
-                <!-- <div class="form-group col-6">
+                </div> 
+                <div class="form-group col-6">
                     <label for="point_type">Kelompok</label>
                     <input type="text" class="form-control form-control-sm" name="point_type" id="point_type" value="{{ $data->pointtype_name }}" required readonly>
                 </div>
@@ -182,7 +182,7 @@
                             <option value="{{ $item['id'] }}">{{ $item['name'] }}</option>
                         @endforeach
                     </select>
-                </div> -->
+                </div>-->
                 <div class="form-group col-6">
                     <label for="path1name">B1 Name</label>
                     <input type="text" class="form-control form-control-sm" name="path1name" id="path1name" required>
@@ -210,12 +210,12 @@
                         <label for="hitung_kinerja" class="mb-0 mr-2" style="font-size: 0.85rem;">
                             Hitung Kinerja
                         </label>
-                        <input type="checkbox" class="form-check-input" id="hitung_kinerja" name="hitung_kinerja"
+                        <input type="checkbox" class="form-check-input" id="hitung_kinerja" name="hitung_kinerja" value="0"
                             style="transform: scale(0.85); margin-top: 2px;">
                     </div>
 
                     <!-- Status -->
-                    <div class="d-flex align-items-center" style="margin-left: 80px;">
+                    <!-- <div class="d-flex align-items-center" style="margin-left: 80px;">
                         <label for="status" class="mb-0 mr-2" style="font-size: 0.85rem;">
                             Status
                         </label>
@@ -237,7 +237,7 @@
                                 Non Aktif
                             </label>
                         </div>
-                    </div>
+                    </div> -->
 
                 </div>
 
@@ -254,6 +254,7 @@
       </form>
     </div>
 </div>  
+
 
 @endsection
 
@@ -284,25 +285,25 @@
                 
                 urlAction = baseUrl + '/update';
                 actionMethod = 'PUT';
-                console.log('URL Action:', urlAction);
-                console.log('Action Method:', actionMethod);
-
+                // console.log('URL Action:', urlAction);
+                // console.log('Action Method:', actionMethod);
+                // console.log(selectedData);
                 
                 $('.is-invalid').removeClass('is-invalid');
 
                 $('.modal-data-title').text('Edit ');
 
                 $('#id').val(selectedData.id);
-                $('#id_region').val(selectedData.id_region).trigger('change').prop('disabled', true);
+                $('#id_region').val(selectedData.region).trigger('change').prop('disabled', true);
                 // $('#point_number').val(selectedData.point_number).prop('disabled', true);
-                $('#point_type_id').val(selectedData.point_type_id).trigger('change').prop('disabled', true);
-                $('#path1name').val(selectedData.path1name).prop('disabled', true);
-                $('#path2name').val(selectedData.path2name).prop('disabled', true);
-                $('#path3name').val(selectedData.path3name).prop('disabled', true);
-                $('#path4name').val(selectedData.path4name).prop('disabled', true);
-                $('#path5name').val(selectedData.path5name).prop('disabled', true);
-                $('#hitung_kinerja').prop('checked', selectedData.hitung_kinerja == 1);
-                $('input[name="status"][value="'+selectedData.status+'"]').prop('checked', true);
+                // $('#point_type_id').val(selectedData.point_type_id).trigger('change').prop('disabled', true);
+                $('#path1name').val(selectedData.b1_name).prop('disabled', true);
+                $('#path2name').val(selectedData.b2_name).prop('disabled', true);
+                $('#path3name').val(selectedData.b3_name).prop('disabled', true);
+                $('#path4name').val(selectedData.el_name).prop('disabled', true);
+                $('#path5name').val(selectedData.info_name).prop('disabled', true);
+                $('#hitung_kinerja').prop('checked', selectedData.kinerja == 1);
+                // $('input[name="status"][value="'+selectedData.status+'"]').prop('checked', true);
 
 
                 $('#modal-data').modal('show');
@@ -391,17 +392,17 @@
             // Enable all fields
             $('#id_region').prop('disabled', false);
             // $('#point_number').prop('disabled', false);
-            $('#point_type_id').prop('disabled', false);
+            // $('#point_type_id').prop('disabled', false);
             $('#path1name').prop('disabled', false);
             $('#path2name').prop('disabled', false);
             $('#path3name').prop('disabled', false);
             $('#path4name').prop('disabled', false);
             $('#path5name').prop('disabled', false);
             $('#hitung_kinerja').prop('disabled', false);
-            $('input[name="status"]').prop('disabled', false);
+            // $('input[name="status"]').prop('disabled', false);
             
             // Set default status to active
-            $('#status1').prop('checked', true);
+            // $('#status1').prop('checked', true);
             
             $('#modal-data').modal('show');
         }
@@ -429,9 +430,9 @@
                     { name: 'b3_text', type: 'string' },
                     { name: 'el_text', type: 'string' },
                     { name: 'info_text', type: 'string' },
-                    { name: 'id_region', type: 'string' },
+                    { name: 'region', type: 'string' },
                     { name: 'nama_region', type: 'string' },
-                    { name: 'hitung_kinerja', type: 'bool' },
+                    { name: 'kinerja', type: 'bool' },
                     { name: 'path5name', type: 'string' },
                     { name: 'status', type: 'integer' },
                 ],
@@ -548,7 +549,7 @@
                             return `<div style="text-align: center; margin-top: 5px;">${row + 1}</div>`;
                         }
                     },
-                    { text: 'Region', datafield: 'nama_region', editable: false, width: 150, },
+                    { text: 'Region', datafield: 'region', editable: false, width: 150, },
                     { text: 'B1 Name', datafield: 'b1_name', editable: false, width: 200},
                     { text: 'B2 Name', datafield: 'b2_name', editable: false, width: 200},
                     { text: 'B3 Name', datafield: 'b3_name', editable: false, width: 200},
@@ -561,7 +562,7 @@
                     { text: 'Info Text', datafield: 'info_text', editable: false, width: 200},
                     {
                         text: 'Hitung Kinerja',
-                        datafield: 'hitung_kinerja',
+                        datafield: 'kinerja',
                         columntype: 'checkbox',
                         width: 100,
                         editable: false,
@@ -571,25 +572,25 @@
                             var nilai = newvalue ? 1 : 0;
                         }
                     },
-                    { text: 'Status', datafield: 'status', editable: false,
-                        width: 80,
-                        cellsrenderer: function (row, columnfield, value, defaulthtml, columnproperties, rowdata) {
-                            var statusHtml = '';
-                            if (value == true || value == 1) {
-                                statusHtml = '<span class="badge badge-success">Aktif</span>';
-                            } else {
-                                statusHtml = '<span class="badge badge-danger">Nonaktif</span>';
-                            }
-                            return '<div style="padding: 5px; text-align: center;">' + statusHtml + '</div>';
-                        }
-                    },
+                    // { text: 'Status', datafield: 'status', editable: false,
+                    //     width: 80,
+                    //     cellsrenderer: function (row, columnfield, value, defaulthtml, columnproperties, rowdata) {
+                    //         var statusHtml = '';
+                    //         if (value == true || value == 1) {
+                    //             statusHtml = '<span class="badge badge-success">Aktif</span>';
+                    //         } else {
+                    //             statusHtml = '<span class="badge badge-danger">Nonaktif</span>';
+                    //         }
+                    //         return '<div style="padding: 5px; text-align: center;">' + statusHtml + '</div>';
+                    //     }
+                    // },
                     { 
                         text: 'Actions', 
                         datafield: 'id', 
                         width: '10%',
                         cellsalign: 'center',
                         sortable: false,
-                        filterable: false, editable: false,
+                        filterable: false, editable: false,pinned: true,
                         cellsrenderer: function(row, columnfield, value, rowData) {
                             // Create a container div for the buttons
                             var container = $('<div style="display: flex; justify-content: center; gap: 5px; margin-top: 3px;"></div>');
@@ -827,7 +828,7 @@
                         row.path4name,
                         row.path5name,
                         row.hitung_kinerja == 1 ? "Ya" : "Tidak",
-                        row.status == 1 ? "Aktif" : "Non-aktif"
+                        // row.status == 1 ? "Aktif" : "Non-aktif"
                     ]);
                 });
 
@@ -978,24 +979,28 @@
             $('#form-data').validate({
                 rules: {
                     id_region: { required: true },
-                    point_type_id: { required: true },
+                    // point_type_id: { required: true },
                     path1name: { required: true },
                     path2name: { required: true },
                     path3name: { required: true },
                     path4name: { required: true },
-                    status: { required: true }
+                    // status: { required: true }
                 },
                 messages: {
                     id_region: { required: "Kolom Region wajib diisi." },
-                    point_type_id: { required: "Kolom Kelompok wajib diisi." },
+                    // point_type_id: { required: "Kolom Kelompok wajib diisi." },
                     path1name: { required: "Kolom B1 Name wajib diisi." },
                     path2name: { required: "Kolom B2 Name wajib diisi." },
                     path3name: { required: "Kolom B3 Name wajib diisi." },
                     path4name: { required: "Kolom Element wajib diisi." },
-                    status: { required: "Kolom Status wajib diisi." }
+                    // status: { required: "Kolom Status wajib diisi." }
                 },
                 submitHandler: function (form) {
                     var reqData = new FormData(form);
+                    reqData.set(
+                        'hitung_kinerja',
+                        $('#hitung_kinerja').is(':checked') ? 1 : 0
+                    );
                     ajaxData(urlAction, reqData, refresh, true, true);
                 }
             });

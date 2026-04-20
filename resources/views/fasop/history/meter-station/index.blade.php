@@ -249,8 +249,9 @@
                     { text: 'B3 Name', datafield: 'b3_text', width: 150 },
                     { text: 'Element', datafield: 'el_text', width: 100 },
                     { text: 'Info', datafield: 'Info_text', width: 100 },
-                    { text: 'Tanggal RTU', datafield: 'rtu_datetime', width: 200 },
-                    { text: 'Tanggal Sistem', datafield: 'system_datetime', width: 200 },
+                    { text: 'Datetime RTU', datafield: 'rtu_datetime', width: 200 },
+                    { text: 'Datetime Sistem', datafield: 'system_datetime', width: 200 },
+                    { text: 'Status', datafield: 'status', width: 200 },
                     // { text: 'Kesimpulan', datafield: 'kesimpulan', width: 100, cellsalign: 'center',
                     //     cellsrenderer: function (row, columnfield, value, defaulthtml, columnproperties) {
                     //         var color = '';

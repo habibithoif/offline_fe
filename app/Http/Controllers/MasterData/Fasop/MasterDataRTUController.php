@@ -54,7 +54,7 @@ class MasterDataRTUController extends Controller
         if ($request->has('hitung_kinerja')) {
             $payload['hitung_kinerja'] = filter_var($request->hitung_kinerja, FILTER_VALIDATE_BOOLEAN) ? 1 : 0;
         }
-        $response = $this->apiRequest('get', 'cpoint', $payload);
+        $response = $this->apiRequest('get', 'master-data/rtu', $payload);
         
         return $response;
     }
@@ -63,7 +63,7 @@ class MasterDataRTUController extends Controller
         $data = $request->all();
         $data['hitung_kinerja'] = $request->hitung_kinerja ? 1 : 0;
         
-        $response = $this->apiRequest('post', 'cpoint', $data);
+        $response = $this->apiRequest('post', 'master-data/rtu', $data);
         
         return $response;
     }
@@ -72,14 +72,14 @@ class MasterDataRTUController extends Controller
         $data = $request->all();
         $data['hitung_kinerja'] = $request->hitung_kinerja ? 1 : 0;
 
-        $response = $this->apiRequest('put', 'cpoint/'.$request->id, $data);
+        $response = $this->apiRequest('put', 'master-data/rtu/'.$request->id, $data);
         return $response;
     }
 
     public function destroy($id) {
         $data = [];
 
-        $response = $this->apiRequest('delete', 'cpoint/'.$id, $data);
+        $response = $this->apiRequest('delete', 'master-data/rtu/'.$id, $data);
 
         return $response;
     }
@@ -87,7 +87,7 @@ class MasterDataRTUController extends Controller
     public function findValueBy(Request $request)
     {
         $payload = $request->all();
-        $response = $this->apiRequest('get', 'cpoint/findValueBy', $payload);
+        $response = $this->apiRequest('get', 'master-data/rtu/findValueBy', $payload);
         
         return $response;
     }

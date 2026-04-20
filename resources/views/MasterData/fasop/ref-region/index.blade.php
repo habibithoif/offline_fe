@@ -67,13 +67,13 @@
               </div>
   
             <div class="form-group">
-                <label for="singk">Singkatan</label>
-                <input type="text" class="form-control" name="singk" id="singk" required>
+                <label for="singk">Region</label>
+                <input type="text" class="form-control" name="region" id="region" required>
             </div>
 
             <div class="form-group">
-                <label for="lat">No Urut</label>
-                <input type="number" class="form-control" name="no_urut" id="no_urut">
+                <label for="lat">AOC</label>
+                <input type="text" class="form-control" name="aoc" id="aoc">
             </div>
             <div class="form-group">
                 <label>Status</label><br>
@@ -404,7 +404,7 @@
             $("#jqxGrid").on("bindingcomplete", function () {
                 console.log("Grid is ready!");
 
-                $("#jqxGrid").jqxGrid('theme', 'darkblue');
+                // $("#jqxGrid").jqxGrid('theme', 'darkblue');
                 $("#jqxGrid").jqxGrid('render');
             });
         };

@@ -39,7 +39,7 @@
   <div class="card">
     <div class="card-body login-card-body">
       <p class="login-box-msg">
-        <h2>Portal Availability Fasilitas Operasi</h2>
+        <h2>Aplikasi Offline Database MCC</h2>
         PT. PLN (Persero) UIP2B Jawa, Madura, Bali
       </p>
 
