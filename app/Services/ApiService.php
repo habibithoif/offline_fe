@@ -19,6 +19,30 @@ class ApiService
         $this->ApibaseUrl = env('API_BASE_URL', 'http://127.0.0.1:8000/api/v1/portal/');
     }
 
+    // public function request($method, $endpoint, $data = [], $headers = [], $token = null)
+    // {
+    //     $url = $this->ApibaseUrl . $endpoint;
+
+    //     if ($token) {
+    //         $headers['Authorization'] = "Bearer $token";
+    //     }
+
+    //     try {
+    //         $response = $this->client->request($method, $url, [
+    //             'headers' => $headers,
+    //             'json'    => $data,
+    //         ]);
+
+    //         return json_decode($response->getBody()->getContents(), true);
+    //     } catch (RequestException $e) {
+    //         return [
+    //             'error' => true,
+    //             'message' => $e->getMessage(),
+    //             'response' => $e->getResponse() ? $e->getResponse()->getBody()->getContents() : null
+    //         ];
+    //     }
+    // }
+
     public function request($method, $endpoint, $data = [], $headers = [], $token = null)
     {
         $url = $this->ApibaseUrl . $endpoint;
@@ -31,14 +55,24 @@ class ApiService
             $response = $this->client->request($method, $url, [
                 'headers' => $headers,
                 'json'    => $data,
+                'stream'  => true // penting untuk download
             ]);
 
+            // kalau endpoint download -> return raw response
+            if (str_contains($endpoint, 'download')) {
+                return $response;
+            }
+
+            // selain download tetap JSON
             return json_decode($response->getBody()->getContents(), true);
+
         } catch (RequestException $e) {
             return [
                 'error' => true,
                 'message' => $e->getMessage(),
-                'response' => $e->getResponse() ? $e->getResponse()->getBody()->getContents() : null
+                'response' => $e->getResponse()
+                    ? $e->getResponse()->getBody()->getContents()
+                    : null
             ];
         }
     }

@@ -44,7 +44,7 @@
                                             <select class="form-control form-control-sm select2" style="width: 100%;"  id="filterRegion">
                                                 <option value="all">-- Semua Region --</option>
                                                 @foreach ($data->ref_region as $item)
-                                                    <option value="{{ $item['id_region'] }}">{{ $item['nama'] }}</option>
+                                                    <option value="{{ $item['id'] }}">{{ $item['nama'] }}</option>
                                                 @endforeach
                                             </select>
                                         </div>

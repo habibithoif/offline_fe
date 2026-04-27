@@ -71,11 +71,9 @@
                                     <label>Region</label>
                                     <select class="form-control form-control-sm select2" id="filterRegion" style="width: 100%;">
                                         <option value="">--Pilih Region--</option>
-                                        <option value="1">UIP2B JAMALI</option>
-                                        <option value="2">JATENG</option>
-                                        <option value="3">JATIM</option>
-                                        <option value="4">JABAR</option>
-                                        <option value="5">JAKARTA</option>
+                                        @foreach ($data->ref_region as $item)
+                                            <option value="{{ $item['region'] }}">{{ $item['nama'] }}</option>
+                                        @endforeach
                                     </select>
                                 </div>
                             </div> 
@@ -521,7 +519,8 @@
             //         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             //     }
             // });
-            $("#jqxGrid").jqxGrid('exportdata', 'xls', 'TelemetryData', true, null, true, '/export/save-file');
+            // $("#jqxGrid").jqxGrid('exportdata', 'xls', 'TelemetryData', true, null, true, '/export/save-file');
+            exportGridAll('#jqxGrid','kinerja-telemetering','csv');
 
         });
         // columns = $("#jqxGrid").jqxGrid('columns');

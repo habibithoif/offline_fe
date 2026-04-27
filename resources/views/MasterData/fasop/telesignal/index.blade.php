@@ -38,7 +38,7 @@
                                                 <option value=""></option>
                                                 <!-- <option value="all">-- All Region --</option> -->
                                                 @foreach ($data->ref_region_filter as $item)
-                                                    <option value="{{ $item['id_region'] }}">{{ $item['nama_region'] }}</option>
+                                                    <option value="{{ $item['region'] }}">{{ $item['nama'] }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -114,14 +114,14 @@
                     <div class="card-header bg-info text-white">
                         <h3 class="card-title mb-0">{{ $data->page['name'] }}</h3>
                         <div class="card-tools">
-                            <button id="refreshButton" class="btn btn-default btn-xs" title="Refresh">
-                                <i class="fas fa-sync"></i> Refresh
+                            <button id="refreshButton" class="btn btn-default btn-sm" title="Refresh">
+                                <i class="fas fa-sync"></i>
                             </button>
-                            <!-- <button id="listViewButton" class="btn btn-default btn-xs" title="List View">
+                            <button id="listViewButton" class="btn btn-default btn-sm" title="List View">
                                 <i class="fas fa-list"></i>
-                            </button> -->
-                            <button id="downloadButton" class="btn btn-default btn-xs" title="Download">
-                                <i class="fas fa-download"></i> Download
+                            </button>
+                            <button id="downloadButton" class="btn btn-default btn-sm" title="Download">
+                                <i class="fas fa-download"></i>
                             </button>
                         </div>
                     </div>
@@ -162,7 +162,7 @@
                     <select class="form-control form-control-sm select2" style="width: 100%;" data-placeholder="--Pilih Region--" name="id_region" id="id_region" required>
                         <option value=""></option>
                         @foreach ($data->ref_region as $item)
-                            <option value="{{ $item['id_region'] }}">{{ $item['nama'] }}</option>
+                            <option value="{{ $item['region'] }}">{{ $item['nama'] }}</option>
                         @endforeach
                     </select>
                 </div>

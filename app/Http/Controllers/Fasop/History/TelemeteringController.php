@@ -41,6 +41,8 @@ class TelemeteringController extends Controller
         ];
         $point_type = $this->apiRequest('get', 'pointtype/find-child', $params);
         $this->data->point_types = $point_type['data'];
+        $ref_region = $this->apiRequest('get', 'ref-region', $params = []);
+        $this->data->ref_region = $ref_region['data']['Rows'] ?? [];
         return view('fasop.history.telemetering.index', ['data' => $this->data]);
     }
 

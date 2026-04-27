@@ -98,8 +98,8 @@ class MenuController extends Controller
     public function update(Request $request)
     {
         $data = $request->only(['name', 'display', 'path', 'icon', 'no', 'parent_id', 'status']);
+        $data['akses'] = $request->get('akses', '');
         $data['updated_at'] = Carbon::now()->toIso8601String();
-
         $response = $this->apiRequest('put', 'menu/' . $request->id, $data);
         
         return response()->json($response);

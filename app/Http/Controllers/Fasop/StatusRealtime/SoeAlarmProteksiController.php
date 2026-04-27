@@ -35,6 +35,8 @@ class SoeAlarmProteksiController extends Controller
 
     public function index()
     {
+        $ref_region = $this->apiRequest('get', 'ref-region', $params = []);
+        $this->data->ref_region = $ref_region['data']['Rows'] ?? [];
         return view('fasop.realtime.soe-alarm-proteksi.index', ['data' => $this->data]);
     }
 

@@ -46,11 +46,9 @@
                                     <label>Region</label>
                                     <select class="form-control form-control-sm select2" id="filterRegion" style="width: 100%;">
                                         <option value="">--Pilih Region--</option>
-                                        <option value="1">UIP2B JAMALI</option>
-                                        <option value="2">JATENG</option>
-                                        <option value="3">JATIM</option>
-                                        <option value="4">JABAR</option>
-                                        <option value="5">JAKARTA</option>
+                                        @foreach ($data->ref_region as $item)
+                                            <option value="{{ $item['region'] }}">{{ $item['nama'] }}</option>
+                                        @endforeach
                                     </select>
                                 </div>
                             </div> 
@@ -157,7 +155,7 @@
         var baseUrl = mainServerUrl + currentPath;
         var tableData = [];
         var dataAdapter; // Make dataAdapter global to access it later
-
+        
         function initializeGrid(filterParams = {}) {
             // CSRF Token setup
             $.ajaxSetup({
@@ -479,9 +477,37 @@
             //     allowClear: true,
             //     placeholder: '--Pilih Element--'
             // });
-
+        
             
         });
+        function loadExportScript(callback){
+            const s1 = document.createElement("script");
+            s1.src = "/js/jqwidgets/jqxdata.export.js";
+
+            const s2 = document.createElement("script");
+            s2.src = "/js/jqwidgets/jqxexport.js";
+
+            s1.onload = function(){
+                document.body.appendChild(s2);
+                s2.onload = callback;
+            };
+
+            document.body.appendChild(s1);
+        }
+
+        function downloadCSV() {
+            loadExportScript(function(){
+                var data = $("#jqxGrid").jqxGrid('exportdata', 'csv');
+
+                var blob = new Blob([data], { type: 'text/csv;charset=utf-8;' });
+                var link = document.createElement("a");
+
+                link.href = URL.createObjectURL(blob);
+                link.download = "data_realtime_tm.csv";
+                link.click();
+            });
+            
+        }
         // Apply filters button
         $('#applyFilters').on('click', function() {
             applyCustomFilters();
@@ -499,7 +525,7 @@
         
         // Export to Excel
         $('#downloadButton').on('click', function() {
-            $("#jqxGrid").jqxGrid('exportdata', 'xlsx', 'TelemetryData');
+            exportGridAll('#jqxGrid','realtime-telemetering','csv');
         });
         
         // List view button (toggle view or implement custom view)

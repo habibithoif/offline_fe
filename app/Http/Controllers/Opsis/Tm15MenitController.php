@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Fasop\StatusRealtime;
+namespace App\Http\Controllers\Opsis;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -8,7 +8,7 @@ use App\Services\ApiService;
 use App\Services\ApplicationService;
 use Carbon\Carbon;
 
-class MeterStationController extends Controller
+class Tm15MenitController extends Controller
 {
     protected $apiService;
     protected $applicationService;
@@ -36,20 +36,19 @@ class MeterStationController extends Controller
     public function index()
     {
         $params = [
-            'id_induk_pointtype' => '3fc4d6b66faf4089a020344d16ad4208',
+            'id_induk_pointtype' => '798be05c4df249459a475745a0de66c6',
         ];
-        $point_type = $this->apiRequest('get', 'pointtype/find-child', $params);
-        $this->data->point_types = $point_type['data'];
         $ref_region = $this->apiRequest('get', 'ref-region', $params = []);
         $this->data->ref_region = $ref_region['data']['Rows'] ?? [];
-        return view('fasop.realtime.meter-station.index', ['data' => $this->data]);
+        $point_type = $this->apiRequest('get', 'pointtype/find-child', $params);
+        $this->data->point_types = $point_type['data'];
+        return view('opsis.tm-15-menit.index', ['data' => $this->data]);
     }
 
     public function read(Request $request)
     {
         $payload = $request->all();
-        $payload['jenispoint'] = 'METERSTATION';
-        $response = $this->apiRequest('get', 'fasop/realtime/ms', $payload);
+        $response = $this->apiRequest('get', 'opsis/tm-15-menit', $payload);
         
         return $response;
     }

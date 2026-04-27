@@ -38,6 +38,8 @@ class TelemeteringController extends Controller
         $params = [
             'id_induk_pointtype' => '798be05c4df249459a475745a0de66c6',
         ];
+        $ref_region = $this->apiRequest('get', 'ref-region', $params = []);
+        $this->data->ref_region = $ref_region['data']['Rows'] ?? [];
         $point_type = $this->apiRequest('get', 'pointtype/find-child', $params);
         $this->data->point_types = $point_type['data'];
         return view('fasop.realtime.telemetering.index', ['data' => $this->data]);

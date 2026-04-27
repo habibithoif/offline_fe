@@ -197,7 +197,7 @@
             if (confirm('Are you sure you want to delete this menu?')) {
                 $.ajax({
                     url: baseUrl + '/delete/' + id,
-                    type: "POST",
+                    type: "DELETE",
                     contentType: "application/json",
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

@@ -364,7 +364,7 @@
     <script src="{{ asset('js/jqwidgets/jqxexport.js') }}"></script>
     <script src="{{ asset('js/jqwidgets/jqxgrid.sort.js') }}"></script>
     <script src="{{ asset('js') }}/xlsx.full.min.js"></script>
-
+    <script src="{{ asset('js/grid-export.js') }}"></script>
 
     
     <!-- Bootstrap 4 -->

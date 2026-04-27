@@ -32,6 +32,7 @@ use App\Http\Controllers\Fasop\History\MeterStationController as HistoryMeterSta
 use App\Http\Controllers\Fasop\History\RtuController as HistoryRtuController;
 use App\Http\Controllers\Fasop\History\RemoteControlController as HistoryRemoteControlController;
 use App\Http\Controllers\Fasop\History\TripController as HistoryTripController;
+use App\Http\Controllers\Fasop\History\DownloadLSTController;
 
 use App\Http\Controllers\Fasop\Kinerja\TelemeteringController as KinerjaTelemeteringController;
 use App\Http\Controllers\Fasop\Kinerja\TelesignalController as KinerjaTelesignalController;
@@ -60,6 +61,8 @@ use App\Http\Controllers\Fasop\Dashboard\TargetBulananController;
 // OPSIS //
 use App\Http\Controllers\Opsis\Tm30ColController;
 use App\Http\Controllers\Opsis\Tm30RowController;
+use App\Http\Controllers\Opsis\Tm15MenitController;
+use App\Http\Controllers\Opsis\Tm30MenitController;
 
 use App\Http\Controllers\Auth\LoginController;
 Route::get('/', [LoginController::class, 'showLoginForm'])->name('login');
@@ -73,9 +76,10 @@ Route::get('/captcha-image', [CaptchaController::class, 'image']);
 Route::middleware([GlobalMiddleware::class])->group(function () {
     Route::get('/home', [HomeController::class, 'index'])->name('home.index');
     Route::get('/dashboard/monitoringrtu', [MonitoringrtuController::class, 'index'])->name('dash-monitoringrtu.index');
-
+    
     // export excel
     Route::post('/export/save-file', [ExportController::class, 'saveFile']);
+    // Route::get('/export', [ExportController::class,'export']);
 
     Route::prefix('setting')->group(function () {
         Route::get('/menu', [MenuController::class, 'index'])->name('setting-menu.index');
@@ -83,7 +87,7 @@ Route::middleware([GlobalMiddleware::class])->group(function () {
         Route::post('/menu/store', [MenuController::class, 'store'])->name('setting-menu.store');
         Route::get('/menu/detail/{id}', [MenuController::class, 'detail'])->name('setting-menu.detail');
         Route::post('/menu/update', [MenuController::class, 'update'])->name('setting-menu.update');
-        Route::delete('/menu/{id}', [MenuController::class, 'destroy'])->name('setting-menu.destroy');
+        Route::delete('/menu/delete/{id}', [MenuController::class, 'destroy'])->name('setting-menu.destroy');
         Route::get('/menu/read_all', [MenuController::class, 'read_all'])->name('setting-menu.read_all');
         
         // Route::get('/roles', [RolesController::class, 'index'])->name('setting-roles.index');
@@ -236,6 +240,10 @@ Route::middleware([GlobalMiddleware::class])->group(function () {
 
             Route::get('/trip', [HistoryTripController::class, 'index'])->name('fasop.histories.trip.index');
             Route::get('/trip/read', [HistoryTripController::class, 'read'])->name('fasop.histories.trip.read');
+
+            Route::get('/file-lst', [DownloadLSTController::class, 'index'])->name('fasop.histories.download-lst.index');
+            Route::get('/file-lst/read', [DownloadLSTController::class, 'read'])->name('fasop.histories.download-lst.read');
+            Route::get('/file-lst/download/{file_name}', [DownloadLSTController::class, 'download'])->name('fasop.histories.download-lst.download');
         });
 
         Route::prefix('kinerja')->group(function () {
@@ -280,5 +288,9 @@ Route::middleware([GlobalMiddleware::class])->group(function () {
 
         Route::get('/tm-30-row', [Tm30RowController::class, 'index'])->name('opsis.tm-30-row.index');
         Route::get('/tm-30-row/read', [Tm30RowController::class, 'read'])->name('opsis.tm-30-row.read');
+        Route::get('/tm-15-menit', [Tm15MenitController::class, 'index'])->name('opsis.tm-15-menit.index');
+        Route::get('/tm-15-menit/read', [Tm15MenitController::class, 'index'])->name('opsis.tm-15-menit.read');
+        Route::get('/tm-30-menit', [Tm30MenitController::class, 'index'])->name('opsis.tm-30-menit.index');
+        Route::get('/tm-30-menit/read', [Tm30MenitController::class, 'index'])->name('opsis.tm-30-menit.read');
     });
 });

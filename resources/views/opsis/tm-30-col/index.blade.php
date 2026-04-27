@@ -45,16 +45,16 @@
                             </div>
                             <div class="col-md-2">
                                 <div class="form-group">
-                                    <label>Tipe Point</label>
-                                    <select class="form-control form-control-sm select2" id="filterTipePoint" style="width: 100%;">
-                                        <option value="">--Pilih Tipe Point--</option>
-                                        @foreach ($data->point_types as $item)
-                                            <option value="{{ $item['id'] }}">{{ $item['name'] }}</option>
+                                    <label>Region</label>
+                                    <select class="form-control form-control-sm select2" id="filterRegion" style="width: 100%;">
+                                        <option value="">--Pilih Region--</option>
+                                        @foreach ($data->ref_region as $item)
+                                            <option value="{{ $item['region'] }}">{{ $item['nama'] }}</option>
                                         @endforeach
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-md-2">
+                            <!-- <div class="col-md-2">
                                 <div class="form-group">
                                     <label>Durasi</label>
                                     <select class="form-control form-control-sm select2" id="filterDurasi" style="width: 100%;">
@@ -64,7 +64,7 @@
                                         <option value="6">6 Jam</option>
                                     </select>
                                 </div>
-                            </div>
+                            </div> -->
                             <div class="col-md-2">
                                 <div class="form-group">
                                     <label>B1 Name</label>
@@ -145,7 +145,7 @@
             <div class="col-md-12">
                 <div class="card shadow-sm rounded">
                     <div class="card-header bg-info text-white">
-                        <h3 class="card-title mb-0">FASOP - HISTORY</h3>
+                        <h3 class="card-title mb-0">OPSIS - TELEMETERING HARIAN</h3>
                         <div class="card-tools">
                             <button id="refreshButton" class="btn btn-default btn-sm" title="Refresh">
                                 <i class="fas fa-sync"></i>
@@ -190,18 +190,67 @@
                 datatype: "json",
                 datafields: [
                     { name: 'id', type: 'string' },
-                    { name: 'point_number', type: 'string' },
-                    { name: 'nama_pointtype', type: 'string' },
-                    { name: 'path1', type: 'string' },
-                    { name: 'path2', type: 'string' },
-                    { name: 'path3', type: 'string' },
-                    { name: 'path4', type: 'string' },
-                    { name: 'path5', type: 'string' },
-                    { name: 'value', type: 'string' },
-                    { name: 'durasi', type: 'string' },
-                    { name: 'datum_capture', type: 'string' },
-                    { name: 'status_1', type: 'string' },
-                    { name: 'kesimpulan', type: 'string' },
+                    { name: 'id_region', type: 'string' },
+                    { name: 'nama_region', type: 'string' },
+                    { name: 'b1_name', type: 'string' },
+                    { name: 'b2_name', type: 'string' },
+                    { name: 'b3_name', type: 'string' },
+                    { name: 'el_name', type: 'string' },
+                    { name: 'info_name', type: 'string' },
+                    { name: 'b1_text', type: 'string' },
+                    { name: 'b2_text', type: 'string' },
+                    { name: 'b3_text', type: 'string' },
+                    { name: 'el_text', type: 'string' },
+                    { name: 'info_text', type: 'string' },
+                    { name: 'datum', type: 'string' },
+                    { name: 'm0030', type: 'string' },
+                    { name: 'm0100', type: 'string' },
+                    { name: 'm0130', type: 'string' },
+                    { name: 'm0200', type: 'string' },
+                    { name: 'm0230', type: 'string' },
+                    { name: 'm0300', type: 'string' },
+                    { name: 'm0330', type: 'string' },
+                    { name: 'm0400', type: 'string' },
+                    { name: 'm0430', type: 'string' },
+                    { name: 'm0500', type: 'string' },
+                    { name: 'm0530', type: 'string' },
+                    { name: 'm0600', type: 'string' },
+                    { name: 'm0630', type: 'string' },
+                    { name: 'm0700', type: 'string' },
+                    { name: 'm0730', type: 'string' },
+                    { name: 'm0800', type: 'string' },
+                    { name: 'm0830', type: 'string' },
+                    { name: 'm0900', type: 'string' },
+                    { name: 'm0930', type: 'string' },
+                    { name: 'm1000', type: 'string' },
+                    { name: 'm1030', type: 'string' },
+                    { name: 'm1100', type: 'string' },
+                    { name: 'm1130', type: 'string' },
+                    { name: 'm1200', type: 'string' },
+                    { name: 'm1230', type: 'string' },
+                    { name: 'm1300', type: 'string' },
+                    { name: 'm1330', type: 'string' },
+                    { name: 'm1400', type: 'string' },
+                    { name: 'm1430', type: 'string' },
+                    { name: 'm1500', type: 'string' },
+                    { name: 'm1530', type: 'string' },
+                    { name: 'm1600', type: 'string' },
+                    { name: 'm1630', type: 'string' },
+                    { name: 'm1700', type: 'string' },
+                    { name: 'm1730', type: 'string' },
+                    { name: 'm1800', type: 'string' },
+                    { name: 'm1830', type: 'string' },
+                    { name: 'm1900', type: 'string' },
+                    { name: 'm1930', type: 'string' },
+                    { name: 'm2000', type: 'string' },
+                    { name: 'm2030', type: 'string' },
+                    { name: 'm2100', type: 'string' },
+                    { name: 'm2130', type: 'string' },
+                    { name: 'm2200', type: 'string' },
+                    { name: 'm2230', type: 'string' },
+                    { name: 'm2300', type: 'string' },
+                    { name: 'm2330', type: 'string' },
+                    { name: 'm2400', type: 'string' },
                 ],
                 url: '{{ route("fasop.histories.telemetering.read") }}',
                 cache: false,
@@ -240,12 +289,13 @@
                         return "<div style='padding: 5px;'>" + (row + 1) + "</div>";
                     }
                     },
-                    { text: 'Tanggal', datafield: 'point_number', width: 100 },
-                    { text: 'B1 Text', datafield: 'path1text', width: 200 },
-                    { text: 'B2 Text', datafield: 'path2text', width: 200 },
-                    { text: 'B3 Text', datafield: 'path3text', width: 200 },
-                    { text: 'Element Text', datafield: 'path4text', width: 200 },
-                    { text: 'Info', datafield: 'path5text', width: 200 },
+                    { text: 'Tanggal', datafield: 'datum', width: 200 },
+                    { text: 'Region', datafield: 'nama_region', width: 200 },
+                    { text: 'B1 Text', datafield: 'b1_text', width: 200 },
+                    { text: 'B2 Text', datafield: 'b2_text', width: 100 },
+                    { text: 'B3 Text', datafield: 'b3_text', width: 200 },
+                    { text: 'Element Text', datafield: 'el_text', width: 100 },
+                    { text: 'Info', datafield: 'info_text', width: 100 },
                     { text: '00:30', datafield: '0030', width: 50, cellsalign: 'center' },
                     { text: '01:00', datafield: '0100', width: 50, cellsalign: 'center' },
                     { text: '01:30', datafield: '0130', width: 50, cellsalign: 'center' },
@@ -293,6 +343,7 @@
                     { text: '22:30', datafield: '2230', width: 50, cellsalign: 'center' },
                     { text: '23:00', datafield: '2300', width: 50, cellsalign: 'center' },
                     { text: '23:30', datafield: '2330', width: 50, cellsalign: 'center' },
+                    { text: '24:00', datafield: '2400', width: 50, cellsalign: 'center' },
                 ],
                 pagermode: 'default',
                 pagesize: 20,

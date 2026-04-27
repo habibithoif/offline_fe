@@ -59,7 +59,7 @@
           </div>
   
           <div class="modal-body">
-            <input type="hidden" name="id_region" id="id_region">
+            <input type="hidden" name="id" id="id">
   
             <div class="form-group">
                 <label for="nama">Nama Unit</label>
@@ -67,7 +67,7 @@
               </div>
   
             <div class="form-group">
-                <label for="singk">Region</label>
+                <label for="region">Region</label>
                 <input type="text" class="form-control" name="region" id="region" required>
             </div>
 
@@ -115,13 +115,11 @@
 
         function detailData(id) {
             var selectedData = tableData.find(function(item) {
-                return item.id_region == id;
+                return item.id == id;
             });
 
-            console.log(id);
-
             if (selectedData) {
-                urlAction = baseUrl + '/update/' + selectedData.id_region;
+                urlAction = baseUrl + '/update/' + selectedData.id;
                 actionMethod = 'PUT';
 
                 toggleForm('#form-data', true);
@@ -130,10 +128,10 @@
                 $('.is-invalid').removeClass('is-invalid');
 
                 $('#modal-data-title').text('Edit ' + selectedData.name);
-                $('#id_region').val(selectedData.id_region);
+                $('#id').val(selectedData.id);
                 $('#nama').val(selectedData.nama);
-                $('#singk').val(selectedData.singk);
-                $('#no_urut').val(selectedData.no_urut);
+                $('#aoc').val(selectedData.aoc);
+                $('#region').val(selectedData.region);
 
                 if (selectedData.status == 1) {
                     $('#status1').prop('checked', true);
@@ -147,9 +145,9 @@
             }
         }
 
-        function deleteData(id_region) {
+        function deleteData(id) {
             var selectedData = tableData.find(function(item) {
-                return item.id_region == id_region;
+                return item.id == id;
             });
             if (!selectedData) {
                 alert('Unit not found');
@@ -158,7 +156,7 @@
 
             Swal.fire({
                 title: 'Warning!',
-                text: `Are you sure you want to delete this role: ${selectedData.name}?`,
+                text: `Are you sure you want to delete this data: ${selectedData.nama}?`,
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
@@ -168,7 +166,7 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
-                        url: baseUrl + '/' + id_region,
+                        url: baseUrl + '/' + id,
                         type: "DELETE",
                         contentType: "application/json",
                         headers: {
@@ -242,10 +240,10 @@
             var source = {
                 datatype: "json",
                 datafields: [
-                    { name: 'id_region', type: 'string' },
+                    { name: 'id', type: 'string' },
                     { name: 'nama', type: 'string' },
-                    { name: 'singk', type: 'string' },
-                    { name: 'no_urut', type: 'int' },
+                    { name: 'region', type: 'int' },
+                    { name: 'aoc', type: 'string' },
                     { name: 'status', type: 'string' },
                 ],
                 url: '{{ route("region.read") }}',
@@ -272,8 +270,8 @@
                 },
                 updaterow: function (rowid, newdata, commit) {
                     var data = $("#jqxGrid").jqxGrid('getrowdata', rowid);
-                    if (data && data.id_region) {
-                        detailData(data.id_region); // Use your existing detailData function (opens modal)
+                    if (data && data.id) {
+                        detailData(data.id); // Use your existing detailData function (opens modal)
                         commit(true); // Just visually commit — actual update is done via form
                     } else {
                         commit(false);
@@ -315,8 +313,8 @@
                         var selectedrowindex = $("#jqxGrid").jqxGrid('getselectedrowindex');
                         if (selectedrowindex >= 0) {
                             var data = $("#jqxGrid").jqxGrid('getrowdata', selectedrowindex);
-                            if (data && data.id_region) {
-                                detailData(data.id_region);
+                            if (data && data.id) {
+                                detailData(data.id);
                             }
                         }
                     });
@@ -326,8 +324,8 @@
                         var selectedrowindex = $("#jqxGrid").jqxGrid('getselectedrowindex');
                         if (selectedrowindex >= 0) {
                             var data = $("#jqxGrid").jqxGrid('getrowdata', selectedrowindex);
-                            if (data && data.id_region) {
-                                deleteData(data.id_region);
+                            if (data && data.id) {
+                                deleteData(data.id);
                             }
                         }
                     });
@@ -342,8 +340,8 @@
                 },
                 columns: [
                     { text: 'Nama Region', datafield: 'nama' },
-                    // { text: 'Singkatan', datafield: 'singk' },
-                    // { text: 'No Urut', datafield: 'no_urut' },
+                    { text: 'Kode Region', datafield: 'region', width: '10%' },
+                    { text: 'AOC', datafield: 'aoc' },
                     { 
                         text: 'Status', 
                         datafield: 'status', 
@@ -361,11 +359,11 @@
                     },
                     { 
                         text: 'Actions', 
-                        datafield: 'id_region', 
+                        datafield: 'id', 
                         width: '10%',
                         cellsalign: 'center',
                         sortable: false,
-                        filterable: false,
+                        filterable: false, 
                         cellsrenderer: function(row, columnfield, value, rowData) {
                             // Create a container div for the buttons
                             var container = $('<div style="display: flex; justify-content: center; gap: 5px; margin-top: 3px;"></div>');
@@ -421,7 +419,7 @@
                 var rows = $("#jqxGrid").jqxGrid('getrows');
 
                 // Header custom
-                var headers = ["Nama", "Singkatan", "Nomor Urut", "Status"];
+                var headers = ["Nama", "Region", "AOC", "Status"];
 
                 // Buat workbook dan worksheet
                 var workbook = new ExcelJS.Workbook();
@@ -454,8 +452,8 @@
                 rows.forEach(row => {
                     worksheet.addRow([
                         row.nama,
-                        row.singk,
-                        row.no_urut,
+                        row.region,
+                        row.aoc,
                         row.status == 1 ? "Aktif" : "Non-aktif"
                     ]);
                 });
@@ -473,7 +471,7 @@
                 // Export ke file XLSX
                 const buffer = await workbook.xlsx.writeBuffer();
                 const blob = new Blob([buffer], { type: 'application/octet-stream' });
-                saveAs(blob, 'MasterData-UnitKerja.xlsx');
+                saveAs(blob, 'MasterData-Region.xlsx');
             });
 
 
@@ -531,7 +529,7 @@
                 },
                 submitHandler: function (form) {
                     var reqData = new FormData(form);
-                    reqData.delete('id_region');
+                    reqData.delete('id');
 
                     ajaxData(urlAction, reqData, refresh, true, true);
                 }

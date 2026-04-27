@@ -57,11 +57,9 @@
                                     <label>Region</label>
                                     <select class="form-control form-control-sm select2" id="filterRegion" style="width: 100%;">
                                         <option value="">--Pilih Region--</option>
-                                        <option value="1">UIP2B JAMALI</option>
-                                        <option value="2">JATENG</option>
-                                        <option value="3">JATIM</option>
-                                        <option value="4">JABAR</option>
-                                        <option value="5">JAKARTA</option>
+                                        @foreach ($data->ref_region as $item)
+                                            <option value="{{ $item['region'] }}">{{ $item['nama'] }}</option>
+                                        @endforeach
                                     </select>
                                 </div>
                             </div> 
@@ -516,7 +514,7 @@
         
         // Export to Excel
         $('#downloadButton').on('click', function() {
-            $("#jqxGrid").jqxGrid('exportdata', 'xlsx', 'TelemetryData');
+            exportGridAll('#jqxGrid','realtime-master-station','csv');
         });
         
         // List view button (toggle view or implement custom view)

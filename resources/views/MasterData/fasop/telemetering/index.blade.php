@@ -37,8 +37,8 @@
                                             <select class="form-control form-control-sm select2" style="width: 100%;" data-placeholder="--Pilih Region--" id="filterRegion">
                                                 <option value=""></option>
                                                 <!-- <option value="all">-- All Region --</option> -->
-                                                @foreach ($data->ref_region_filter as $item)
-                                                    <option value="{{ $item['id_region'] }}">{{ $item['nama_region'] }}</option>
+                                                @foreach ($data->ref_region as $item)
+                                                    <option value="{{ $item['region'] }}">{{ $item['nama'] }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -114,14 +114,14 @@
                     <div class="card-header bg-info text-white">
                         <h3 class="card-title mb-0">Master Data {{ $data->page['name'] }}</h3>
                         <div class="card-tools">
-                            <button id="refreshButton" class="btn btn-default btn-xs" title="Refresh">
-                                <i class="fas fa-sync"></i> Refresh
+                            <button id="refreshButton" class="btn btn-default btn-sm" title="Refresh">
+                                <i class="fas fa-sync"></i>
                             </button>
-                            <!-- <button id="listViewButton" class="btn btn-default btn-xs" title="List View">
+                            <button id="listViewButton" class="btn btn-default btn-sm" title="List View">
                                 <i class="fas fa-list"></i>
-                            </button> -->
-                            <button id="downloadButton" class="btn btn-default btn-xs" title="Download">
-                                <i class="fas fa-download"></i> Download
+                            </button>
+                            <button id="downloadButton" class="btn btn-default btn-sm" title="Download">
+                                <i class="fas fa-download"></i>
                             </button>
                         </div>
                     </div>
@@ -159,11 +159,11 @@
             <input type="hidden" name="id" id="id">
             <div class="row">
                 <div class="form-group col-6">
-                    <label for="id_region">Region</label>
-                    <select class="form-control form-control-sm select2" style="width: 100%;" data-placeholder="--Pilih Region--" name="id_region" id="id_region" required>
+                    <label for="region">Region</label>
+                    <select class="form-control form-control-sm select2" style="width: 100%;" data-placeholder="--Pilih Region--" name="region" id="region" required>
                         <option value=""></option>
                         @foreach ($data->ref_region as $item)
-                            <option value="{{ $item['id_region'] }}">{{ $item['nama'] }}</option>
+                            <option value="{{ $item['region'] }}">{{ $item['nama'] }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -295,7 +295,7 @@
                 $('.modal-data-title').text('Edit ');
 
                 $('#id').val(selectedData.id);
-                $('#id_region').val(selectedData.region).trigger('change').prop('disabled', true);
+                $('#region').val(selectedData.region).trigger('change').prop('disabled', true);
                 // $('#point_number').val(selectedData.point_number).prop('disabled', true);
                 // $('#point_type_id').val(selectedData.point_type_id).trigger('change').prop('disabled', true);
                 $('#path1name').val(selectedData.b1_name).prop('disabled', true);
@@ -391,7 +391,7 @@
             toggleForm('#form-data', true);
 
             // Enable all fields
-            $('#id_region').prop('disabled', false);
+            $('#region').prop('disabled', false);
             // $('#point_number').prop('disabled', false);
             // $('#point_type_id').prop('disabled', false);
             $('#path1name').prop('disabled', false);
@@ -942,7 +942,7 @@
                     var regionFilterGroup = new $.jqx.filter();
                     var regionFilter = regionFilterGroup.createfilter('stringfilter', filterRegion, 'EQUAL');
                     regionFilterGroup.addfilter(0, regionFilter);
-                    $("#jqxGrid").jqxGrid('addfilter', 'id_region', regionFilterGroup);
+                    $("#jqxGrid").jqxGrid('addfilter', 'region', regionFilterGroup);
                 }
 
                 // Apply filter for Lokasi (path1name)
@@ -1009,7 +1009,7 @@
             // Form validation
             $('#form-data').validate({
                 rules: {
-                    id_region: { required: true },
+                    region: { required: true },
                     // point_type_id: { required: true },
                     path1name: { required: true },
                     path2name: { required: true },
@@ -1018,7 +1018,7 @@
                     // status: { required: true }
                 },
                 messages: {
-                    id_region: { required: "Kolom Region wajib diisi." },
+                    region: { required: "Kolom Region wajib diisi." },
                     // point_type_id: { required: "Kolom Kelompok wajib diisi." },
                     path1name: { required: "Kolom B1 Name wajib diisi." },
                     path2name: { required: "Kolom B2 Name wajib diisi." },

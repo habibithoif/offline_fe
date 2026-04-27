@@ -512,7 +512,8 @@
             
             // Export to Excel
             $('#downloadButton').on('click', function() {
-                $("#jqxGrid").jqxGrid('exportdata', 'xlsx', 'TelemetryData');
+                // $("#jqxGrid").jqxGrid('exportdata', 'xlsx', 'TelemetryData');
+                exportGridAll('#jqxGrid','kinerja-trip','csv');
             });
             
             // List view button (toggle view or implement custom view)

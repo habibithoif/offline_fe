@@ -41,6 +41,8 @@ class Tm30ColController extends Controller
         ];
         $point_type = $this->apiRequest('get', 'pointtype/find-child', $params);
         $this->data->point_types = $point_type['data'];
+        $ref_region = $this->apiRequest('get', 'ref-region', $params = []);
+        $this->data->ref_region = $ref_region['data']['Rows'] ?? [];
         return view('opsis.tm-30-col.index', ['data' => $this->data]);
     }
 
@@ -48,7 +50,7 @@ class Tm30ColController extends Controller
     {
         $payload = $request->all();
         $payload['point_type'] = 'TELEMETERING';
-        $response = $this->apiRequest('get', 'fasop/history/analog', $payload);
+        $response = $this->apiRequest('get', 'fasop/telemetering', $payload);
         
         return $response;
     }

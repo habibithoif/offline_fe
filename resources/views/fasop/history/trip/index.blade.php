@@ -512,7 +512,7 @@
             
             // Export to Excel
             $('#downloadButton').on('click', function() {
-                $("#jqxGrid").jqxGrid('exportdata', 'xlsx', 'TelemetryData');
+                exportGridAll('#jqxGrid','histori-trip','csv');
             });
             
             // List view button (toggle view or implement custom view)
