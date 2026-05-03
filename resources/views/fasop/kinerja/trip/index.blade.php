@@ -152,9 +152,9 @@
                             <button id="refreshButton" class="btn btn-default btn-sm" title="Refresh">
                                 <i class="fas fa-sync"></i>
                             </button>
-                            <button id="listViewButton" class="btn btn-default btn-sm" title="List View">
+                            <!-- <button id="listViewButton" class="btn btn-default btn-sm" title="List View">
                                 <i class="fas fa-list"></i>
-                            </button>
+                            </button> -->
                             <button id="downloadButton" class="btn btn-default btn-sm" title="Download">
                                 <i class="fas fa-download"></i>
                             </button>
@@ -162,6 +162,33 @@
                     </div>
                     <div class="card-body p-3">
                         <div id="jqxGrid" style="width: 100%;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card shadow-sm rounded">
+                    <div class="card-header bg-info text-white">
+                        <h3 class="card-title mb-0">DETAIL KINERJA - TELEMETERING</h3>
+                        <div class="card-tools">
+                            <button id="refreshDetailButton" class="btn btn-default btn-sm" title="Refresh">
+                                <i class="fas fa-sync"></i>
+                            </button>
+                            
+                            <!-- <button id="listViewDetailButton" class="btn btn-default btn-sm" title="List View">
+                                <i class="fas fa-list"></i>
+                            </button>
+                            <div id="columnDetailDropdown" style="display:none; position:absolute; right:0; z-index:99999;">
+                                <div id="columnListBoxDetail"></div>
+                            </div>  -->
+                            <button id="downloaddDetailButton" class="btn btn-default btn-sm" title="Download">
+                                <i class="fas fa-download"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body p-3">
+                        <div id="jqxGridDetail" style="width: 100%;"></div>
                     </div>
                 </div>
             </div>
@@ -295,6 +322,19 @@
             $("#jqxGrid").jqxGrid('updatebounddata');
         }
 
+        let tgl = new Date().toISOString().slice(0,7);
+        $('#startDate').val(tgl);
+
+        let filterParams = {
+            tanggal: $('#startDate').val(),
+            id_region: $('#filterRegion').val(),
+            b1_name: $('#filterLokasi').val(),
+            b2_name: $('#filterTegangan').val(),
+            b3_name: $('#filterBay').val(),
+            el_name: $('#filterElement').val(),
+            info_name: $('#filterInfo').val()
+        };
+
         function applyCustomFilters() {
             var filterParams = {
                 tipe_point: $('#filterTipePoint').val(),
@@ -317,7 +357,7 @@
 
         $(document).ready(function() {
             // Initialize grid first time
-            initializeGrid();
+            initializeGrid(filterParams);
 
             // Initialize select2 controls
             $('.select2').select2();
@@ -521,6 +561,144 @@
                 // Implement custom view toggle here
                 console.log("List view toggle clicked");
             });
+        });
+
+        $("#jqxGrid").on('rowselect', function (event) {
+            var selectedRowData = event.args.row;
+            var detailParams = {   "b1_nameoperator" : "and",
+                                    "filtervalue0" : selectedRowData.b1_name,
+                                    "filtercondition0" : "EQUAL",
+                                    "filteroperator0" : 1,
+                                    "filterdatafield0" : "a.b1_name",
+                                    "b2_nameoperator" : "and",
+                                    "filtervalue1" : selectedRowData.b2_name,
+                                    "filtercondition1" : "EQUAL",
+                                    "filteroperator1" : 1,
+                                    "filterdatafield1" : "a.b2_name",
+                                    "b3_nameoperator" : "and",
+                                    "filtervalue2" : selectedRowData.b3_name,
+                                    "filtercondition2" : "EQUAL",
+                                    "filteroperator2" : 1,
+                                    "filterdatafield2" : "a.b3_name",
+                                    "el_nameoperator" : "and",
+                                    "filtervalue3" : selectedRowData.el_name,
+                                    "filtercondition3" : "EQUAL",
+                                    "filteroperator3" : 1,
+                                    "filterdatafield3" : "a.el_name",
+                                    "info_nameoperator" : "and",
+                                    "filtervalue4" : selectedRowData.info_name,
+                                    "filtercondition4" : "EQUAL",
+                                    "filteroperator4" : 1,
+                                    "filterdatafield4" : "a.info_name",
+                                    "filterscount" : 5
+                            };
+           initializeGridDetail(detailParams);
+        });
+
+        function initializeGridDetail(filterParams = {}) {
+            // CSRF Token setup
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+
+            // Create data source
+            var sourceDetail = {
+                datatype: "json",
+                datafields: [
+                    { name: 'id', type: 'string' },
+                    { name: 'id_region', type: 'string' },
+                    { name: 'nama_region', type: 'string' },
+                    { name: 'b1_name', type: 'string' },
+                    { name: 'b2_name', type: 'string' },
+                    { name: 'b3_name', type: 'string' },
+                    { name: 'el_name', type: 'string' },
+                    { name: 'info_name', type: 'string' },
+                    { name: 'b1_text', type: 'string' },
+                    { name: 'b2_text', type: 'string' },
+                    { name: 'b3_text', type: 'string' },
+                    { name: 'el_text', type: 'string' },
+                    { name: 'info_text', type: 'string' },
+                    { name: 'status', type: 'string' },
+                    { name: 'kinerja', type: 'string' },
+                    { name: 'rtu_datetime', type: 'string' },
+                    { name: 'system_datetime', type: 'string' },
+                    { name: 'durasi', type: 'string' },
+                ],
+                url: '{{ route("fasop.histories.telemetering.read") }}',
+                cache: false,
+                data: filterParams,
+                root: 'Rows',
+                beforeprocessing: function(data) {
+                    if (data && data.data && data.data.Rows) {
+                        tableData = data.data.Rows;
+                        sourceDetail.totalrecords = data.data.TotalRows;
+                    } else {
+                        console.error('Invalid data structure:', data);
+                        tableData = [];
+                        sourceDetail.totalrecords = 0;
+                    }
+                }
+            };
+
+            // Create data adapter
+            dataAdapterDetail = new $.jqx.dataAdapter(sourceDetail);
+
+            // Initialize grid
+            $("#jqxGridDetail").jqxGrid({
+                width: '100%',
+                source: dataAdapterDetail,
+                pageable: true,
+                virtualmode: true,
+                autorowheight: true,
+                autoheight: false,
+                showtoolbar: false,
+                rendergridrows: function() {
+                    return dataAdapterDetail.records;
+                },
+                columns: [
+                    { text: 'No', width: 50, cellsalign: 'center', align: 'center',
+                        cellsrenderer: function (row) {
+                            return "<div style='padding: 5px;'>" + (row + 1) + "</div>";
+                        }
+                    },
+                    { text: 'Region', datafield: 'nama_region', width: 150 },
+                    { text: 'B1 Name', datafield: 'b1_name', width: 150 },
+                    { text: 'B2 Name', datafield: 'b2_name', width: 100 },
+                    { text: 'B3 Name', datafield: 'b3_name', width: 150 },
+                    { text: 'Element Name', datafield: 'el_name', width: 150 },
+                    { text: 'Info Name', datafield: 'info_name', width: 100 },
+                    { text: 'B1 Text', datafield: 'b1_text', width:150 },
+                    { text: 'B2 Text', datafield: 'b2_text', width: 100 },
+                    { text: 'B3 Text', datafield: 'b3_text', width: 150 },
+                    { text: 'Element Text', datafield: 'el_text', width: 150 },
+                    { text: 'Info Text', datafield: 'info_text', width: 100 },
+                    { text: 'Datetime RTU', datafield: 'rtu_datetime', width: 200 },
+                    { text: 'Datetime Sistem', datafield: 'system_datetime', width: 200 },
+                    { text: 'Status', datafield: 'status', width: 200 },
+                ],
+                pagermode: 'default',
+                pagesize: 20,
+                pagesizeoptions: ['5', '10', '20', '50'],
+                sortable: true,
+                filterable: true,
+                showfilterrow: true,
+                filtermode: 'excel',
+                theme: 'material'
+            });
+        }
+
+        // Refresh button functionality
+        $('#refreshDetailButton').on('click', function() {
+            $("#jqxGridDetail").jqxGrid('clearselection');
+            $("#jqxGridDetail").jqxGrid('updatebounddata');
+        });
+        
+        // Export to Excel
+        $('#downloadDetailButton').on('click', function() {
+            exportGridAll('#jqxGridDetail','Detail-kinerja-telemetering','csv');
+
         });
     </script>
 @endpush

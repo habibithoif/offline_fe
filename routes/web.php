@@ -52,6 +52,7 @@ use App\Http\Controllers\MasterData\Fasop\MasterDataRTUController;
 use App\Http\Controllers\MasterData\Fasop\RefRegionController;
 use App\Http\Controllers\MasterData\Fasop\MasterDataRemoteControlController;
 use App\Http\Controllers\MasterData\Fasop\MasterDataTargetBulananController;
+use App\Http\Controllers\ImportController;
 
 // FASOP - DASHBOARD //
 use App\Http\Controllers\Fasop\Dashboard\KinerjaScadaHarianController;
@@ -72,6 +73,7 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 use App\Http\Controllers\CaptchaController;
 Route::get('/captcha-image', [CaptchaController::class, 'image']);
+// Route::get('/captcha-image', [CaptchaController::class, 'image'])->name('captcha');
 
 Route::middleware([GlobalMiddleware::class])->group(function () {
     Route::get('/home', [HomeController::class, 'index'])->name('home.index');
@@ -181,10 +183,7 @@ Route::middleware([GlobalMiddleware::class])->group(function () {
             Route::post('/target-bulanan/store', [MasterDataTargetBulananController::class, 'store'])->name('masterdata-fasop-target-bulanan.store');
             Route::post('/target-bulanan/update', [MasterDataTargetBulananController::class, 'update'])->name('masterdata-fasop-target-bulanan.update');
             Route::delete('/target-bulanan/{id}', [MasterDataTargetBulananController::class, 'destroy'])->name('masterdata-fasop-target-bulanan.destroy');
-
-            
-
-        });
+         });
 
         Route::get('/cpoint/findValueBy', [CPointController::class, 'findValueBy'])->name('cpoint.findValueBy');
         Route::get('/cpoint/read', [CPointController::class, 'read'])->name('cpoint.read');
@@ -243,7 +242,8 @@ Route::middleware([GlobalMiddleware::class])->group(function () {
 
             Route::get('/file-lst', [DownloadLSTController::class, 'index'])->name('fasop.histories.download-lst.index');
             Route::get('/file-lst/read', [DownloadLSTController::class, 'read'])->name('fasop.histories.download-lst.read');
-            Route::get('/file-lst/download/{file_name}', [DownloadLSTController::class, 'download'])->name('fasop.histories.download-lst.download');
+            Route::get('/file-lst/download', [DownloadLSTController::class, 'download'])->name('fasop.histories.download-lst.download');
+            Route::get('/file-lst/downloadFolder', [DownloadLSTController::class, 'download'])->name('fasop.histories.download-lst.downloadFolder');
         });
 
         Route::prefix('kinerja')->group(function () {
@@ -293,4 +293,8 @@ Route::middleware([GlobalMiddleware::class])->group(function () {
         Route::get('/tm-30-menit', [Tm30MenitController::class, 'index'])->name('opsis.tm-30-menit.index');
         Route::get('/tm-30-menit/read', [Tm30MenitController::class, 'index'])->name('opsis.tm-30-menit.read');
     });
+
+    Route::post('/import/review', [ImportController::class, 'review']);
+    Route::post('/import/save', [ImportController::class, 'save']);
+    Route::get('/import/downloadTemplate', [ImportController::class, 'downloadTemplate']);
 });

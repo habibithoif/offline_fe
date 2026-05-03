@@ -49,7 +49,7 @@ class RemoteControlController extends Controller
     {
         $payload = $request->all();
         $payload['jenispoint'] = 'TELESIGNAL';
-        $response = $this->apiRequest('get', 'fasop/history/digital', $payload);
+        $response = $this->apiRequest('get', 'fasop/history/rc', $payload);
         
         return $response;
     }

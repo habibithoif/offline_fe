@@ -80,7 +80,7 @@ class LoginController extends Controller
                     // --- End password expiry check ---
                 }
 
-                return redirect()->route('fasop.dashboard.kinerja-scada-harian.index')->with('success', 'Login successful!');
+                return redirect()->route('fasop.dashboard.kinerja-scada-bulanan.index')->with('success', 'Login successful!');
             }
             
             // Tambah percobaan login, simpan selama 5 menit

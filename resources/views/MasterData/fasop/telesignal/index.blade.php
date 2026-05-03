@@ -87,6 +87,17 @@
 
                                     <div class="col-md-2">
                                         <div class="form-group">
+                                            <label>Info</label>
+                                            <div class="input-group input-group-sm">
+                                                <select class="form-control form-control-sm select2" id="filterInfo">
+                                                    <option value="">-- All Info --</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <div class="form-group">
                                             <label>Hitung Kinerja</label>
                                             <div class="input-group input-group-sm">
                                                 <select class="form-control form-control-sm select2" data-placeholder="--Pilih Hitung Kinerja--" id="filterHitungKinerja">
@@ -117,8 +128,8 @@
                             <button id="refreshButton" class="btn btn-default btn-sm" title="Refresh">
                                 <i class="fas fa-sync"></i>
                             </button>
-                            <button id="listViewButton" class="btn btn-default btn-sm" title="List View">
-                                <i class="fas fa-list"></i>
+                            <button id="uploadButton" class="btn btn-default btn-sm" title="Upload">
+                                <i class="fas fa-upload"></i>
                             </button>
                             <button id="downloadButton" class="btn btn-default btn-sm" title="Download">
                                 <i class="fas fa-download"></i>
@@ -200,7 +211,7 @@
                     <input type="text" class="form-control form-control-sm" name="path4name" id="path4name" required>
                 </div>
                 <div class="form-group col-6">
-                    <label for="path5name">Status Info</label>
+                    <label for="path5name">Info Name</label>
                     <input type="text" class="form-control form-control-sm" name="path5name" id="path5name">
                 </div>
                 <div class="form-group col-12 d-flex align-items-center">
@@ -254,7 +265,68 @@
       </form>
     </div>
 </div>  
+<div class="modal fade" id="modal-data-upload" tabindex="-1" role="dialog" aria-labelledby="modalDataLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <form id="form-data-upload" method="POST" enctype="multipart/form-data">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: #17a2b8!important; color: white;">
+                    <h5 class="modal-data-title" id="modalUploadLabel">Form Data</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+  
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="form-group col-12">
+                            <label for="file" class="mb-0 mr-2" style="font-size: 0.85rem;">
+                                Upload File 
+                            </label>
+                            <input type="file" class="form-control" id="file" name="file" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-12">
+                            <small>
+                                Tidak punya template?
+                                <span id="download-template" style="color: blue; cursor: pointer; text-decoration: underline;">
+                                    Download Template
+                                </span>
+                            </small>
+                        </div>
+                    </div>
+                </div>
+                    <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary btn-sm">Simpan</button>
+                    <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Keluar</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div> 
 
+<div class="modal fade" id="modal-data-preview" tabindex="-1" role="dialog" aria-labelledby="modalDataLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <form id="form-data-preview">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: #17a2b8!important; color: white;">
+                    <h5 class="modal-data-title" id="modalpreviewLabel">Form Data</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+  
+                <div class="modal-body">
+                    <div id="jqxPreviewGrid"></div>
+                </div>
+                    <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary btn-sm">Simpan</button>
+                    <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Keluar</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
 
 @endsection
 
@@ -294,7 +366,7 @@
                 $('.modal-data-title').text('Edit ');
 
                 $('#id').val(selectedData.id);
-                $('#id_region').val(selectedData.region).trigger('change').prop('disabled', true);
+                $('#id_region').val(selectedData.region).trigger('change').prop('disabled', false);
                 // $('#point_number').val(selectedData.point_number).prop('disabled', true);
                 // $('#point_type_id').val(selectedData.point_type_id).trigger('change').prop('disabled', true);
                 $('#path1name').val(selectedData.b1_name).prop('disabled', true);
@@ -303,6 +375,7 @@
                 $('#path4name').val(selectedData.el_name).prop('disabled', true);
                 $('#path5name').val(selectedData.info_name).prop('disabled', true);
                 $('#hitung_kinerja').prop('checked', selectedData.kinerja == 1);
+                $('#hitung_tm').prop('checked', selectedData.tm_harian == 1);
                 // $('input[name="status"][value="'+selectedData.status+'"]').prop('checked', true);
 
 
@@ -435,6 +508,8 @@
                     { name: 'kinerja', type: 'bool' },
                     { name: 'path5name', type: 'string' },
                     { name: 'status', type: 'integer' },
+                    { name: 'tm_harian', type: 'bool' },
+                    { name: 'faktor', type: 'integer' },
                 ],
                 url: '{{ route("masterdata-fasop-telesignal.read") }}',
                 cache: false,
@@ -572,6 +647,19 @@
                             var nilai = newvalue ? 1 : 0;
                         }
                     },
+                    // {
+                    //     text: 'Telemetering Harian',
+                    //     datafield: 'tm_harian',
+                    //     columntype: 'checkbox',
+                    //     width: 100,
+                    //     editable: false,
+                    //     filtertype: 'bool',
+                    //     cellendedit: function (row, datafield, columntype, oldvalue, newvalue) {
+                    //         // newvalue = true/false
+                    //         var nilai = newvalue ? 1 : 0;
+                    //     }
+                    // },
+                    { text: 'Faktor', datafield: 'faktor', editable: false, width: 200},
                     // { text: 'Status', datafield: 'status', editable: false,
                     //     width: 80,
                     //     cellsrenderer: function (row, columnfield, value, defaulthtml, columnproperties, rowdata) {
@@ -783,69 +871,70 @@
             });
 
             $('#downloadButton').on('click', async function() {
-                // Ambil semua data dari jqxGrid
-                var rows = $("#jqxGrid").jqxGrid('getrows');
+                // // Ambil semua data dari jqxGrid
+                // var rows = $("#jqxGrid").jqxGrid('getrows');
 
-                // Header custom
-                var headers = ["Regional",  "Kelompok", "B1 Name","B2 Name","B3 Name","Element","path5name","Hitung Kinerja","Status"];
+                // // Header custom
+                // var headers = ["Regional",  "Kelompok", "B1 Name","B2 Name","B3 Name","Element","path5name","Hitung Kinerja","Status"];
 
-                // Buat workbook dan worksheet
-                var workbook = new ExcelJS.Workbook();
-                var worksheet = workbook.addWorksheet('MasterData');
+                // // Buat workbook dan worksheet
+                // var workbook = new ExcelJS.Workbook();
+                // var worksheet = workbook.addWorksheet('MasterData');
 
-                // Tambahkan header
-                var headerRow = worksheet.addRow(headers);
+                // // Tambahkan header
+                // var headerRow = worksheet.addRow(headers);
 
-                // Style header
-                headerRow.eachCell(function(cell, colNumber) {
-                    cell.fill = {
-                        type: 'pattern',
-                        pattern: 'solid',
-                        fgColor: { argb: 'C5D9F1' } // biru
-                    };
-                    cell.font = {
-                        bold: true,
-                        color: { argb: '000000' } // hitam
-                    };
-                    cell.alignment = { horizontal: 'center', vertical: 'middle' };
-                    cell.border = {
-                        top: {style:'thin'},
-                        left: {style:'thin'},
-                        bottom: {style:'thin'},
-                        right: {style:'thin'}
-                    };
-                });
+                // // Style header
+                // headerRow.eachCell(function(cell, colNumber) {
+                //     cell.fill = {
+                //         type: 'pattern',
+                //         pattern: 'solid',
+                //         fgColor: { argb: 'C5D9F1' } // biru
+                //     };
+                //     cell.font = {
+                //         bold: true,
+                //         color: { argb: '000000' } // hitam
+                //     };
+                //     cell.alignment = { horizontal: 'center', vertical: 'middle' };
+                //     cell.border = {
+                //         top: {style:'thin'},
+                //         left: {style:'thin'},
+                //         bottom: {style:'thin'},
+                //         right: {style:'thin'}
+                //     };
+                // });
 
-                // Tambahkan data
-                rows.forEach(row => {
-                    worksheet.addRow([
-                        row.nama_region,
-                        // row.point_number,
-                        row.point_type_id,
-                        row.path1name,
-                        row.path2name,
-                        row.path3name,
-                        row.path4name,
-                        row.path5name,
-                        row.hitung_kinerja == 1 ? "Ya" : "Tidak",
-                        // row.status == 1 ? "Aktif" : "Non-aktif"
-                    ]);
-                });
+                // // Tambahkan data
+                // rows.forEach(row => {
+                //     worksheet.addRow([
+                //         row.nama_region,
+                //         // row.point_number,
+                //         row.point_type_id,
+                //         row.path1name,
+                //         row.path2name,
+                //         row.path3name,
+                //         row.path4name,
+                //         row.path5name,
+                //         row.hitung_kinerja == 1 ? "Ya" : "Tidak",
+                //         // row.status == 1 ? "Aktif" : "Non-aktif"
+                //     ]);
+                // });
 
-                // Atur lebar kolom otomatis
-                worksheet.columns.forEach(column => {
-                    let maxLength = 0;
-                    column.eachCell({ includeEmpty: true }, cell => {
-                        const columnLength = cell.value ? cell.value.toString().length : 10;
-                        if (columnLength > maxLength) maxLength = columnLength;
-                    });
-                    column.width = maxLength + 2;
-                });
+                // // Atur lebar kolom otomatis
+                // worksheet.columns.forEach(column => {
+                //     let maxLength = 0;
+                //     column.eachCell({ includeEmpty: true }, cell => {
+                //         const columnLength = cell.value ? cell.value.toString().length : 10;
+                //         if (columnLength > maxLength) maxLength = columnLength;
+                //     });
+                //     column.width = maxLength + 2;
+                // });
 
-                // Export ke file XLSX
-                const buffer = await workbook.xlsx.writeBuffer();
-                const blob = new Blob([buffer], { type: 'application/octet-stream' });
-                saveAs(blob, 'MasterData-fasop-telesignal.xlsx');
+                // // Export ke file XLSX
+                // const buffer = await workbook.xlsx.writeBuffer();
+                // const blob = new Blob([buffer], { type: 'application/octet-stream' });
+                // saveAs(blob, 'MasterData-fasop-telesignal.xlsx');
+                exportGridAll('#jqxGrid','Master-Data-Telesignal','csv');
             });
 
             $('#listViewButton').on('click', function() {
@@ -894,6 +983,7 @@
                 var filterTegangan = $('#filterTegangan').val();
                 var filterBay = $('#filterBay').val();
                 var filterElement = $('#filterElement').val();
+                var filterInfo = $('#filterInfo').val();
                 var filterHitungKinerja = $('#filterHitungKinerja').val(); // Get Hitung Kinerja filter value
 
                 // Log the filters for debugging
@@ -919,7 +1009,7 @@
                     var lokasiFilterGroup = new $.jqx.filter();
                     var lokasiFilter = lokasiFilterGroup.createfilter('stringfilter', filterLokasi, 'EQUAL');
                     lokasiFilterGroup.addfilter(0, lokasiFilter);
-                    $("#jqxGrid").jqxGrid('addfilter', 'path1name', lokasiFilterGroup);
+                    $("#jqxGrid").jqxGrid('addfilter', 'b1_name', lokasiFilterGroup);
                 }
 
                 // Apply filter for Tegangan (path2name)
@@ -927,7 +1017,7 @@
                     var teganganFilterGroup = new $.jqx.filter();
                     var teganganFilter = teganganFilterGroup.createfilter('stringfilter', filterTegangan, 'EQUAL');
                     teganganFilterGroup.addfilter(0, teganganFilter);
-                    $("#jqxGrid").jqxGrid('addfilter', 'path2name', teganganFilterGroup);
+                    $("#jqxGrid").jqxGrid('addfilter', 'b2_name', teganganFilterGroup);
                 }
 
                 // Apply filter for Bay (path3name)
@@ -935,7 +1025,7 @@
                     var bayFilterGroup = new $.jqx.filter();
                     var bayFilter = bayFilterGroup.createfilter('stringfilter', filterBay, 'EQUAL');
                     bayFilterGroup.addfilter(0, bayFilter);
-                    $("#jqxGrid").jqxGrid('addfilter', 'path3name', bayFilterGroup);
+                    $("#jqxGrid").jqxGrid('addfilter', 'b3_name', bayFilterGroup);
                 }
 
                 // Apply filter for Element (path4name)
@@ -943,7 +1033,15 @@
                     var elementFilterGroup = new $.jqx.filter();
                     var elementFilter = elementFilterGroup.createfilter('stringfilter', filterElement, 'EQUAL');
                     elementFilterGroup.addfilter(0, elementFilter);
-                    $("#jqxGrid").jqxGrid('addfilter', 'path4name', elementFilterGroup);
+                    $("#jqxGrid").jqxGrid('addfilter', 'el_name', elementFilterGroup);
+                }
+
+                // Apply filter for Info (Info name)
+                if (filterInfo) {
+                    var infoFilterGroup = new $.jqx.filter();
+                    var infoFilter = infoFilterGroup.createfilter('stringfilter', filterInfo, 'EQUAL');
+                    infoFilterGroup.addfilter(0, infoFilter);
+                    $("#jqxGrid").jqxGrid('addfilter', 'info_name', infoFilterGroup);
                 }
 
                 // Apply filter for Hitung Kinerja
@@ -979,21 +1077,21 @@
             $('#form-data').validate({
                 rules: {
                     id_region: { required: true },
-                    // point_type_id: { required: true },
                     path1name: { required: true },
                     path2name: { required: true },
                     path3name: { required: true },
                     path4name: { required: true },
-                    // status: { required: true }
+                    path5name: { required: true },
+                    hitungkinerja: { required: true }
                 },
                 messages: {
                     id_region: { required: "Kolom Region wajib diisi." },
-                    // point_type_id: { required: "Kolom Kelompok wajib diisi." },
                     path1name: { required: "Kolom B1 Name wajib diisi." },
                     path2name: { required: "Kolom B2 Name wajib diisi." },
                     path3name: { required: "Kolom B3 Name wajib diisi." },
                     path4name: { required: "Kolom Element wajib diisi." },
-                    // status: { required: "Kolom Status wajib diisi." }
+                    path5name: { required: "Kolom Info wajib diisi." },
+                    hitungkinerja: { required: "Kolom Status wajib diisi." }
                 },
                 submitHandler: function (form) {
                     var reqData = new FormData(form);
@@ -1004,6 +1102,238 @@
                     ajaxData(urlAction, reqData, refresh, true, true);
                 }
             });
+        });
+
+        function uploadData() {
+            resetForm('#form-data-upload');
+            $('#form-data-upload').validate().resetForm();
+            
+            // Clear any previous validation errors
+            $('.is-invalid').removeClass('is-invalid');
+
+            $('#modalUploadLabel').text('Upload File');
+            urlAction = mainServerUrl + '/import/review' ;
+            actionMethod = 'POST';
+            toggleForm('#form-data-upload', true);
+            $('#modal-data-upload').modal('show');
+        }
+
+        $('#uploadButton').on('click', function() {
+            uploadData();
+        });
+
+        // Form validation
+        $('#form-data-upload').validate({
+            
+            rules: {
+                file : { required: true }
+            },
+            messages: {
+                file : { required: "Silahkan upload file" }
+            },
+            submitHandler: function (form) {
+                var formData = new FormData(form);
+
+                // 🔥 tambahkan parameter wajib
+                formData.append("table", "scd_ref_ts");
+
+                formData.append("columns[]", "b1_name");
+                formData.append("columns[]", "b2_name");
+                formData.append("columns[]", "b3_name");
+                formData.append("columns[]", "el_name");
+                formData.append("columns[]", "info_name");
+                formData.append("columns[]", "b1_text");
+                formData.append("columns[]", "b2_text");
+                formData.append("columns[]", "b3_text");
+                formData.append("columns[]", "el_text");
+                formData.append("columns[]", "info_text");
+                formData.append("columns[]", "rtu_datetime");
+                formData.append("columns[]", "system_datetime");
+                // formData.append("columns[]", "status");
+                formData.append("columns[]", "aoc");
+                formData.append("columns[]", "kinerja");
+                formData.append("columns[]", "region");
+
+                formData.append("unique_by[]", "b1_name");
+                formData.append("unique_by[]", "b2_name");
+                formData.append("unique_by[]", "b3_name");
+                formData.append("unique_by[]", "el_name");
+                formData.append("unique_by[]", "info_name");
+
+                $.ajax({
+                    url: urlAction, // endpoint preview
+                    type: "POST",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (res) {
+                        $('#modal-data-upload').modal('hide');
+                        // 🔥 tampilkan hasil preview
+                        showPreview(res.data);
+
+                    },
+                    error: function (err) {
+                        console.log("ERROR FULL:", err.responseJSON);
+                        alert("Gagal upload");
+                    }
+                });
+                return false; // 🔥 INI PENTING
+            }
+        });
+
+        function showPreview(data) {
+
+            if ($("#jqxPreviewGrid").length) {
+                try {
+                    $("#jqxPreviewGrid").jqxGrid('destroy');
+                } catch (e) {}
+                $("#jqxPreviewGrid").empty();
+            }
+            
+            if (!data || data.length === 0) return;
+
+            // 🔥 ambil field dari data
+            let datafields = [];
+            let columns = [];
+
+            let keys = Object.keys(data[0]);
+            let noColumn = null;
+
+            keys.forEach(key => {
+                if (!key) return;
+
+                let col = {
+                    text: key.toUpperCase(),
+                    datafield: key,
+                    align: 'center',
+                    cellsalign: 'center',
+                    width: 150
+                };
+
+                // 🔥 kalau kolom no → simpan dulu
+                if (key.toLowerCase() === 'no') {
+                    noColumn = col;
+                } else if (key.toLowerCase() === 'status_data') {
+                    status_data = col;
+                } else {
+                    columns.push(col);
+                }
+            });
+            if (noColumn) {
+                noColumn.width = 60;
+                noColumn.pinned = true; // biar tetap di kiri
+                columns.unshift(noColumn);
+            }
+            if (status_data) {
+                status_data.width = 150;
+                status_data.pinned = true; // biar tetap di kiri
+                columns.unshift(status_data);
+            }
+            let source = {
+                datatype: "array",
+                localdata: data,
+                datafields: datafields
+            };
+            let dataAdapter = new $.jqx.dataAdapter(source);
+
+            // 🔥 destroy kalau sudah ada
+            $("#jqxPreviewGrid").jqxGrid('destroy');
+
+            // 🔥 init grid
+            $("#jqxPreviewGrid").jqxGrid({
+                width: '100%',
+                autoheight: true,
+                source: dataAdapter,
+                columns: columns,
+                pageable: true,
+                pagesize: 10,
+                sortable: true,
+                filterable: true,
+                showfilterrow: true,
+                // showrownumbers: true
+            });
+
+            // 🔥 highlight row
+            $("#jqxPreviewGrid").on('bindingcomplete', function () {
+                $("#jqxPreviewGrid").jqxGrid('autoresizecolumns');
+                for (let i = 0; i < data.length; i++) {
+
+                    let row = data[i];
+
+                    if (row.status === 'NEW') {
+                        $("#jqxPreviewGrid").jqxGrid('setrowbackground', i, '#d4edda');
+                    }
+
+                    if (row.status === 'UPDATE') {
+                        $("#jqxPreviewGrid").jqxGrid('setrowbackground', i, '#fff3cd');
+                    }
+                }
+            });
+            $('#modalpreviewLabel').text('Daftar List Upload');
+            urlAction = mainServerUrl + '/import/save' ;
+            actionMethod = 'POST';
+            toggleForm('#form-data-preview', true);
+
+            $("#modal-data-preview").modal('show');
+        }
+
+        const downloadTemplate = async () => {
+            const params = new URLSearchParams();
+
+            params.append("template_name", "master_telesignal");
+            params.append("columns[]", "b1_name");
+            params.append("columns[]", "b2_name");
+            params.append("columns[]", "b3_name");
+            params.append("columns[]", "el_name");
+            params.append("columns[]", "info_name");
+            params.append("columns[]", "b1_text");
+            params.append("columns[]", "b2_text");
+            params.append("columns[]", "b3_text");
+            params.append("columns[]", "el_text");
+            params.append("columns[]", "info_text");
+            params.append("columns[]", "rtu_datetime");
+            params.append("columns[]", "system_datetime");
+            // params.append("columns[]", "status");
+            params.append("columns[]", "aoc");
+            params.append("columns[]", "kinerja");
+            params.append("columns[]", "region");
+
+            const res = await fetch(mainServerUrl + `/import/downloadTemplate?${params.toString()}`);
+
+            const blob = await res.blob();
+            const url = window.URL.createObjectURL(blob);
+
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "template.xlsx";
+            a.click();
+        };
+
+        $('#download-template').on('click', function () {
+            downloadTemplate();
+        });
+
+        // Form validation
+        $('#form-data-preview').validate({
+            submitHandler: function (form) {
+                let rows = $("#jqxPreviewGrid").jqxGrid('getrows');
+
+                $.ajax({
+                    url: urlAction,
+                    type: "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify({
+                        table: "scd_ref_ts",
+                        unique_by: ["b1_name", "b2_name", "b3_name", "el_name", "info_name"],
+                        data: rows
+                    }),
+                    success: function (data) {
+                        alertSuccess(data.message);
+                        $("#jqxGrid").jqxGrid('updatebounddata');
+                        $("#modal-data-preview").modal("hide");
+                    }
+                });
+            }
         });
 </script>
 @endpush

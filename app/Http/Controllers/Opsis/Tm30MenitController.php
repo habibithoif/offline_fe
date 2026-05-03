@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Fasop\StatusRealtime;
+namespace App\Http\Controllers\Opsis;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -8,7 +8,7 @@ use App\Services\ApiService;
 use App\Services\ApplicationService;
 use Carbon\Carbon;
 
-class SoeAlarmProteksiController extends Controller
+class Tm30MenitController extends Controller
 {
     protected $apiService;
     protected $applicationService;
@@ -35,16 +35,20 @@ class SoeAlarmProteksiController extends Controller
 
     public function index()
     {
+        $params = [
+            'id_induk_pointtype' => '798be05c4df249459a475745a0de66c6',
+        ];
         $ref_region = $this->apiRequest('get', 'ref-region', $params = []);
         $this->data->ref_region = $ref_region['data']['Rows'] ?? [];
-        return view('fasop.realtime.soe-alarm-proteksi.index', ['data' => $this->data]);
+        $point_type = $this->apiRequest('get', 'pointtype/find-child', $params);
+        $this->data->point_types = $point_type['data'];
+        return view('opsis.tm-30-menit.index', ['data' => $this->data]);
     }
 
     public function read(Request $request)
     {
         $payload = $request->all();
-        $payload['jenispoint'] = 'RTU';
-        $response = $this->apiRequest('get', 'fasop/history/message', $payload);
+        $response = $this->apiRequest('get', 'opsis/tm-30-menit', $payload);
         
         return $response;
     }

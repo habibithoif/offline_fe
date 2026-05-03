@@ -32,7 +32,7 @@
                             <div class="col-md-2">
                                 <div class="form-group">
                                     <label for="startDate">Start Date</label>
-                                    <input type="date" id="startDate" class="form-control form-control-sm">
+                                    <input type="datetime-local" id="startDate" class="form-control form-control-sm">
                                 </div>
                             </div>
                         
@@ -40,7 +40,7 @@
                             <div class="col-md-2">
                                 <div class="form-group">
                                     <label for="endDate">End Date</label>
-                                    <input type="date" id="endDate" class="form-control form-control-sm">
+                                    <input type="datetime-local" id="endDate" class="form-control form-control-sm">
                                 </div>
                             </div>
                             <!-- <div class="col-md-2">
@@ -143,9 +143,9 @@
                             <button id="refreshButton" class="btn btn-default btn-sm" title="Refresh">
                                 <i class="fas fa-sync"></i>
                             </button>
-                            <button id="listViewButton" class="btn btn-default btn-sm" title="List View">
+                            <!-- <button id="listViewButton" class="btn btn-default btn-sm" title="List View">
                                 <i class="fas fa-list"></i>
-                            </button>
+                            </button> -->
                             <button id="downloadButton" class="btn btn-default btn-sm" title="Download">
                                 <i class="fas fa-download"></i>
                             </button>
@@ -194,6 +194,7 @@
                     { name: 'b3_text', type: 'string' },
                     { name: 'el_text', type: 'string' },
                     { name: 'info_text', type: 'string' },
+                    { name: 'datum', type: 'string' },
                     { name: 'value', type: 'string' },
                     { name: 'rtu_datetime', type: 'string' },
                     { name: 'system_datetime', type: 'string' },
@@ -214,7 +215,7 @@
                     { name: 'quality_notrenew', type: 'string' },
                     { name: 'quality_se_replaced', type: 'string' },
                 ],
-                url: '{{ route("opsis.tm-15-menit.read") }}',
+                url: '{{ route("opsis.tm-30-menit.read") }}',
                 cache: false,
                 data: filterParams,
                 root: 'Rows',
@@ -250,21 +251,22 @@
                       }
                     },
                     { text: 'Region', datafield: 'nama_region', width: 150 },
+                    { text: 'Datetime', datafield: 'datum', width: 200 },
                     { text: 'B1 Name', datafield: 'b1_name', width: 150 },
                     { text: 'B2 Name', datafield: 'b2_name', width: 100 },
                     { text: 'B3 Name', datafield: 'b3_name', width: 150 },
-                    { text: 'Element', datafield: 'el_name', width: 100 },
-                    { text: 'Info', datafield: 'Info_name', width: 100 },
-                    { text: 'B1 Name', datafield: 'b1_text', width:200 },
-                    { text: 'B2 Name', datafield: 'b2_text', width: 100 },
-                    { text: 'B3 Name', datafield: 'b3_text', width: 150 },
+                    { text: 'Element Name', datafield: 'el_name', width: 100 },
+                    { text: 'Info Name', datafield: 'Info_name', width: 100 },
+                    { text: 'B1 Text', datafield: 'b1_text', width:200 },
+                    { text: 'B2 Text', datafield: 'b2_text', width: 100 },
+                    { text: 'B3 Text', datafield: 'b3_text', width: 150 },
                     { text: 'Element', datafield: 'el_text', width: 100 },
-                    { text: 'Info', datafield: 'Info_text', width: 100 },
-                    { text: 'Datetime RTU', datafield: 'rtu_datetime', width: 200 },
-                    { text: 'Datetime Sistem', datafield: 'system_datetime', width: 200 },
+                    { text: 'Info Text', datafield: 'Info_text', width: 100 },
+                    // { text: 'Datetime RTU', datafield: 'rtu_datetime', width: 200 },
+                    // { text: 'Datetime Sistem', datafield: 'system_datetime', width: 200 },
                     { text: 'Value', datafield: 'value', width: 100 },
-                    { text: 'Quality Blocked', datafield: 'quality_blocked', width: 100 },
-                    { text: 'Quality Exist', datafield: 'quality_exist', width: 100 },
+                    // { text: 'Quality Blocked', datafield: 'quality_blocked', width: 100 },
+                    // { text: 'Quality Exist', datafield: 'quality_exist', width: 100 },
                     // { text: 'Kesimpulan', datafield: 'kesimpulan', width: 100, cellsalign: 'center',
                     //     cellsrenderer: function (row, columnfield, value, defaulthtml, columnproperties) {
                     //         var color = '';
@@ -310,6 +312,23 @@
             // $("#jqxGrid").jqxGrid('updatebounddata');
         }
 
+        let now = new Date();
+        let plus1Hour = new Date(now.getTime() + 60 * 60 * 1000);
+
+        $('#startDate').val(formatWIB(now));
+        $('#endDate').val(formatWIB(plus1Hour));
+
+        let filterParams = {
+            tanggal1: $('#startDate').val(),
+            tanggal2: $('#endDate').val(),
+            id_region: $('#filterRegion').val(),
+            b1_name: $('#filterLokasi').val(),
+            b2_name: $('#filterTegangan').val(),
+            b3_name: $('#filterBay').val(),
+            el_name: $('#filterElement').val(),
+            info_name: $('#filterInfo').val()
+        };
+        
         function applyCustomFilters() {
             var filterParams = {
                 tanggal1: $('#startDate').val(),
@@ -330,10 +349,41 @@
             refreshGrid();
         }
 
+        function validateDateRange() {
+
+            let startVal = $('#startDate').val();
+            let endVal   = $('#endDate').val();
+
+            if (!startVal || !endVal) {
+                alert('Start Date dan End Date wajib diisi');
+                return false;
+            }
+
+            let startDate = new Date(startVal);
+            let endDate   = new Date(endVal);
+
+            // 1. start tidak boleh lebih dari end
+            if (startDate > endDate) {
+                alert('Start Date tidak boleh lebih besar dari End Date');
+                return false;
+            }
+
+            // 2. range tidak boleh lebih dari 1 bulan (30 hari)
+            let diffTime = endDate - startDate;
+            let diffDays = diffTime / (1000 * 60 * 60 * 24);
+
+            if (diffDays > 31) {
+                alert('Range tanggal tidak boleh lebih dari 1 bulan');
+                return false;
+            }
+
+            return true;
+        }
+
         $(document).ready(function() {
             // Initialize grid first time
-            initializeGrid();
-
+            initializeGrid(filterParams);
+            
             // Initialize select2 controls
             // $('.select2').select2();
 
@@ -513,6 +563,7 @@
 
         // Apply filters button
         $('#applyFilters').on('click', function() {
+            if (!validateDateRange()) return;
             applyCustomFilters();
         });
         

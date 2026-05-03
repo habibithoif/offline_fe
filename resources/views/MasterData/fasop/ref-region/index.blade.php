@@ -22,9 +22,9 @@
                             <button id="refreshButton" class="btn btn-default btn-xs" title="Refresh">
                                 <i class="fas fa-sync"></i>
                             </button>
-                            <button id="listViewButton" class="btn btn-default btn-xs" title="List View">
+                            <!-- <button id="listViewButton" class="btn btn-default btn-xs" title="List View">
                                 <i class="fas fa-list"></i>
-                            </button>
+                            </button> -->
                             <button id="downloadButton" class="btn btn-default btn-xs" title="Download">
                                 <i class="fas fa-download"></i>
                             </button>
@@ -518,13 +518,12 @@
             $('#form-data').validate({
                 rules: {
                     nama: { required: true, minlength: 3 },
-                    singk: { required: true },
+                    aoc: { required: true },
                     status: { required: true }
                 },
                 messages: {
                     nama: { required: "Kolom Nama Unit wajib diisi.", minlength: "Nama Lokasi harus terdiri dari minimal 3 karakter." },
-                    singk: { required: "Kolom Singkatan wajib diisi." },
-                    no_urut: { required: "Kolom Nomor Urut wajib diisi." },
+                    aoc: { required: "Kolom AOC wajib diisi." },
                     status: { required: "Kolom Status wajib diisi." }
                 },
                 submitHandler: function (form) {

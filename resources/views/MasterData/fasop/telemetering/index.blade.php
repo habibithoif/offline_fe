@@ -87,6 +87,17 @@
 
                                     <div class="col-md-2">
                                         <div class="form-group">
+                                            <label>Info</label>
+                                            <div class="input-group input-group-sm">
+                                                <select class="form-control form-control-sm select2" id="filterInfo">
+                                                    <option value="">-- All Info --</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <div class="form-group">
                                             <label>Hitung Kinerja</label>
                                             <div class="input-group input-group-sm">
                                                 <select class="form-control form-control-sm select2" data-placeholder="--Pilih Hitung Kinerja--" id="filterHitungKinerja">
@@ -117,8 +128,8 @@
                             <button id="refreshButton" class="btn btn-default btn-sm" title="Refresh">
                                 <i class="fas fa-sync"></i>
                             </button>
-                            <button id="listViewButton" class="btn btn-default btn-sm" title="List View">
-                                <i class="fas fa-list"></i>
+                            <button id="uploadButton" class="btn btn-default btn-sm" title="Upload">
+                                <i class="fas fa-upload"></i>
                             </button>
                             <button id="downloadButton" class="btn btn-default btn-sm" title="Download">
                                 <i class="fas fa-download"></i>
@@ -146,116 +157,186 @@
 
 <div class="modal fade" id="modal-data" tabindex="-1" role="dialog" aria-labelledby="modalDataLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
-      <form id="form-data">
-        <div class="modal-content">
-          <div class="modal-header" style="background-color: #17a2b8!important; color: white;">
-            <h5 class="modal-data-title" id="modalDataLabel">Form Data</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-  
-          <div class="modal-body">
-            <input type="hidden" name="id" id="id">
-            <div class="row">
-                <div class="form-group col-6">
-                    <label for="region">Region</label>
-                    <select class="form-control form-control-sm select2" style="width: 100%;" data-placeholder="--Pilih Region--" name="region" id="region" required>
-                        <option value=""></option>
-                        @foreach ($data->ref_region as $item)
-                            <option value="{{ $item['region'] }}">{{ $item['nama'] }}</option>
-                        @endforeach
-                    </select>
+        <form id="form-data">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: #17a2b8!important; color: white;">
+                    <h5 class="modal-data-title" id="modalDataLabel">Form Data</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
-                <!-- <div class="form-group col-6">
-                    <label for="point_number">Point Number</label>
-                    <input type="number" class="form-control form-control-sm" name="point_number" id="point_number" required>
-                </div> 
-                <div class="form-group col-6">
-                    <label for="point_type">Kelompok</label>
-                    <input type="text" class="form-control form-control-sm" name="point_type" id="point_type" value="{{ $data->pointtype_name }}" required readonly>
-                </div>
-                <div class="form-group col-6">
-                    <label for="point_type_id">Jenis Point</label>
-                    <select class="form-control form-control-sm select2" style="width: 100%;" data-placeholder="--Pilih Jenis Point--" name="point_type_id" id="point_type_id" required>
-                        <option value=""></option>
-                        @foreach ($data->point_type as $item)
-                            <option value="{{ $item['id'] }}">{{ $item['name'] }}</option>
-                        @endforeach
-                    </select>
-                </div>-->
-                <div class="form-group col-6">
-                    <label for="path1name">B1 Name</label>
-                    <input type="text" class="form-control form-control-sm" name="path1name" id="path1name" required>
-                </div>
-                <div class="form-group col-6">
-                    <label for="path2name">B2 Name</label>
-                    <input type="text" class="form-control form-control-sm" name="path2name" id="path2name" required>
-                </div>
-                <div class="form-group col-6">
-                    <label for="path3name">B3 Name</label>
-                    <input type="text" class="form-control form-control-sm" name="path3name" id="path3name" required>
-                </div>
-                <div class="form-group col-6">
-                    <label for="path4name">Element Name</label>
-                    <input type="text" class="form-control form-control-sm" name="path4name" id="path4name" required>
-                </div>
-                <div class="form-group col-6">
-                    <label for="path5name">Status Info</label>
-                    <input type="text" class="form-control form-control-sm" name="path5name" id="path5name">
-                </div>
-                <div class="form-group col-12 d-flex align-items-center">
+        
+                <div class="modal-body">
+                    <input type="hidden" name="id" id="id">
+                    <div class="row">
+                        <div class="form-group col-6">
+                            <label for="region">Region</label>
+                            <select class="form-control form-control-sm select2" style="width: 100%;" data-placeholder="--Pilih Region--" name="region" id="region" required>
+                                <option value=""></option>
+                                @foreach ($data->ref_region as $item)
+                                    <option value="{{ $item['region'] }}">{{ $item['nama'] }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <!-- <div class="form-group col-6">
+                            <label for="point_number">Point Number</label>
+                            <input type="number" class="form-control form-control-sm" name="point_number" id="point_number" required>
+                        </div> 
+                        <div class="form-group col-6">
+                            <label for="point_type">Kelompok</label>
+                            <input type="text" class="form-control form-control-sm" name="point_type" id="point_type" value="{{ $data->pointtype_name }}" required readonly>
+                        </div>
+                        <div class="form-group col-6">
+                            <label for="point_type_id">Jenis Point</label>
+                            <select class="form-control form-control-sm select2" style="width: 100%;" data-placeholder="--Pilih Jenis Point--" name="point_type_id" id="point_type_id" required>
+                                <option value=""></option>
+                                @foreach ($data->point_type as $item)
+                                    <option value="{{ $item['id'] }}">{{ $item['name'] }}</option>
+                                @endforeach
+                            </select>
+                        </div>-->
+                        <div class="form-group col-6">
+                            <label for="path1name">B1 Name</label>
+                            <input type="text" class="form-control form-control-sm" name="path1name" id="path1name" required>
+                        </div>
+                        <div class="form-group col-6">
+                            <label for="path2name">B2 Name</label>
+                            <input type="text" class="form-control form-control-sm" name="path2name" id="path2name" required>
+                        </div>
+                        <div class="form-group col-6">
+                            <label for="path3name">B3 Name</label>
+                            <input type="text" class="form-control form-control-sm" name="path3name" id="path3name" required>
+                        </div>
+                        <div class="form-group col-6">
+                            <label for="path4name">Element Name</label>
+                            <input type="text" class="form-control form-control-sm" name="path4name" id="path4name" required>
+                        </div>
+                        <div class="form-group col-6">
+                            <label for="path5name">Status Info</label>
+                            <input type="text" class="form-control form-control-sm" name="path5name" id="path5name">
+                        </div>
+                        <div class="form-group col-12 d-flex align-items-center">
 
-                    <!-- Hitung Kinerja -->
-                    <div class="d-flex align-items-center mr-5" style="margin-left: 20px;">
-                        <label for="hitung_kinerja" class="mb-0 mr-2" style="font-size: 0.85rem;">
-                            Hitung Kinerja
-                        </label>
-                        <input type="checkbox" class="form-check-input" id="hitung_kinerja" name="hitung_kinerja" value="0"
-                            style="transform: scale(0.85); margin-top: 2px;">
+                            <!-- Hitung Kinerja -->
+                            <div class="d-flex align-items-center mr-5" style="margin-left: 20px;">
+                                <label for="hitung_kinerja" class="mb-0 mr-2" style="font-size: 0.85rem;">
+                                    Hitung Kinerja
+                                </label>
+                                <input type="checkbox" class="form-check-input" id="hitung_kinerja" name="hitung_kinerja" value="0"
+                                    style="transform: scale(0.85); margin-top: 2px;">
+                            </div>
+                            
+                            <div class="d-flex align-items-center mr-5" style="margin-left: 20px;">
+                                <label for="hitung_tm" class="mb-0 mr-2" style="font-size: 0.85rem;">
+                                    Hitung Telemetering
+                                </label>
+                                <input type="checkbox" class="form-check-input" id="hitung_tm" name="hitung_tm" value="0"
+                                    style="transform: scale(0.85); margin-top: 2px;">
+                            </div>
+
+                            <!-- Status -->
+                            <!-- <div class="d-flex align-items-center" style="margin-left: 80px;">
+                                <label for="status" class="mb-0 mr-2" style="font-size: 0.85rem;">
+                                    Hitung Telemetering
+                                </label>
+
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio"
+                                        name="status" id="status_aktif" value="1" required
+                                        style="transform: scale(0.85); margin-top: 2px;">
+                                    <label class="form-check-label" for="status_aktif" style="font-size: 0.85rem;">
+                                        Aktif
+                                    </label>
+                                </div>
+
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio"
+                                        name="status" id="status_nonaktif" value="0"
+                                        style="transform: scale(0.85); margin-top: 2px;">
+                                    <label class="form-check-label" for="status_nonaktif" style="font-size: 0.85rem;">
+                                        Non Aktif
+                                    </label>
+                                </div>
+                            </div> -->
+
+                        </div>
+
+
+
                     </div>
-
-                    <!-- Status -->
-                    <!-- <div class="d-flex align-items-center" style="margin-left: 80px;">
-                        <label for="status" class="mb-0 mr-2" style="font-size: 0.85rem;">
-                            Status
-                        </label>
-
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio"
-                                name="status" id="status_aktif" value="1" required
-                                style="transform: scale(0.85); margin-top: 2px;">
-                            <label class="form-check-label" for="status_aktif" style="font-size: 0.85rem;">
-                                Aktif
-                            </label>
-                        </div>
-
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio"
-                                name="status" id="status_nonaktif" value="0"
-                                style="transform: scale(0.85); margin-top: 2px;">
-                            <label class="form-check-label" for="status_nonaktif" style="font-size: 0.85rem;">
-                                Non Aktif
-                            </label>
-                        </div>
-                    </div> -->
-
                 </div>
-
-
-
+    
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary btn-sm">Simpan</button>
+                    <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Keluar</button>
+                </div>
             </div>
-          </div>
-  
-          <div class="modal-footer">
-            <button type="submit" class="btn btn-primary btn-sm">Simpan</button>
-            <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Keluar</button>
-          </div>
-        </div>
-      </form>
+        </form>
     </div>
-</div>  
+</div> 
 
+<div class="modal fade" id="modal-data-upload" tabindex="-1" role="dialog" aria-labelledby="modalDataLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <form id="form-data-upload" method="POST" enctype="multipart/form-data">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: #17a2b8!important; color: white;">
+                    <h5 class="modal-data-title" id="modalUploadLabel">Form Data</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+  
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="form-group col-12">
+                            <label for="file" class="mb-0 mr-2" style="font-size: 0.85rem;">
+                                Upload File 
+                            </label>
+                            <input type="file" class="form-control" id="file" name="file" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-12">
+                            <small>
+                                Tidak punya template?
+                                <span id="download-template" style="color: blue; cursor: pointer; text-decoration: underline;">
+                                    Download Template
+                                </span>
+                            </small>
+                        </div>
+                    </div>
+                </div>
+                    <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary btn-sm">Simpan</button>
+                    <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Keluar</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div> 
+
+<div class="modal fade" id="modal-data-preview" tabindex="-1" role="dialog" aria-labelledby="modalDataLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <form id="form-data-preview">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: #17a2b8!important; color: white;">
+                    <h5 class="modal-data-title" id="modalpreviewLabel">Form Data</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+  
+                <div class="modal-body">
+                    <div id="jqxPreviewGrid"></div>
+                </div>
+                    <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary btn-sm">Simpan</button>
+                    <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Keluar</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
 
 @endsection
 
@@ -266,8 +347,9 @@
         var baseUrl = mainServerUrl + currentPath;
         var appSettings = []; // Store appSettings data for easy access
         var actionMethod = 'POST';
-        
-        function refresh(result) {
+        var filterLoaded = false;
+
+        function refresh(data) {
             alertSuccess(result.message);
             $("#jqxGrid").jqxGrid('updatebounddata'); // This properly refreshes the grid data
             $('#modal-data').modal('hide');
@@ -279,7 +361,7 @@
             });
 
             if (selectedData) {
-                console.log(selectedData);
+                
                 toggleForm('#form-data', true);
                 resetForm('#form-data');
                 $('#form-data').validate().resetForm();
@@ -295,7 +377,7 @@
                 $('.modal-data-title').text('Edit ');
 
                 $('#id').val(selectedData.id);
-                $('#region').val(selectedData.region).trigger('change').prop('disabled', true);
+                $('#region').val(selectedData.region).trigger('change').prop('disabled', false);
                 // $('#point_number').val(selectedData.point_number).prop('disabled', true);
                 // $('#point_type_id').val(selectedData.point_type_id).trigger('change').prop('disabled', true);
                 $('#path1name').val(selectedData.b1_name).prop('disabled', true);
@@ -304,7 +386,7 @@
                 $('#path4name').val(selectedData.el_name).prop('disabled', true);
                 $('#path5name').val(selectedData.info_name).prop('disabled', true);
                 $('#hitung_kinerja').prop('checked', selectedData.kinerja == 1);
-                // $('input[name="status"][value="'+selectedData.status+'"]').prop('checked', true);
+                $('input[name="status"][value="'+selectedData.tm_harian+'"]').prop('checked', true);
 
 
                 $('#modal-data').modal('show');
@@ -438,16 +520,17 @@
                     { name: 'region', type: 'string' },
                     { name: 'nama_region', type: 'string' },
                     { name: 'kinerja', type: 'bool' },
-                    { name: 'status', type: 'integer' },
+                    { name: 'tm_harian', type: 'bool' },
+                    { name: 'faktor', type: 'integer' },
                 ],
                 url: '{{ route("masterdata-fasop-telemetering.read") }}',
                 cache: false,
-                root: 'data',
+                root: 'Rows',
                 beforeprocessing: function(data) {
                     // appSettings = data.data.Rows; // Store appSettings data
                     // source.totalrecords = data.data.TotalRows;
                     if (data && data.data) {
-                        appSettings = data.data;
+                        appSettings = data.data.Rows;
                         source.totalrecords = data.data.TotalRows;
                     } else {
                         console.error('Invalid data structure:', data);
@@ -580,6 +663,19 @@
                             var nilai = newvalue ? 1 : 0;
                         }
                     },
+                    {
+                        text: 'Telemetering Harian',
+                        datafield: 'tm_harian',
+                        columntype: 'checkbox',
+                        width: 100,
+                        editable: false,
+                        filtertype: 'bool',
+                        cellendedit: function (row, datafield, columntype, oldvalue, newvalue) {
+                            // newvalue = true/false
+                            var nilai = newvalue ? 1 : 0;
+                        }
+                    },
+                    { text: 'Faktor', datafield: 'faktor', editable: false, width: 200},
                     // { text: 'Status', datafield: 'status', editable: false,
                     //     width: 80,
                     //     cellsrenderer: function (row, columnfield, value, defaulthtml, columnproperties, rowdata) {
@@ -634,13 +730,57 @@
                 // theme: 'material'
             });
 
+            
             $("#jqxGrid").on("bindingcomplete", function () {
-                console.log("Grid is ready!");
+                // console.log("Grid is ready!");
 
                 // $("#jqxGrid").jqxGrid('theme', 'darkblue');
-                $("#jqxGrid").jqxGrid('render');
+                // $("#jqxGrid").jqxGrid('render');
+                 if (filterLoaded) return; // sudah pernah load → skip
+                var records = dataAdapter.records;
+
+                var uniqueB1_name = [...new Set(records.map(x => x.b1_name).filter(Boolean))];
+                var uniqueB2_name = [...new Set(records.map(x => x.b2_name).filter(Boolean))];
+                var uniqueB3_name = [...new Set(records.map(x => x.b3_name).filter(Boolean))];
+                var uniqueel_name = [...new Set(records.map(x => x.el_name).filter(Boolean))];
+                var uniqueinfo_name = [...new Set(records.map(x => x.info_name).filter(Boolean))];
+                
+                // isi dropdown satu-satu
+                fillSelect('#filterLokasi', uniqueB1_name);
+                fillSelect('#filterTegangan', uniqueB2_name);
+                fillSelect('#filterBay', uniqueB3_name);
+                fillSelect('#filterElement', uniqueel_name);
+                fillSelect('#filterInfo', uniqueinfo_name);
+
+                filterLoaded = true; // tandai sudah load
             });
         };
+
+        function distinct(records, field){
+            return [...new Set(
+                records.map(x => x[field]).filter(Boolean)
+            )];
+        }
+
+        function fillSelect(selector, data){
+            $(selector).select2('destroy').empty();
+            $(selector).append('<option value=""></option>');
+
+            $.each(data, function(i, val){
+                $(selector).append(
+                    $('<option>', {
+                        value: val,
+                        text: val
+                    })
+                );
+            });
+
+            $(selector).select2({
+                allowClear: true,
+                placeholder: '-- Pilih --',
+                width: '100%'
+            });
+        }
 
         // EVENT SEARCH
         // $("#searchInput").on('keyup', function () {
@@ -669,254 +809,7 @@
 
             // Initialize select2 controls
             $('.select2').select2();
-
             loadData();
-
-            // Rest of your select2 initialization code...
-            $('#filterLokasi').select2({
-                ajax: {
-                    url: '{{ route("cpoint.findValueBy") }}',
-                    dataType: 'json',
-                    delay: 250,
-                    data: function (params) {
-                        return {
-                            keyword: params.term, 
-                            page: params.page || 1,
-                            field: 'path1name',
-                            point_type: '{{ $data->pointtype_name }}'
-                        };
-                    },
-                    processResults: function (data, params) {
-                        params.page = params.page || 1;
-                        const response = data.data.data;
-                        return {
-                            results: response.map(function(item) {
-                                return {
-                                    id: item, 
-                                    text: item 
-                                };
-                            }),
-                            pagination: {
-                                more: (params.page * 10) < data.total  
-                            }
-                        };
-                    },
-                    cache: true
-                },
-                allowClear: true,
-                placeholder: '--Pilih B1 Name--',
-            });
-
-            $('#filterTegangan').select2({
-                ajax: {
-                    url: '{{ route("cpoint.findValueBy") }}',
-                    dataType: 'json',
-                    delay: 250,
-                    data: function (params) {
-                        return {
-                            keyword: params.term,  
-                            page: params.page || 1,
-                            field: 'path2name',
-                            point_type: '{{ $data->pointtype_name }}'
-                        };
-                    },
-                    processResults: function (data, params) {
-                        params.page = params.page || 1;
-                        const response = data.data.data;
-                        return {
-                            results: response.map(function(item) {
-                                return {
-                                    id: item, 
-                                    text: item 
-                                };
-                            }),
-                            pagination: {
-                                more: (params.page * 10) < data.total  
-                            }
-                        };
-                    },
-                    cache: true
-                },
-                allowClear: true,
-                placeholder: '--Pilih B2 Name--'
-            });
-
-            $('#filterBay').select2({
-                ajax: {
-                    url: '{{ route("cpoint.findValueBy") }}',
-                    dataType: 'json',
-                    delay: 250,
-                    data: function (params) {
-                        return {
-                            keyword: params.term,  
-                            page: params.page || 1,
-                            field: 'path3name',
-                            pointtype_name: '{{ $data->pointtype_name }}'
-                        };
-                    },
-                    processResults: function (data, params) {
-                        params.page = params.page || 1;
-                        const response = data.data.data;
-                        return {
-                            results: response.map(function(item) {
-                                return {
-                                    id: item, 
-                                    text: item 
-                                };
-                            }),
-                            pagination: {
-                                more: (params.page * 10) < data.total  
-                            }
-                        };
-                    },
-                    cache: true
-                },
-                allowClear: true,
-                placeholder: '--Pilih B3 Name--'
-            });
-
-            $('#filterElement').select2({
-                ajax: {
-                    url: '{{ route("cpoint.findValueBy") }}',
-                    dataType: 'json',
-                    delay: 250,
-                    data: function (params) {
-                        return {
-                            keyword: params.term,  
-                            page: params.page || 1,
-                            field: 'path4name' ,
-                            pointtype_name: '{{ $data->pointtype_name }}'
-                        };
-                    },
-                    processResults: function (data, params) {
-                        params.page = params.page || 1;
-                        const response = data.data.data;
-                        return {
-                            results: response.map(function(item) {
-                                return {
-                                    id: item, 
-                                    text: item 
-                                };
-                            }),
-                            pagination: {
-                                more: (params.page * 10) < data.total  
-                            }
-                        };
-                    },
-                    cache: true
-                },
-                allowClear: true,
-                placeholder: '--Pilih Element--'
-            });
-
-            $('#refreshButton').on('click', function() {
-                $("#jqxGrid").jqxGrid('updatebounddata');
-            });
-
-            $('#downloadButton').on('click', async function() {
-                // Ambil semua data dari jqxGrid
-                var rows = $("#jqxGrid").jqxGrid('getrows');
-
-                // Header custom
-                var headers = ["Regional",  "Kelompok", "B1 Name","B2 Name","B3 Name","Element","path5name","Hitung Kinerja","Status"];
-
-                // Buat workbook dan worksheet
-                var workbook = new ExcelJS.Workbook();
-                var worksheet = workbook.addWorksheet('MasterData');
-
-                // Tambahkan header
-                var headerRow = worksheet.addRow(headers);
-
-                // Style header
-                headerRow.eachCell(function(cell, colNumber) {
-                    cell.fill = {
-                        type: 'pattern',
-                        pattern: 'solid',
-                        fgColor: { argb: 'C5D9F1' } // biru
-                    };
-                    cell.font = {
-                        bold: true,
-                        color: { argb: '000000' } // hitam
-                    };
-                    cell.alignment = { horizontal: 'center', vertical: 'middle' };
-                    cell.border = {
-                        top: {style:'thin'},
-                        left: {style:'thin'},
-                        bottom: {style:'thin'},
-                        right: {style:'thin'}
-                    };
-                });
-
-                // Tambahkan data
-                rows.forEach(row => {
-                    worksheet.addRow([
-                        row.nama_region,
-                        // row.point_number,
-                        // row.point_type_id,
-                        row.path1name,
-                        row.path2name,
-                        row.path3name,
-                        row.path4name,
-                        row.path5name,
-                        row.hitung_kinerja == 1 ? "Ya" : "Tidak",
-                        row.status == 1 ? "Aktif" : "Non-aktif"
-                    ]);
-                });
-
-                // Atur lebar kolom otomatis
-                worksheet.columns.forEach(column => {
-                    let maxLength = 0;
-                    column.eachCell({ includeEmpty: true }, cell => {
-                        const columnLength = cell.value ? cell.value.toString().length : 10;
-                        if (columnLength > maxLength) maxLength = columnLength;
-                    });
-                    column.width = maxLength + 2;
-                });
-
-                // Export ke file XLSX
-                const buffer = await workbook.xlsx.writeBuffer();
-                const blob = new Blob([buffer], { type: 'application/octet-stream' });
-                saveAs(blob, 'MasterData-fasop-telemetering.xlsx');
-            });
-
-            $('#listViewButton').on('click', function() {
-                console.log("List view toggle clicked");
-            });
-            
-            // Custom search functionality
-            $('#searchButton').on('click', function() {
-                var searchValue = $('#searchInput').val();
-                if (searchValue) {
-                    // Apply filters to multiple columns
-                    var filtergroup = new $.jqx.filter();
-                    
-                    var nameFilter = filtergroup.createfilter('stringfilter', searchValue, 'contains');
-                    filtergroup.addfilter(0, nameFilter);
-                    
-                    var displayNameFilter = filtergroup.createfilter('stringfilter', searchValue, 'contains');
-                    filtergroup.addfilter(0, displayNameFilter, 'or');
-                    
-                    var descFilter = filtergroup.createfilter('stringfilter', searchValue, 'contains');
-                    filtergroup.addfilter(0, descFilter, 'or');
-                    
-                    $("#jqxGrid").jqxGrid('addfilter', 'name', filtergroup);
-                    $("#jqxGrid").jqxGrid('applyfilters');
-                } else {
-                    $("#jqxGrid").jqxGrid('clearfilters');
-                }
-            });
-            
-            // Search on Enter key
-            $('#searchInput').on('keypress', function(e) {
-                if (e.which === 13) {
-                    $('#searchButton').click();
-                }
-            });
-            
-            // Delete confirmation
-            $('#confirm-delete').on('click', function() {
-                confirmDelete();
-            });
 
             $('#applyFilters').on('click', function () {
                 // Collect filter values
@@ -925,17 +818,34 @@
                 var filterTegangan = $('#filterTegangan').val();
                 var filterBay = $('#filterBay').val();
                 var filterElement = $('#filterElement').val();
+                var filterInfo = $('#filterInfo').val();
                 var filterHitungKinerja = $('#filterHitungKinerja').val(); // Get Hitung Kinerja filter value
-
-                // Log the filters for debugging
-                // console.log('Filters:', {
-                //     region: filterRegion,
-                //     lokasi: filterLokasi,
-                //     tegangan: filterTegangan,
-                //     bay: filterBay,
-                //     element: filterElement,
-                //     hitung_kinerja: filterHitungKinerja
-                // });
+                
+                $("#jqxGrid").one("bindingcomplete", function () {
+                    var records = $("#jqxGrid").jqxGrid('getrows');
+                    // hanya reload yang kosong
+                    if (!filterLokasi) {
+                        fillSelect('#filterLokasi', distinct(records, 'b1_name'));
+                    }
+                    if (!filterTegangan) {
+                        fillSelect('#filterTegangan', distinct(records, 'b2_name'));
+                    }
+                    if (!filterBay) {
+                        fillSelect('#filterBay', distinct(records, 'b3_name'));
+                    }
+                    if (!filterElement) {
+                        fillSelect('#filterElement', distinct(records, 'el_name'));
+                    }
+                    if (!filterInfo) {
+                        fillSelect('#filterInfo', distinct(records, 'info_name'));
+                    }
+                    
+                    $('#filterLokasi').val(filterLokasi).trigger('change.select2');
+                    $('#filterTegangan').val(filterTegangan).trigger('change.select2');
+                    $('#filterBay').val(filterBay).trigger('change.select2');
+                    $('#filterElement').val(filterElement).trigger('change.select2');
+                    $('#filterInfo').val(filterInfo).trigger('change.select2');
+                });
 
                 // Apply filter for Region
                 if (filterRegion) {
@@ -950,7 +860,7 @@
                     var lokasiFilterGroup = new $.jqx.filter();
                     var lokasiFilter = lokasiFilterGroup.createfilter('stringfilter', filterLokasi, 'EQUAL');
                     lokasiFilterGroup.addfilter(0, lokasiFilter);
-                    $("#jqxGrid").jqxGrid('addfilter', 'path1name', lokasiFilterGroup);
+                    $("#jqxGrid").jqxGrid('addfilter', 'b1_name', lokasiFilterGroup);
                 }
 
                 // Apply filter for Tegangan (path2name)
@@ -958,7 +868,7 @@
                     var teganganFilterGroup = new $.jqx.filter();
                     var teganganFilter = teganganFilterGroup.createfilter('stringfilter', filterTegangan, 'EQUAL');
                     teganganFilterGroup.addfilter(0, teganganFilter);
-                    $("#jqxGrid").jqxGrid('addfilter', 'path2name', teganganFilterGroup);
+                    $("#jqxGrid").jqxGrid('addfilter', 'b2_name', teganganFilterGroup);
                 }
 
                 // Apply filter for Bay (path3name)
@@ -966,7 +876,7 @@
                     var bayFilterGroup = new $.jqx.filter();
                     var bayFilter = bayFilterGroup.createfilter('stringfilter', filterBay, 'EQUAL');
                     bayFilterGroup.addfilter(0, bayFilter);
-                    $("#jqxGrid").jqxGrid('addfilter', 'path3name', bayFilterGroup);
+                    $("#jqxGrid").jqxGrid('addfilter', 'b3_name', bayFilterGroup);
                 }
 
                 // Apply filter for Element (path4name)
@@ -974,7 +884,15 @@
                     var elementFilterGroup = new $.jqx.filter();
                     var elementFilter = elementFilterGroup.createfilter('stringfilter', filterElement, 'EQUAL');
                     elementFilterGroup.addfilter(0, elementFilter);
-                    $("#jqxGrid").jqxGrid('addfilter', 'path4name', elementFilterGroup);
+                    $("#jqxGrid").jqxGrid('addfilter', 'el_name', elementFilterGroup);
+                }
+
+                // Apply filter for Element (path4name)
+                if (filterInfo) {
+                    var infoFilterGroup = new $.jqx.filter();
+                    var infoFilter = infoFilterGroup.createfilter('stringfilter', filterInfo, 'EQUAL');
+                    infoFilterGroup.addfilter(0, infoFilter);
+                    $("#jqxGrid").jqxGrid('addfilter', 'info_name', infoFilterGroup);
                 }
 
                 // Apply filter for Hitung Kinerja
@@ -992,49 +910,329 @@
                 // Apply all filters
                 $("#jqxGrid").jqxGrid('applyfilters');
             });
+        });
 
-            $('#resetFilters').on('click', function () {
-                // Clear all filters
-                $("#jqxGrid").jqxGrid('clearfilters');
+        $('#refreshButton').on('click', function() {
+            $("#jqxGrid").jqxGrid('updatebounddata');
+        });
 
-                // Reset filter dropdowns
-                $('#filterRegion').val('').trigger('change');
-                $('#filterLokasi').val('').trigger('change');
-                $('#filterTegangan').val('').trigger('change');
-                $('#filterBay').val('').trigger('change');
-                $('#filterElement').val('').trigger('change');
-                $('#filterHitungKinerja').val('').trigger('change'); 
-            });
+        $('#downloadButton').on('click', async function() {
+            exportGridAll('#jqxGrid','Master-Data-Telemetering','csv');
+        });
+
+        
+        
+        // Custom search functionality
+        // $('#searchButton').on('click', function() {
+        //     var searchValue = $('#searchInput').val();
+        //     console.log(searchValue);
+        //     if (searchValue) {
+        //         // Apply filters to multiple columns
+        //         var filtergroup = new $.jqx.filter();
+                
+        //         var nameFilter = filtergroup.createfilter('stringfilter', searchValue, 'contains');
+        //         filtergroup.addfilter(0, nameFilter);
+                
+        //         var displayNameFilter = filtergroup.createfilter('stringfilter', searchValue, 'contains');
+        //         filtergroup.addfilter(0, displayNameFilter, 'or');
+                
+        //         var descFilter = filtergroup.createfilter('stringfilter', searchValue, 'contains');
+        //         filtergroup.addfilter(0, descFilter, 'or');
+                
+        //         $("#jqxGrid").jqxGrid('addfilter', 'name', filtergroup);
+        //         $("#jqxGrid").jqxGrid('applyfilters');
+        //     } else {
+        //         $("#jqxGrid").jqxGrid('clearfilters');
+        //     }
+        // });
+        
+        // // Search on Enter key
+        // $('#searchInput').on('keypress', function(e) {
+        //     if (e.which === 13) {
+        //         $('#searchButton').click();
+        //     }
+        // });
+        
+        // Delete confirmation
+        $('#confirm-delete').on('click', function() {
+            confirmDelete();
+        });
+
+        
+
+        $('#resetFilters').on('click', function () {
+            // Clear all filters
+            $("#jqxGrid").jqxGrid('clearfilters');
+
+            // Reset filter dropdowns
+            $('#filterRegion').val('').trigger('change');
+            $('#filterLokasi').val('').trigger('change');
+            $('#filterTegangan').val('').trigger('change');
+            $('#filterBay').val('').trigger('change');
+            $('#filterElement').val('').trigger('change');
+            $('#filterHitungKinerja').val('').trigger('change'); 
+        });
+        
+        // Form validation
+        $('#form-data').validate({
+            rules: {
+                region: { required: true },
+                // point_type_id: { required: true },
+                path1name: { required: true },
+                path2name: { required: true },
+                path3name: { required: true },
+                path4name: { required: true },
+                // status: { required: true }
+            },
+            messages: {
+                region: { required: "Kolom Region wajib diisi." },
+                // point_type_id: { required: "Kolom Kelompok wajib diisi." },
+                path1name: { required: "Kolom B1 Name wajib diisi." },
+                path2name: { required: "Kolom B2 Name wajib diisi." },
+                path3name: { required: "Kolom B3 Name wajib diisi." },
+                path4name: { required: "Kolom Element wajib diisi." },
+                // status: { required: "Kolom Status wajib diisi." }
+            },
+            submitHandler: function (form) {
+                var reqData = new FormData(form);
+                reqData.set(
+                    'hitung_kinerja',
+                    $('#hitung_kinerja').is(':checked') ? 1 : 0
+                );
+                ajaxData(urlAction, reqData, refresh, true, true);
+            }
+        });
+
+        function uploadData() {
+            resetForm('#form-data-upload');
+            $('#form-data-upload').validate().resetForm();
             
-            // Form validation
-            $('#form-data').validate({
-                rules: {
-                    region: { required: true },
-                    // point_type_id: { required: true },
-                    path1name: { required: true },
-                    path2name: { required: true },
-                    path3name: { required: true },
-                    path4name: { required: true },
-                    // status: { required: true }
-                },
-                messages: {
-                    region: { required: "Kolom Region wajib diisi." },
-                    // point_type_id: { required: "Kolom Kelompok wajib diisi." },
-                    path1name: { required: "Kolom B1 Name wajib diisi." },
-                    path2name: { required: "Kolom B2 Name wajib diisi." },
-                    path3name: { required: "Kolom B3 Name wajib diisi." },
-                    path4name: { required: "Kolom Element wajib diisi." },
-                    // status: { required: "Kolom Status wajib diisi." }
-                },
-                submitHandler: function (form) {
-                    var reqData = new FormData(form);
-                    reqData.set(
-                        'hitung_kinerja',
-                        $('#hitung_kinerja').is(':checked') ? 1 : 0
-                    );
-                    ajaxData(urlAction, reqData, refresh, true, true);
+            // Clear any previous validation errors
+            $('.is-invalid').removeClass('is-invalid');
+
+            $('#modalUploadLabel').text('Upload File');
+            urlAction = mainServerUrl + '/import/review' ;
+            actionMethod = 'POST';
+            toggleForm('#form-data-upload', true);
+            $('#modal-data-upload').modal('show');
+        }
+
+        $('#uploadButton').on('click', function() {
+            uploadData();
+        });
+
+        // Form validation
+        $('#form-data-upload').validate({
+            
+            rules: {
+                file : { required: true }
+            },
+            messages: {
+                file : { required: "Silahkan upload file" }
+            },
+            submitHandler: function (form) {
+                var formData = new FormData(form);
+
+                // 🔥 tambahkan parameter wajib
+                formData.append("table", "scd_ref_tm");
+
+                formData.append("columns[]", "b1_name");
+                formData.append("columns[]", "b2_name");
+                formData.append("columns[]", "b3_name");
+                formData.append("columns[]", "el_name");
+                formData.append("columns[]", "info_name");
+                formData.append("columns[]", "b1_text");
+                formData.append("columns[]", "b2_text");
+                formData.append("columns[]", "b3_text");
+                formData.append("columns[]", "el_text");
+                formData.append("columns[]", "info_text");
+                formData.append("columns[]", "rtu_datetime");
+                formData.append("columns[]", "system_datetime");
+                // formData.append("columns[]", "status");
+                formData.append("columns[]", "aoc");
+                formData.append("columns[]", "kinerja");
+                formData.append("columns[]", "region");
+
+                formData.append("unique_by[]", "b1_name");
+                formData.append("unique_by[]", "b2_name");
+                formData.append("unique_by[]", "b3_name");
+                formData.append("unique_by[]", "el_name");
+                formData.append("unique_by[]", "info_name");
+
+                $.ajax({
+                    url: urlAction, // endpoint preview
+                    type: "POST",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (res) {
+                        $('#modal-data-upload').modal('hide');
+                        // 🔥 tampilkan hasil preview
+                        showPreview(res.data);
+
+                    },
+                    error: function (err) {
+                        console.log("ERROR FULL:", err.responseJSON);
+                        alert("Gagal upload");
+                    }
+                });
+                return false; // 🔥 INI PENTING
+            }
+        });
+
+        function showPreview(data) {
+
+            if ($("#jqxPreviewGrid").length) {
+                try {
+                    $("#jqxPreviewGrid").jqxGrid('destroy');
+                } catch (e) {}
+                $("#jqxPreviewGrid").empty();
+            }
+            
+            if (!data || data.length === 0) return;
+
+            // 🔥 ambil field dari data
+            let datafields = [];
+            let columns = [];
+
+            let keys = Object.keys(data[0]);
+            let noColumn = null;
+
+            keys.forEach(key => {
+                if (!key) return;
+
+                let col = {
+                    text: key.toUpperCase(),
+                    datafield: key,
+                    align: 'center',
+                    cellsalign: 'center',
+                    width: 150
+                };
+
+                // 🔥 kalau kolom no → simpan dulu
+                if (key.toLowerCase() === 'no') {
+                    noColumn = col;
+                } else if (key.toLowerCase() === 'status_data') {
+                    status_data = col;
+                } else {
+                    columns.push(col);
                 }
             });
+            if (noColumn) {
+                noColumn.width = 60;
+                noColumn.pinned = true; // biar tetap di kiri
+                columns.unshift(noColumn);
+            }
+            if (status_data) {
+                status_data.width = 150;
+                status_data.pinned = true; // biar tetap di kiri
+                columns.unshift(status_data);
+            }
+            let source = {
+                datatype: "array",
+                localdata: data,
+                datafields: datafields
+            };
+            let dataAdapter = new $.jqx.dataAdapter(source);
+
+            // 🔥 destroy kalau sudah ada
+            $("#jqxPreviewGrid").jqxGrid('destroy');
+
+            // 🔥 init grid
+            $("#jqxPreviewGrid").jqxGrid({
+                width: '100%',
+                autoheight: true,
+                source: dataAdapter,
+                columns: columns,
+                pageable: true,
+                pagesize: 10,
+                sortable: true,
+                filterable: true,
+                showfilterrow: true,
+                // showrownumbers: true
+            });
+
+            // 🔥 highlight row
+            $("#jqxPreviewGrid").on('bindingcomplete', function () {
+                $("#jqxPreviewGrid").jqxGrid('autoresizecolumns');
+                for (let i = 0; i < data.length; i++) {
+
+                    let row = data[i];
+
+                    if (row.status === 'NEW') {
+                        $("#jqxPreviewGrid").jqxGrid('setrowbackground', i, '#d4edda');
+                    }
+
+                    if (row.status === 'UPDATE') {
+                        $("#jqxPreviewGrid").jqxGrid('setrowbackground', i, '#fff3cd');
+                    }
+                }
+            });
+            $('#modalpreviewLabel').text('Daftar List Upload');
+            urlAction = mainServerUrl + '/import/save' ;
+            actionMethod = 'POST';
+            toggleForm('#form-data-preview', true);
+
+            $("#modal-data-preview").modal('show');
+        }
+
+        const downloadTemplate = async () => {
+            const params = new URLSearchParams();
+
+            params.append("template_name", "master_telemetering");
+            params.append("columns[]", "b1_name");
+            params.append("columns[]", "b2_name");
+            params.append("columns[]", "b3_name");
+            params.append("columns[]", "el_name");
+            params.append("columns[]", "info_name");
+            params.append("columns[]", "b1_text");
+            params.append("columns[]", "b2_text");
+            params.append("columns[]", "b3_text");
+            params.append("columns[]", "el_text");
+            params.append("columns[]", "info_text");
+            params.append("columns[]", "rtu_datetime");
+            params.append("columns[]", "system_datetime");
+            // params.append("columns[]", "status");
+            params.append("columns[]", "aoc");
+            params.append("columns[]", "kinerja");
+            params.append("columns[]", "region");
+
+            const res = await fetch(mainServerUrl + `/import/downloadTemplate?${params.toString()}`);
+
+            const blob = await res.blob();
+            const url = window.URL.createObjectURL(blob);
+
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "template.xlsx";
+            a.click();
+        };
+
+        $('#download-template').on('click', function () {
+            downloadTemplate();
+        });
+
+        // Form validation
+        $('#form-data-preview').validate({
+            submitHandler: function (form) {
+                let rows = $("#jqxPreviewGrid").jqxGrid('getrows');
+
+                $.ajax({
+                    url: urlAction,
+                    type: "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify({
+                        table: "scd_ref_tm",
+                        unique_by: ["b1_name", "b2_name", "b3_name", "el_name", "info_name"],
+                        data: rows
+                    }),
+                    success: function (data) {
+                        alertSuccess(data.message);
+                        $("#jqxGrid").jqxGrid('updatebounddata');
+                        $("#modal-data-preview").modal("hide");
+                    }
+                });
+            }
         });
 </script>
 @endpush

@@ -22,9 +22,9 @@
                             <button id="refreshButton" class="btn btn-default btn-xs" title="Refresh">
                                 <i class="fas fa-sync"></i>
                             </button>
-                            <button id="listViewButton" class="btn btn-default btn-xs" title="List View">
+                            <!-- <button id="listViewButton" class="btn btn-default btn-xs" title="List View">
                                 <i class="fas fa-list"></i>
-                            </button>
+                            </button> -->
                             <button id="downloadButton" class="btn btn-default btn-xs" title="Download">
                                 <i class="fas fa-download"></i>
                             </button>
@@ -433,7 +433,7 @@
             $("#jqxGrid").on("bindingcomplete", function () {
                 console.log("Grid is ready!");
 
-                $("#jqxGrid").jqxGrid('theme', 'darkblue');
+                // $("#jqxGrid").jqxGrid('theme', 'darkblue');
                 $("#jqxGrid").jqxGrid('render');
             });
         };

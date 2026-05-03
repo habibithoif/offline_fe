@@ -76,10 +76,21 @@
                                     
                                     <div class="col-md-2">
                                         <div class="form-group">
-                                            <label>Element</label>
+                                            <label>Element Name</label>
                                             <div class="input-group input-group-sm">
                                                 <select class="form-control form-control-sm select2" id="filterElement">
                                                     <option value="">-- All Element --</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label>Info Name</label>
+                                            <div class="input-group input-group-sm">
+                                                <select class="form-control form-control-sm select2" id="filterInfo">
+                                                    <option value="">-- All Info Name --</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -117,8 +128,8 @@
                             <button id="refreshButton" class="btn btn-default btn-sm" title="Refresh">
                                 <i class="fas fa-sync"></i>
                             </button>
-                            <button id="listViewButton" class="btn btn-default btn-sm" title="List View">
-                                <i class="fas fa-list"></i>
+                            <button id="uploadButton" class="btn btn-default btn-sm" title="Upload">
+                                <i class="fas fa-upload"></i>
                             </button>
                             <button id="downloadButton" class="btn btn-default btn-sm" title="Download">
                                 <i class="fas fa-download"></i>
@@ -159,7 +170,7 @@
             <div class="row">
                 <div class="form-group col-6">
                     <label for="id_region">Region</label>
-                    <select class="form-control form-control-sm select2" style="width: 100%;" data-placeholder="--Pilih Region--" name="id_region" id="id_region" required>
+                    <select class="form-control form-control-sm select2" style="width: 100%;" data-placeholder="--Pilih Region--" name="region" id="region" required>
                         <option value=""></option>
                         @foreach ($data->ref_region as $item)
                             <option value="{{ $item['region'] }}">{{ $item['nama'] }}</option>
@@ -200,7 +211,7 @@
                     <input type="text" class="form-control form-control-sm" name="path4name" id="path4name" required>
                 </div>
                 <div class="form-group col-6">
-                    <label for="path5name">Status Info</label>
+                    <label for="path5name">Info Name</label>
                     <input type="text" class="form-control form-control-sm" name="path5name" id="path5name">
                 </div>
                 <div class="form-group col-12 d-flex align-items-center">
@@ -210,7 +221,7 @@
                         <label for="hitung_kinerja" class="mb-0 mr-2" style="font-size: 0.85rem;">
                             Hitung Kinerja
                         </label>
-                        <input type="checkbox" class="form-check-input" id="hitung_kinerja" name="hitung_kinerja" value="0"
+                        <input type="checkbox" class="form-check-input" id="kinerja" name="kinerja" value="0"
                             style="transform: scale(0.85); margin-top: 2px;">
                     </div>
 
@@ -255,6 +266,68 @@
     </div>
 </div>  
 
+<div class="modal fade" id="modal-data-upload" tabindex="-1" role="dialog" aria-labelledby="modalDataLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <form id="form-data-upload" method="POST" enctype="multipart/form-data">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: #17a2b8!important; color: white;">
+                    <h5 class="modal-data-title" id="modalUploadLabel">Form Data</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+  
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="form-group col-12">
+                            <label for="file" class="mb-0 mr-2" style="font-size: 0.85rem;">
+                                Upload File 
+                            </label>
+                            <input type="file" class="form-control" id="file" name="file" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-12">
+                            <small>
+                                Tidak punya template?
+                                <span id="download-template" style="color: blue; cursor: pointer; text-decoration: underline;">
+                                    Download Template
+                                </span>
+                            </small>
+                        </div>
+                    </div>
+                </div>
+                    <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary btn-sm">Simpan</button>
+                    <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Keluar</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div> 
+
+<div class="modal fade" id="modal-data-preview" tabindex="-1" role="dialog" aria-labelledby="modalDataLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <form id="form-data-preview">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: #17a2b8!important; color: white;">
+                    <h5 class="modal-data-title" id="modalpreviewLabel">Form Data</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+  
+                <div class="modal-body">
+                    <div id="jqxPreviewGrid"></div>
+                </div>
+                    <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary btn-sm">Simpan</button>
+                    <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Keluar</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
 @endsection
 
 @push('scripts')
@@ -293,7 +366,7 @@
                 $('.modal-data-title').text('Edit ');
 
                 $('#id').val(selectedData.id);
-                $('#id_region').val(selectedData.region).trigger('change').prop('disabled', true);
+                $('#region').val(selectedData.region).trigger('change').prop('disabled', false);
                 // $('#point_number').val(selectedData.point_number).prop('disabled', true);
                 // $('#point_type_id').val(selectedData.point_type_id).trigger('change').prop('disabled', true);
                 $('#path1name').val(selectedData.b1_name).prop('disabled', true);
@@ -301,7 +374,7 @@
                 $('#path3name').val(selectedData.b3_name).prop('disabled', true);
                 $('#path4name').val(selectedData.el_name).prop('disabled', true);
                 $('#path5name').val(selectedData.info_name).prop('disabled', true);
-                $('#hitung_kinerja').prop('checked', selectedData.hitung_kinerja == 1);
+                $('#kinerja').prop('checked', selectedData.kinerja == 1);
                 // $('input[name="status"][value="'+selectedData.status+'"]').prop('checked', true);
 
 
@@ -397,7 +470,7 @@
             $('#path3name').prop('disabled', false);
             $('#path4name').prop('disabled', false);
             $('#path5name').prop('disabled', false);
-            $('#hitung_kinerja').prop('disabled', false);
+            $('#kinerja').prop('disabled', false);
             // $('input[name="status"]').prop('disabled', false);
             
             // Set default status to active
@@ -435,6 +508,7 @@
                     { name: 'info_text', type: 'string' },
                     { name: 'region', type: 'string' },
                     { name: 'kinerja', type: 'bool' },
+                    { name: 'faktor', type: 'integer' },
                 ],
                 url: '{{ route("masterdata-fasop-master-station.read") }}',
                 cache: false,
@@ -564,7 +638,7 @@
                     { text: 'Info Text', datafield: 'info_text', editable: false, width: 200},
                     {
                         text: 'Hitung Kinerja',
-                        datafield: 'hitung_kinerja',
+                        datafield: 'kinerja',
                         columntype: 'checkbox',
                         width: 100,
                         editable: false,
@@ -574,6 +648,7 @@
                             var nilai = newvalue ? 1 : 0;
                         }
                     },
+                    { text: 'Faktor', datafield: 'faktor', editable: false, width: 200},
                     // { text: 'Status', datafield: 'status', editable: false,
                     //     width: 80,
                     //     cellsrenderer: function (row, columnfield, value, defaulthtml, columnproperties, rowdata) {
@@ -896,6 +971,7 @@
                 var filterTegangan = $('#filterTegangan').val();
                 var filterBay = $('#filterBay').val();
                 var filterElement = $('#filterElement').val();
+                var filterInfo = $('#filterInfo').val();
                 var filterHitungKinerja = $('#filterHitungKinerja').val(); // Get Hitung Kinerja filter value
 
                 // Log the filters for debugging
@@ -948,6 +1024,14 @@
                     $("#jqxGrid").jqxGrid('addfilter', 'path4name', elementFilterGroup);
                 }
 
+                // Apply filter for Info (Info name)
+                if (filterInfo) {
+                    var infoFilterGroup = new $.jqx.filter();
+                    var infoFilter = infoFilterGroup.createfilter('stringfilter', filterInfo, 'EQUAL');
+                    infoFilterGroup.addfilter(0, infoFilter);
+                    $("#jqxGrid").jqxGrid('addfilter', 'info_name', infoFilterGroup);
+                }
+
                 // Apply filter for Hitung Kinerja
                 if (filterHitungKinerja && filterHitungKinerja !== '') {
                     var hitungKinerjaFilterGroup = new $.jqx.filter();
@@ -957,7 +1041,7 @@
                         'EQUAL'
                     );
                     hitungKinerjaFilterGroup.addfilter(0, hitungKinerjaFilter);
-                    $("#jqxGrid").jqxGrid('addfilter', 'hitung_kinerja', hitungKinerjaFilterGroup);
+                    $("#jqxGrid").jqxGrid('addfilter', 'kinerja', hitungKinerjaFilterGroup);
                 }
 
                 // Apply all filters
@@ -981,31 +1065,263 @@
             $('#form-data').validate({
                 rules: {
                     id_region: { required: true },
-                    // point_type_id: { required: true },
                     path1name: { required: true },
                     path2name: { required: true },
                     path3name: { required: true },
                     path4name: { required: true },
-                    status: { required: true }
+                    path5name: { required: true },
+                    hitungkinerja: { required: true }
                 },
                 messages: {
                     id_region: { required: "Kolom Region wajib diisi." },
-                    // point_type_id: { required: "Kolom Kelompok wajib diisi." },
                     path1name: { required: "Kolom B1 Name wajib diisi." },
                     path2name: { required: "Kolom B2 Name wajib diisi." },
                     path3name: { required: "Kolom B3 Name wajib diisi." },
                     path4name: { required: "Kolom Element wajib diisi." },
-                    // status: { required: "Kolom Status wajib diisi." }
+                    path5name: { required: "Kolom Info wajib diisi." },
+                    hitungkinerja: { required: "Kolom Status wajib diisi." }
                 },
                 submitHandler: function (form) {
                     var reqData = new FormData(form);
                     reqData.set(
-                        'hitung_kinerja',
-                        $('#hitung_kinerja').is(':checked') ? 1 : 0
+                        'kinerja',
+                        $('#kinerja').is(':checked') ? 1 : 0
                     );
                     ajaxData(urlAction, reqData, refresh, true, true);
                 }
             });
+        });
+
+        function uploadData() {
+            resetForm('#form-data-upload');
+            $('#form-data-upload').validate().resetForm();
+            
+            // Clear any previous validation errors
+            $('.is-invalid').removeClass('is-invalid');
+
+            $('#modalUploadLabel').text('Upload File');
+            urlAction = mainServerUrl + '/import/review' ;
+            actionMethod = 'POST';
+            toggleForm('#form-data-upload', true);
+            $('#modal-data-upload').modal('show');
+        }
+
+        $('#uploadButton').on('click', function() {
+            uploadData();
+        });
+
+        // Form validation
+        $('#form-data-upload').validate({
+            
+            rules: {
+                file : { required: true }
+            },
+            messages: {
+                file : { required: "Silahkan upload file" }
+            },
+            submitHandler: function (form) {
+                var formData = new FormData(form);
+
+                // 🔥 tambahkan parameter wajib
+                formData.append("table", "scd_ref_ms");
+
+                formData.append("columns[]", "b1_name");
+                formData.append("columns[]", "b2_name");
+                formData.append("columns[]", "b3_name");
+                formData.append("columns[]", "el_name");
+                formData.append("columns[]", "info_name");
+                formData.append("columns[]", "b1_text");
+                formData.append("columns[]", "b2_text");
+                formData.append("columns[]", "b3_text");
+                formData.append("columns[]", "el_text");
+                formData.append("columns[]", "info_text");
+                formData.append("columns[]", "rtu_datetime");
+                formData.append("columns[]", "system_datetime");
+                // formData.append("columns[]", "status");
+                formData.append("columns[]", "aoc");
+                formData.append("columns[]", "kinerja");
+                formData.append("columns[]", "region");
+
+                formData.append("unique_by[]", "b1_name");
+                formData.append("unique_by[]", "b2_name");
+                formData.append("unique_by[]", "b3_name");
+                formData.append("unique_by[]", "el_name");
+                formData.append("unique_by[]", "info_name");
+
+                $.ajax({
+                    url: urlAction, // endpoint preview
+                    type: "POST",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (res) {
+                        $('#modal-data-upload').modal('hide');
+                        // 🔥 tampilkan hasil preview
+                        showPreview(res.data);
+
+                    },
+                    error: function (err) {
+                        console.log("ERROR FULL:", err.responseJSON);
+                        alert("Gagal upload");
+                    }
+                });
+                return false; // 🔥 INI PENTING
+            }
+        });
+
+        function showPreview(data) {
+
+            if ($("#jqxPreviewGrid").length) {
+                try {
+                    $("#jqxPreviewGrid").jqxGrid('destroy');
+                } catch (e) {}
+                $("#jqxPreviewGrid").empty();
+            }
+            
+            if (!data || data.length === 0) return;
+
+            // 🔥 ambil field dari data
+            let datafields = [];
+            let columns = [];
+
+            let keys = Object.keys(data[0]);
+            let noColumn = null;
+
+            keys.forEach(key => {
+                if (!key) return;
+
+                let col = {
+                    text: key.toUpperCase(),
+                    datafield: key,
+                    align: 'center',
+                    cellsalign: 'center',
+                    width: 150
+                };
+
+                // 🔥 kalau kolom no → simpan dulu
+                if (key.toLowerCase() === 'no') {
+                    noColumn = col;
+                } else if (key.toLowerCase() === 'status_data') {
+                    status_data = col;
+                } else {
+                    columns.push(col);
+                }
+            });
+            if (noColumn) {
+                noColumn.width = 60;
+                noColumn.pinned = true; // biar tetap di kiri
+                columns.unshift(noColumn);
+            }
+            if (status_data) {
+                status_data.width = 150;
+                status_data.pinned = true; // biar tetap di kiri
+                columns.unshift(status_data);
+            }
+            let source = {
+                datatype: "array",
+                localdata: data,
+                datafields: datafields
+            };
+            let dataAdapter = new $.jqx.dataAdapter(source);
+
+            // 🔥 destroy kalau sudah ada
+            $("#jqxPreviewGrid").jqxGrid('destroy');
+
+            // 🔥 init grid
+            $("#jqxPreviewGrid").jqxGrid({
+                width: '100%',
+                autoheight: true,
+                source: dataAdapter,
+                columns: columns,
+                pageable: true,
+                pagesize: 10,
+                sortable: true,
+                filterable: true,
+                showfilterrow: true,
+                // showrownumbers: true
+            });
+
+            // 🔥 highlight row
+            $("#jqxPreviewGrid").on('bindingcomplete', function () {
+                $("#jqxPreviewGrid").jqxGrid('autoresizecolumns');
+                for (let i = 0; i < data.length; i++) {
+
+                    let row = data[i];
+
+                    if (row.status === 'NEW') {
+                        $("#jqxPreviewGrid").jqxGrid('setrowbackground', i, '#d4edda');
+                    }
+
+                    if (row.status === 'UPDATE') {
+                        $("#jqxPreviewGrid").jqxGrid('setrowbackground', i, '#fff3cd');
+                    }
+                }
+            });
+            $('#modalpreviewLabel').text('Daftar List Upload');
+            urlAction = mainServerUrl + '/import/save' ;
+            actionMethod = 'POST';
+            toggleForm('#form-data-preview', true);
+
+            $("#modal-data-preview").modal('show');
+        }
+
+        const downloadTemplate = async () => {
+            const params = new URLSearchParams();
+
+            params.append("template_name", "masterstation_template_upload");
+            params.append("columns[]", "b1_name");
+            params.append("columns[]", "b2_name");
+            params.append("columns[]", "b3_name");
+            params.append("columns[]", "el_name");
+            params.append("columns[]", "info_name");
+            params.append("columns[]", "b1_text");
+            params.append("columns[]", "b2_text");
+            params.append("columns[]", "b3_text");
+            params.append("columns[]", "el_text");
+            params.append("columns[]", "info_text");
+            params.append("columns[]", "rtu_datetime");
+            params.append("columns[]", "system_datetime");
+            // params.append("columns[]", "status");
+            params.append("columns[]", "aoc");
+            params.append("columns[]", "kinerja");
+            params.append("columns[]", "region");
+
+            const res = await fetch(mainServerUrl + `/import/downloadTemplate?${params.toString()}`);
+
+            const blob = await res.blob();
+            const url = window.URL.createObjectURL(blob);
+
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "template.xlsx";
+            a.click();
+        };
+
+        $('#download-template').on('click', function () {
+            downloadTemplate();
+        });
+
+        // Form validation
+        $('#form-data-preview').validate({
+            submitHandler: function (form) {
+                let rows = $("#jqxPreviewGrid").jqxGrid('getrows');
+
+                $.ajax({
+                    url: urlAction,
+                    type: "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify({
+                        table: "scd_ref_ms",
+                        unique_by: ["b1_name", "b2_name", "b3_name", "el_name", "info_name"],
+                        data: rows
+                    }),
+                    success: function (data) {
+                        alertSuccess(data.message);
+                        $("#jqxGrid").jqxGrid('updatebounddata');
+                        $("#modal-data-preview").modal("hide");
+                    }
+                });
+            }
         });
 </script>
 @endpush

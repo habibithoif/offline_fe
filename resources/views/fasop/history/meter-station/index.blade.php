@@ -33,7 +33,7 @@
                             <div class="col-md-2">
                                 <div class="form-group">
                                     <label for="startDate">Start Date</label>
-                                    <input type="date" id="startDate" class="form-control form-control-sm">
+                                    <input type="datetime-local" id="startDate" class="form-control form-control-sm">
                                 </div>
                             </div>
                         
@@ -41,7 +41,7 @@
                             <div class="col-md-2">
                                 <div class="form-group">
                                     <label for="endDate">End Date</label>
-                                    <input type="date" id="endDate" class="form-control form-control-sm">
+                                    <input type="datetime-local" id="endDate" class="form-control form-control-sm">
                                 </div>
                             </div>
                             <!-- <div class="col-md-2">
@@ -144,9 +144,9 @@
                             <button id="refreshButton" class="btn btn-default btn-sm" title="Refresh">
                                 <i class="fas fa-sync"></i>
                             </button>
-                            <button id="listViewButton" class="btn btn-default btn-sm" title="List View">
+                            <!-- <button id="listViewButton" class="btn btn-default btn-sm" title="List View">
                                 <i class="fas fa-list"></i>
-                            </button>
+                            </button> -->
                             <button id="downloadButton" class="btn btn-default btn-sm" title="Download">
                                 <i class="fas fa-download"></i>
                             </button>
@@ -240,13 +240,13 @@
                     { text: 'B1 Name', datafield: 'b1_name', width: 150 },
                     { text: 'B2 Name', datafield: 'b2_name', width: 100 },
                     { text: 'B3 Name', datafield: 'b3_name', width: 150 },
-                    { text: 'Element', datafield: 'el_name', width: 100 },
-                    { text: 'Info', datafield: 'Info_name', width: 100 },
-                    { text: 'B1 Name', datafield: 'b1_text', width:200 },
-                    { text: 'B2 Name', datafield: 'b2_text', width: 100 },
-                    { text: 'B3 Name', datafield: 'b3_text', width: 150 },
-                    { text: 'Element', datafield: 'el_text', width: 100 },
-                    { text: 'Info', datafield: 'Info_text', width: 100 },
+                    { text: 'Element Name', datafield: 'el_name', width: 150 },
+                    { text: 'Info Name', datafield: 'Info_name', width: 100 },
+                    { text: 'B1 Text', datafield: 'b1_text', width:200 },
+                    { text: 'B2 Text', datafield: 'b2_text', width: 100 },
+                    { text: 'B3 Text', datafield: 'b3_text', width: 150 },
+                    { text: 'Element Text', datafield: 'el_text', width: 100 },
+                    { text: 'Info Text', datafield: 'Info_text', width: 100 },
                     { text: 'Datetime RTU', datafield: 'rtu_datetime', width: 200 },
                     { text: 'Datetime Sistem', datafield: 'system_datetime', width: 200 },
                     { text: 'Status', datafield: 'status', width: 200 },
@@ -294,210 +294,74 @@
             // Refresh the grid
             // $("#jqxGrid").jqxGrid('updatebounddata');
         }
+        
+        //set tanggal
+        let now = new Date();
+        let plus1Hour = new Date(now.getTime() + 60 * 60 * 1000);
 
+        $('#startDate').val(formatWIB(now));
+        $('#endDate').val(formatWIB(plus1Hour));
+
+        let filterParams = {
+            tanggal1: $('#startDate').val(),
+            tanggal2: $('#endDate').val(),
+            id_region: $('#filterRegion').val(),
+            b1_name: $('#filterLokasi').val(),
+            b2_name: $('#filterTegangan').val(),
+            b3_name: $('#filterBay').val(),
+            el_name: $('#filterElement').val(),
+            info_name: $('#filterInfo').val()
+        };
+        
         function applyCustomFilters() {
-            var filterParams = {
-                tanggal1: $('#startDate').val(),
-                tanggal2: $('#endDate').val(),
-                id_region: $('#filterRegion').val(),
-                b1_name: $('#filterLokasi').val(),
-                b2_name: $('#filterTegangan').val(),
-                b3_name: $('#filterBay').val(),
-                el_name: $('#filterElement').val(),
-                info_name: $('#filterInfo').val()
-            };
-            
             refreshGrid(filterParams);
         }
 
         function resetFilters() {
             $('.select2').val('').trigger('change');
+            $('.input').val('').trigger('change');
             refreshGrid();
+        }
+
+        function validateDateRange() {
+
+            let startVal = $('#startDate').val();
+            let endVal   = $('#endDate').val();
+
+            if (!startVal || !endVal) {
+                alert('Start Date dan End Date wajib diisi');
+                return false;
+            }
+
+            let startDate = new Date(startVal);
+            let endDate   = new Date(endVal);
+
+            // 1. start tidak boleh lebih dari end
+            if (startDate > endDate) {
+                alert('Start Date tidak boleh lebih besar dari End Date');
+                return false;
+            }
+
+            // 2. range tidak boleh lebih dari 1 bulan (30 hari)
+            let diffTime = endDate - startDate;
+            let diffDays = diffTime / (1000 * 60 * 60 * 24);
+
+            if (diffDays > 31) {
+                alert('Range tanggal tidak boleh lebih dari 1 bulan');
+                return false;
+            }
+
+            return true;
         }
 
         $(document).ready(function() {
             // Initialize grid first time
-            initializeGrid();
-
-            // Initialize select2 controls
-            // $('.select2').select2();
-
-            // Set up event handlers
-            // $('#applyFilters').on('click', applyCustomFilters);
-            // $('#resetFilters').on('click', resetFilters);
-            // $('#refreshButton').on('click', function() {
-            //     refreshGrid();
-            // });
-
-            // Rest of your select2 initialization code...
-            // $('#filterLokasi').select2({
-            //     ajax: {
-            //         url: '{{ route("cpoint.findValueBy") }}',
-            //         dataType: 'json',
-            //         delay: 250,
-            //         data: function (params) {
-            //             return {
-            //                 keyword: params.term, 
-            //                 page: params.page || 1,
-            //                 field: 'path1'
-            //             };
-            //         },
-            //         processResults: function (data, params) {
-            //             params.page = params.page || 1;
-            //             const response = data.data.data;
-            //             return {
-            //                 results: response.map(function(item) {
-            //                     return {
-            //                         id: item, 
-            //                         text: item 
-            //                     };
-            //                 }),
-            //                 pagination: {
-            //                     more: (params.page * 10) < data.total  
-            //                 }
-            //             };
-            //         },
-            //         cache: true
-            //     },
-            //     allowClear: true,
-            //     placeholder: '--Pilih B1 Name--',
-            // });
-
-            // $('#filterTegangan').select2({
-            //     ajax: {
-            //         url: '{{ route("cpoint.findValueBy") }}',
-            //         dataType: 'json',
-            //         delay: 250,
-            //         data: function (params) {
-            //             return {
-            //                 keyword: params.term,  
-            //                 page: params.page || 1,
-            //                 field: 'path2' 
-            //             };
-            //         },
-            //         processResults: function (data, params) {
-            //             params.page = params.page || 1;
-            //             const response = data.data.data;
-            //             return {
-            //                 results: response.map(function(item) {
-            //                     return {
-            //                         id: item, 
-            //                         text: item 
-            //                     };
-            //                 }),
-            //                 pagination: {
-            //                     more: (params.page * 10) < data.total  
-            //                 }
-            //             };
-            //         },
-            //         cache: true
-            //     },
-            //     allowClear: true,
-            //     placeholder: '--Pilih B2 Name--'
-            // });
-
-            // $('#filterBay').select2({
-            //     ajax: {
-            //         url: '{{ route("cpoint.findValueBy") }}',
-            //         dataType: 'json',
-            //         delay: 250,
-            //         data: function (params) {
-            //             return {
-            //                 keyword: params.term,  
-            //                 page: params.page || 1,
-            //                 field: 'path3' 
-            //             };
-            //         },
-            //         processResults: function (data, params) {
-            //             params.page = params.page || 1;
-            //             const response = data.data.data;
-            //             return {
-            //                 results: response.map(function(item) {
-            //                     return {
-            //                         id: item, 
-            //                         text: item 
-            //                     };
-            //                 }),
-            //                 pagination: {
-            //                     more: (params.page * 10) < data.total  
-            //                 }
-            //             };
-            //         },
-            //         cache: true
-            //     },
-            //     allowClear: true,
-            //     placeholder: '--Pilih B3 Name--'
-            // });
-
-            // $('#filterElement').select2({
-            //     ajax: {
-            //         url: '{{ route("cpoint.findValueBy") }}',
-            //         dataType: 'json',
-            //         delay: 250,
-            //         data: function (params) {
-            //             return {
-            //                 keyword: params.term,  
-            //                 page: params.page || 1,
-            //                 field: 'path4' 
-            //             };
-            //         },
-            //         processResults: function (data, params) {
-            //             params.page = params.page || 1;
-            //             const response = data.data.data;
-            //             return {
-            //                 results: response.map(function(item) {
-            //                     return {
-            //                         id: item, 
-            //                         text: item 
-            //                     };
-            //                 }),
-            //                 pagination: {
-            //                     more: (params.page * 10) < data.total  
-            //                 }
-            //             };
-            //         },
-            //         cache: true
-            //     },
-            //     allowClear: true,
-            //     placeholder: '--Pilih Element--'
-            // });
-
-            // $('#filterInfo').select2({
-            //     ajax: {
-            //         url: '{{ route("cpoint.findValueBy") }}',
-            //         dataType: 'json',
-            //         delay: 250,
-            //         data: function (params) {
-            //             return {
-            //                 keyword: params.term,  
-            //                 page: params.page || 1,
-            //                 field: 'path5' 
-            //             };
-            //         },
-            //         processResults: function (data, params) {
-            //             params.page = params.page || 1;
-            //             const response = data.data.data;
-            //             return {
-            //                 results: response.map(function(item) {
-            //                     return {
-            //                         id: item, 
-            //                         text: item 
-            //                     };
-            //                 }),
-            //                 pagination: {
-            //                     more: (params.page * 10) < data.total  
-            //                 }
-            //             };
-            //         },
-            //         cache: true
-            //     },
-            //     allowClear: true,
-            //     placeholder: '--Pilih Element--'
-            // });
+            initializeGrid(filterParams);
         });
 
         // Apply filters button
         $('#applyFilters').on('click', function() {
+            if (!validateDateRange()) return;
             applyCustomFilters();
         });
         

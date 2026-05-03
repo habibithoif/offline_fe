@@ -129,9 +129,9 @@
                             <button id="refreshButton" class="btn btn-default btn-sm" title="Refresh">
                                 <i class="fas fa-sync"></i>
                             </button>
-                            <button id="listViewButton" class="btn btn-default btn-sm" title="List View">
+                            <!-- <button id="listViewButton" class="btn btn-default btn-sm" title="List View">
                                 <i class="fas fa-list"></i>
-                            </button>
+                            </button> -->
                             <button id="downloadButton" class="btn btn-default btn-sm" title="Download">
                                 <i class="fas fa-download"></i>
                             </button>
@@ -230,13 +230,13 @@
                     { text: 'B1 Name', datafield: 'b1_name', width: 150 },
                     { text: 'B2 Name', datafield: 'b2_name', width: 100 },
                     { text: 'B3 Name', datafield: 'b3_name', width: 150 },
-                    { text: 'Element', datafield: 'el_name', width: 100 },
-                    { text: 'Info', datafield: 'info_name', width: 100 },
-                    { text: 'B1 Name', datafield: 'b1_text', width:200 },
-                    { text: 'B2 Name', datafield: 'b2_text', width: 100 },
-                    { text: 'B3 Name', datafield: 'b3_text', width: 150 },
-                    { text: 'Element', datafield: 'el_text', width: 100 },
-                    { text: 'Info', datafield: 'info_text', width: 100 },
+                    { text: 'Element Name', datafield: 'el_name', width: 100 },
+                    { text: 'Info Name', datafield: 'info_name', width: 100 },
+                    { text: 'B1 Text', datafield: 'b1_text', width:150 },
+                    { text: 'B2 Text', datafield: 'b2_text', width: 100 },
+                    { text: 'B3 Text', datafield: 'b3_text', width: 150 },
+                    { text: 'Element Text', datafield: 'el_text', width: 150 },
+                    { text: 'Info Text', datafield: 'info_text', width: 100 },
                     { text: 'Datetime RTU', datafield: 'rtu_datetime', width: 200 },
                     { text: 'Datetime Sistem', datafield: 'system_datetime', width: 200 },
                     { text: 'Status', datafield: 'status', width: 200 },

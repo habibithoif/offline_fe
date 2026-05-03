@@ -7,7 +7,9 @@
   <title>PLN UIP2B JAMALI OFFLINE</title>
 
   <!-- Google Font: Source Sans Pro -->
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+  <!-- <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback"> -->
+  <link rel="stylesheet" href="{{ asset('css/fonts.css') }}">
+
   <!-- Font Awesome -->
   <link rel="stylesheet" href="{{ asset('template_app') }}/plugins/fontawesome-free/css/all.min.css">
   <!-- Theme style -->
@@ -19,6 +21,7 @@
 
   <!-- jQuery -->
   <script src="{{ asset('template_app') }}/plugins/jquery/jquery.min.js"></script>
+  
   <!-- favicon -->
   <link rel="icon" type="image/x-icon" href="{{ asset('template_app') }}/dist/img/logo-pln.png">
 
@@ -385,11 +388,16 @@
 
     <!-- iCheck for checkboxes and radio inputs -->
     <link rel="stylesheet" href="{{ asset('template_app') }}/plugins/icheck-bootstrap/icheck-bootstrap.min.css">
+
+    <!-- <link rel="stylesheet" href="{{ asset('css/bootstrap-datetimepicker.min.css') }}">
+
+    <script src="{{ asset('js/moment.min.js') }}"></script>
+    <script src="{{ asset('js/bootstrap-datetimepicker.min.js') }}"></script> -->
  
     <!-- ExcelJS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script> -->
     <!-- FileSaver untuk download -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script> -->
 
     
     <script>

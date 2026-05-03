@@ -57,6 +57,12 @@ class MasterDataTelemeteringController extends Controller
         
         return $response;
     }
+    // public function read(Request $request) {
+    //     $payload = $request->all();
+    //     $response = $this->apiRequest('get', 'users', $payload);
+        
+    //     return $response;
+    // }
 
     public function store(Request $request) {
         $data = $request->all();

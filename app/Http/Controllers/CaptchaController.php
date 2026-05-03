@@ -82,3 +82,81 @@ class CaptchaController extends Controller
             ->header('Content-Type', 'image/png');
     }
 }
+
+// class CaptchaController extends Controller
+// {
+//     public function image()
+//     {
+//         $code = strtoupper(substr(md5(rand()), 0, 5));
+//         Session::put('captcha', $code);
+
+//         $width = 150;
+//         $height = 45;
+
+//         $image = imagecreatetruecolor($width, $height);
+
+//         // background
+//         $bg = imagecolorallocate($image, 224, 231, 239);
+//         imagefill($image, 0, 0, $bg);
+
+//         // warna random
+//         $colors = [
+//             imagecolorallocate($image, 255, 0, 0),
+//             imagecolorallocate($image, 0, 0, 255),
+//             imagecolorallocate($image, 0, 128, 0),
+//             imagecolorallocate($image, 255, 165, 0),
+//             imagecolorallocate($image, 255, 20, 147),
+//             imagecolorallocate($image, 75, 0, 130),
+//         ];
+
+//         // garis noise
+//         for ($i=0;$i<5;$i++){
+//             $lineColor = $colors[array_rand($colors)];
+//             imageline(
+//                 $image,
+//                 rand(0,$width),
+//                 rand(0,$height),
+//                 rand(0,$width),
+//                 rand(0,$height),
+//                 $lineColor
+//             );
+//         }
+
+//         // titik noise
+//         for ($i=0;$i<80;$i++){
+//             $dotColor = $colors[array_rand($colors)];
+//             imagesetpixel(
+//                 $image,
+//                 rand(0,$width),
+//                 rand(0,$height),
+//                 $dotColor
+//             );
+//         }
+
+//         // text warna warni
+//         $x = 20;
+//         for ($i = 0; $i < strlen($code); $i++) {
+//             $textColor = $colors[array_rand($colors)];
+
+//             imagestring(
+//                 $image,
+//                 5,
+//                 $x,
+//                 rand(8,15),
+//                 $code[$i],
+//                 $textColor
+//             );
+
+//             $x += 22;
+//         }
+
+//         ob_start();
+//         imagepng($image);
+//         $imageData = ob_get_clean();
+//         imagedestroy($image);
+
+//         return response($imageData)
+//             ->header('Content-Type', 'image/png')
+//             ->header('Cache-Control', 'no-cache, no-store, must-revalidate');
+//     }
+// }

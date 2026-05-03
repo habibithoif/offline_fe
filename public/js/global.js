@@ -320,4 +320,12 @@ $(document).ready(function() {
       }
     }
   });
+
+ 
 });
+
+ function formatWIB(date) {
+      return date.toLocaleString('sv-SE', {
+          timeZone: 'Asia/Jakarta'
+      }).replace('T', ' ');
+  }

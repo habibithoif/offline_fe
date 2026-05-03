@@ -6,7 +6,8 @@
   <title>OFFLINE | Log in</title>
 
   <!-- Google Font: Source Sans Pro -->
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+  <!-- <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback"> -->
+   <link rel="stylesheet" href="{{ asset('css/fonts.css') }}">
   <!-- Font Awesome -->
   <link rel="stylesheet" href="{{ asset('template_app') }}/plugins/fontawesome-free/css/all.min.css">
   <!-- icheck bootstrap -->

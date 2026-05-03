@@ -60,15 +60,59 @@ class DownloadLSTController extends Controller
         // ]);
     // }
 
-    public function download($filename)
-    {
-        $filename = urldecode($filename);
+    // public function download(Request $request)
+    // {
+    //     $files = $request->input('files');
 
-        $response = $this->apiRequest('get', "files/download/".$filename);
+    //     if (!is_array($files)) {
+    //         $files = [$files];
+    //     }
+
+    //     $response = $this->apiRequest(
+    //         'get',
+    //         "files/download?files=" . urlencode(json_encode($files))
+    //     );
+
+    //     $stream = $response->getBody();
+
+    //     // 🔥 ambil filename dari header API
+    //     $disposition = $response->getHeaderLine('Content-Disposition');
+
+    //     $filename = 'download.bin'; // fallback
+
+    //     if ($disposition && preg_match('/filename="?([^"]+)"?/', $disposition, $matches)) {
+    //         $filename = $matches[1];
+    //     }
+
+    //     return response()->streamDownload(function () use ($stream) {
+    //         while (!$stream->eof()) {
+    //             echo $stream->read(1024);
+    //         }
+    //     }, $filename, [
+    //         'Content-Type' => $response->getHeaderLine('Content-Type') ?: 'application/octet-stream'
+    //     ]);
+    // }
+
+    public function download(Request $request)
+    {
+        $files = $request->input('path'); 
+        $name = $request->input('name'); 
+        $type = $request->input('type'); 
+        $data = [
+            'files' => $files,
+            'name' => $name
+        ];
+        if ($type == 'folder'){
+            $response = $this->apiRequest('get', "files/downloadFolder", $data);
+            $name = $name.'.zip';
+        }else{
+            $response = $this->apiRequest('get', "files/download", $data);
+        }
+        
 
         return response()->streamDownload(function () use ($response) {
             echo $response->getBody()->getContents();
-        }, $filename, [
+        }, $name, [
             'Content-Type' => $response->getHeaderLine('Content-Type')
         ]);
     }
