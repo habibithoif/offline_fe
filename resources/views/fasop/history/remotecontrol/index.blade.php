@@ -251,9 +251,9 @@
                     { text: 'B3 Text', datafield: 'b3_text', width: 150 },
                     { text: 'Element Text', datafield: 'el_text', width: 100 },
                     { text: 'Info Text', datafield: 'Info_text', width: 100 },
-                    { text: 'Dateime RTU', datafield: 'rtu_datetime', width: 200,columngroup: 'eksekusi' },
+                    { text: 'Datetime RTU', datafield: 'rtu_datetime', width: 200,columngroup: 'eksekusi' },
                     { text: 'Eksekusi', datafield: 'status', width: 100,columngroup: 'eksekusi' },
-                    { text: 'Dateime RTU', datafield: 'rtu_datetime_2', width: 200,columngroup: 'respons' },
+                    { text: 'Datetime RTU', datafield: 'rtu_datetime_2', width: 200,columngroup: 'respons' },
                     { text: 'Response', datafield: 'status_2', width: 100,columngroup: 'respons' },
                     { text: 'Kesimpulan', datafield: 'kesimpulan', width: 100 },
                     // { text: 'Kesimpulan', datafield: 'kesimpulan', width: 100, cellsalign: 'center',
@@ -287,8 +287,8 @@
                 filtermode: 'excel',
                 theme: 'material',
                 columngroups: [
-                    { text: 'Eksekusi', name: 'eksekusi', align:'center' },
-                    { text: 'Response', name: 'respons', align:'center' }
+                    { text: 'Eksekusi RC', name: 'eksekusi', align:'center' },
+                    { text: 'Response RC', name: 'respons', align:'center' }
                 ],
             });
         }
