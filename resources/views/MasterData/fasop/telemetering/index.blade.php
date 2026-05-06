@@ -1052,6 +1052,8 @@
                 formData.append("columns[]", "aoc");
                 formData.append("columns[]", "kinerja");
                 formData.append("columns[]", "region");
+                formData.append("columns[]", "tm_harian");
+                formData.append("columns[]", "faktor");
 
                 formData.append("unique_by[]", "b1_name");
                 formData.append("unique_by[]", "b2_name");
@@ -1196,6 +1198,8 @@
             params.append("columns[]", "aoc");
             params.append("columns[]", "kinerja");
             params.append("columns[]", "region");
+            params.append("columns[]", "tm_harian");
+            params.append("columns[]", "faktor");
 
             const res = await fetch(mainServerUrl + `/import/downloadTemplate?${params.toString()}`);
 

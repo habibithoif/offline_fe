@@ -35,7 +35,7 @@ class AppSettingController extends Controller
 
     public function index()
     {
-        return view('Setting.app-setting.app-setting-index', ['data' => $this->data]);
+        return view('setting.app-setting.app-setting-index', ['data' => $this->data]);
     }
 
     public function read(Request $request)

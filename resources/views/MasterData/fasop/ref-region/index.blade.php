@@ -415,63 +415,7 @@
             });
 
             $('#downloadButton').on('click', async function() {
-                // Ambil semua data dari jqxGrid
-                var rows = $("#jqxGrid").jqxGrid('getrows');
-
-                // Header custom
-                var headers = ["Nama", "Region", "AOC", "Status"];
-
-                // Buat workbook dan worksheet
-                var workbook = new ExcelJS.Workbook();
-                var worksheet = workbook.addWorksheet('MasterData');
-
-                // Tambahkan header
-                var headerRow = worksheet.addRow(headers);
-
-                // Style header
-                headerRow.eachCell(function(cell, colNumber) {
-                    cell.fill = {
-                        type: 'pattern',
-                        pattern: 'solid',
-                        fgColor: { argb: 'C5D9F1' } // biru
-                    };
-                    cell.font = {
-                        bold: true,
-                        color: { argb: '000000' } // hitam
-                    };
-                    cell.alignment = { horizontal: 'center', vertical: 'middle' };
-                    cell.border = {
-                        top: {style:'thin'},
-                        left: {style:'thin'},
-                        bottom: {style:'thin'},
-                        right: {style:'thin'}
-                    };
-                });
-
-                // Tambahkan data
-                rows.forEach(row => {
-                    worksheet.addRow([
-                        row.nama,
-                        row.region,
-                        row.aoc,
-                        row.status == 1 ? "Aktif" : "Non-aktif"
-                    ]);
-                });
-
-                // Atur lebar kolom otomatis
-                worksheet.columns.forEach(column => {
-                    let maxLength = 0;
-                    column.eachCell({ includeEmpty: true }, cell => {
-                        const columnLength = cell.value ? cell.value.toString().length : 10;
-                        if (columnLength > maxLength) maxLength = columnLength;
-                    });
-                    column.width = maxLength + 2;
-                });
-
-                // Export ke file XLSX
-                const buffer = await workbook.xlsx.writeBuffer();
-                const blob = new Blob([buffer], { type: 'application/octet-stream' });
-                saveAs(blob, 'MasterData-Region.xlsx');
+                exportGridAll('#jqxGrid','master-data-region','xls');
             });
 
 

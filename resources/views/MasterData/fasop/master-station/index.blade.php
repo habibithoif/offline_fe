@@ -512,12 +512,12 @@
                 ],
                 url: '{{ route("masterdata-fasop-master-station.read") }}',
                 cache: false,
-                root: 'data',
+                root: 'Rows',
                 beforeprocessing: function(data) {
                     // appSettings = data.data.Rows; // Store appSettings data
                     // source.totalrecords = data.data.TotalRows;
                     if (data && data.data) {
-                        appSettings = data.data;
+                        appSettings = data.data.Rows;
                         source.totalrecords = data.data.TotalRows;
                     } else {
                         console.error('Invalid data structure:', data);
@@ -552,7 +552,7 @@
             };
 
             var dataAdapter = new $.jqx.dataAdapter(source);
-
+            
             // Initialize jQWidgets Grid with action column and fixed status display
             $("#jqxGrid").jqxGrid({
                 width: '100%',
@@ -704,12 +704,55 @@
             });
 
             $("#jqxGrid").on("bindingcomplete", function () {
-                console.log("Grid is ready!");
+                // console.log("Grid is ready!");
 
                 // $("#jqxGrid").jqxGrid('theme', 'darkblue');
-                $("#jqxGrid").jqxGrid('render');
+                // $("#jqxGrid").jqxGrid('render');
+                 if (filterLoaded) return; // sudah pernah load → skip
+                var records = dataAdapter.records;
+
+                var uniqueB1_name = [...new Set(records.map(x => x.b1_name).filter(Boolean))];
+                var uniqueB2_name = [...new Set(records.map(x => x.b2_name).filter(Boolean))];
+                var uniqueB3_name = [...new Set(records.map(x => x.b3_name).filter(Boolean))];
+                var uniqueel_name = [...new Set(records.map(x => x.el_name).filter(Boolean))];
+                var uniqueinfo_name = [...new Set(records.map(x => x.info_name).filter(Boolean))];
+                
+                // isi dropdown satu-satu
+                fillSelect('#filterLokasi', uniqueB1_name);
+                fillSelect('#filterTegangan', uniqueB2_name);
+                fillSelect('#filterBay', uniqueB3_name);
+                fillSelect('#filterElement', uniqueel_name);
+                fillSelect('#filterInfo', uniqueinfo_name);
+
+                filterLoaded = true; // tandai sudah load
             });
         };
+        
+        function distinct(records, field){
+            return [...new Set(
+                records.map(x => x[field]).filter(Boolean)
+            )];
+        }
+
+        function fillSelect(selector, data){
+            $(selector).select2('destroy').empty();
+            $(selector).append('<option value=""></option>');
+
+            $.each(data, function(i, val){
+                $(selector).append(
+                    $('<option>', {
+                        value: val,
+                        text: val
+                    })
+                );
+            });
+
+            $(selector).select2({
+                allowClear: true,
+                placeholder: '-- Pilih --',
+                width: '100%'
+            });
+        }
 
         $(document).ready(function() {
 
@@ -718,245 +761,14 @@
 
             loadData();
 
-            // Rest of your select2 initialization code...
-            $('#filterLokasi').select2({
-                ajax: {
-                    url: '{{ route("cpoint.findValueBy") }}',
-                    dataType: 'json',
-                    delay: 250,
-                    data: function (params) {
-                        return {
-                            keyword: params.term, 
-                            page: params.page || 1,
-                            field: 'path1name',
-                            point_type: '{{ $data->pointtype_name }}'
-                        };
-                    },
-                    processResults: function (data, params) {
-                        params.page = params.page || 1;
-                        const response = data.data.data;
-                        return {
-                            results: response.map(function(item) {
-                                return {
-                                    id: item, 
-                                    text: item 
-                                };
-                            }),
-                            pagination: {
-                                more: (params.page * 10) < data.total  
-                            }
-                        };
-                    },
-                    cache: true
-                },
-                allowClear: true,
-                placeholder: '--Pilih B1 Name--',
-            });
-
-            $('#filterTegangan').select2({
-                ajax: {
-                    url: '{{ route("cpoint.findValueBy") }}',
-                    dataType: 'json',
-                    delay: 250,
-                    data: function (params) {
-                        return {
-                            keyword: params.term,  
-                            page: params.page || 1,
-                            field: 'path2name',
-                            point_type: '{{ $data->pointtype_name }}'
-                        };
-                    },
-                    processResults: function (data, params) {
-                        params.page = params.page || 1;
-                        const response = data.data.data;
-                        return {
-                            results: response.map(function(item) {
-                                return {
-                                    id: item, 
-                                    text: item 
-                                };
-                            }),
-                            pagination: {
-                                more: (params.page * 10) < data.total  
-                            }
-                        };
-                    },
-                    cache: true
-                },
-                allowClear: true,
-                placeholder: '--Pilih B2 Name--'
-            });
-
-            $('#filterBay').select2({
-                ajax: {
-                    url: '{{ route("cpoint.findValueBy") }}',
-                    dataType: 'json',
-                    delay: 250,
-                    data: function (params) {
-                        return {
-                            keyword: params.term,  
-                            page: params.page || 1,
-                            field: 'path3name',
-                            pointtype_name: '{{ $data->pointtype_name }}'
-                        };
-                    },
-                    processResults: function (data, params) {
-                        params.page = params.page || 1;
-                        const response = data.data.data;
-                        return {
-                            results: response.map(function(item) {
-                                return {
-                                    id: item, 
-                                    text: item 
-                                };
-                            }),
-                            pagination: {
-                                more: (params.page * 10) < data.total  
-                            }
-                        };
-                    },
-                    cache: true
-                },
-                allowClear: true,
-                placeholder: '--Pilih B3 Name--'
-            });
-
-            $('#filterElement').select2({
-                ajax: {
-                    url: '{{ route("cpoint.findValueBy") }}',
-                    dataType: 'json',
-                    delay: 250,
-                    data: function (params) {
-                        return {
-                            keyword: params.term,  
-                            page: params.page || 1,
-                            field: 'path4name' ,
-                            pointtype_name: '{{ $data->pointtype_name }}'
-                        };
-                    },
-                    processResults: function (data, params) {
-                        params.page = params.page || 1;
-                        const response = data.data.data;
-                        return {
-                            results: response.map(function(item) {
-                                return {
-                                    id: item, 
-                                    text: item 
-                                };
-                            }),
-                            pagination: {
-                                more: (params.page * 10) < data.total  
-                            }
-                        };
-                    },
-                    cache: true
-                },
-                allowClear: true,
-                placeholder: '--Pilih Element--'
-            });
+            
 
             $('#refreshButton').on('click', function() {
                 $("#jqxGrid").jqxGrid('updatebounddata');
             });
 
             $('#downloadButton').on('click', async function() {
-                // Ambil semua data dari jqxGrid
-                var rows = $("#jqxGrid").jqxGrid('getrows');
-
-                // Header custom
-                var headers = ["Regional",  "Kelompok", "B1 Name","B2 Name","B3 Name","Element","path5name","Hitung Kinerja","Status"];
-
-                // Buat workbook dan worksheet
-                var workbook = new ExcelJS.Workbook();
-                var worksheet = workbook.addWorksheet('MasterData');
-
-                // Tambahkan header
-                var headerRow = worksheet.addRow(headers);
-
-                // Style header
-                headerRow.eachCell(function(cell, colNumber) {
-                    cell.fill = {
-                        type: 'pattern',
-                        pattern: 'solid',
-                        fgColor: { argb: 'C5D9F1' } // biru
-                    };
-                    cell.font = {
-                        bold: true,
-                        color: { argb: '000000' } // hitam
-                    };
-                    cell.alignment = { horizontal: 'center', vertical: 'middle' };
-                    cell.border = {
-                        top: {style:'thin'},
-                        left: {style:'thin'},
-                        bottom: {style:'thin'},
-                        right: {style:'thin'}
-                    };
-                });
-
-                // Tambahkan data
-                rows.forEach(row => {
-                    worksheet.addRow([
-                        row.nama_region,
-                        // row.point_number,
-                        // row.point_type_id,
-                        row.path1name,
-                        row.path2name,
-                        row.path3name,
-                        row.path4name,
-                        row.path5name,
-                        row.hitung_kinerja == 1 ? "Ya" : "Tidak",
-                        // row.status == 1 ? "Aktif" : "Non-aktif"
-                    ]);
-                });
-
-                // Atur lebar kolom otomatis
-                worksheet.columns.forEach(column => {
-                    let maxLength = 0;
-                    column.eachCell({ includeEmpty: true }, cell => {
-                        const columnLength = cell.value ? cell.value.toString().length : 10;
-                        if (columnLength > maxLength) maxLength = columnLength;
-                    });
-                    column.width = maxLength + 2;
-                });
-
-                // Export ke file XLSX
-                const buffer = await workbook.xlsx.writeBuffer();
-                const blob = new Blob([buffer], { type: 'application/octet-stream' });
-                saveAs(blob, 'MasterData-fasop-master-station.xlsx');
-            });
-
-            $('#listViewButton').on('click', function() {
-                console.log("List view toggle clicked");
-            });
-            
-            // Custom search functionality
-            $('#searchButton').on('click', function() {
-                var searchValue = $('#searchInput').val();
-                if (searchValue) {
-                    // Apply filters to multiple columns
-                    var filtergroup = new $.jqx.filter();
-                    
-                    var nameFilter = filtergroup.createfilter('stringfilter', searchValue, 'contains');
-                    filtergroup.addfilter(0, nameFilter);
-                    
-                    var displayNameFilter = filtergroup.createfilter('stringfilter', searchValue, 'contains');
-                    filtergroup.addfilter(0, displayNameFilter, 'or');
-                    
-                    var descFilter = filtergroup.createfilter('stringfilter', searchValue, 'contains');
-                    filtergroup.addfilter(0, descFilter, 'or');
-                    
-                    $("#jqxGrid").jqxGrid('addfilter', 'name', filtergroup);
-                    $("#jqxGrid").jqxGrid('applyfilters');
-                } else {
-                    $("#jqxGrid").jqxGrid('clearfilters');
-                }
-            });
-            
-            // Search on Enter key
-            $('#searchInput').on('keypress', function(e) {
-                if (e.which === 13) {
-                    $('#searchButton').click();
-                }
+                exportGridAll('#jqxGrid','Master-Data-Master-Station','csv');
             });
             
             // Delete confirmation
@@ -973,23 +785,39 @@
                 var filterElement = $('#filterElement').val();
                 var filterInfo = $('#filterInfo').val();
                 var filterHitungKinerja = $('#filterHitungKinerja').val(); // Get Hitung Kinerja filter value
-
-                // Log the filters for debugging
-                // console.log('Filters:', {
-                //     region: filterRegion,
-                //     lokasi: filterLokasi,
-                //     tegangan: filterTegangan,
-                //     bay: filterBay,
-                //     element: filterElement,
-                //     hitung_kinerja: filterHitungKinerja
-                // });
+                
+                $("#jqxGrid").one("bindingcomplete", function () {
+                    var records = $("#jqxGrid").jqxGrid('getrows');
+                    // hanya reload yang kosong
+                    if (!filterLokasi) {
+                        fillSelect('#filterLokasi', distinct(records, 'b1_name'));
+                    }
+                    if (!filterTegangan) {
+                        fillSelect('#filterTegangan', distinct(records, 'b2_name'));
+                    }
+                    if (!filterBay) {
+                        fillSelect('#filterBay', distinct(records, 'b3_name'));
+                    }
+                    if (!filterElement) {
+                        fillSelect('#filterElement', distinct(records, 'el_name'));
+                    }
+                    if (!filterInfo) {
+                        fillSelect('#filterInfo', distinct(records, 'info_name'));
+                    }
+                    
+                    $('#filterLokasi').val(filterLokasi).trigger('change.select2');
+                    $('#filterTegangan').val(filterTegangan).trigger('change.select2');
+                    $('#filterBay').val(filterBay).trigger('change.select2');
+                    $('#filterElement').val(filterElement).trigger('change.select2');
+                    $('#filterInfo').val(filterInfo).trigger('change.select2');
+                });
 
                 // Apply filter for Region
                 if (filterRegion) {
                     var regionFilterGroup = new $.jqx.filter();
                     var regionFilter = regionFilterGroup.createfilter('stringfilter', filterRegion, 'EQUAL');
                     regionFilterGroup.addfilter(0, regionFilter);
-                    $("#jqxGrid").jqxGrid('addfilter', 'id_region', regionFilterGroup);
+                    $("#jqxGrid").jqxGrid('addfilter', 'region', regionFilterGroup);
                 }
 
                 // Apply filter for Lokasi (path1name)
@@ -997,7 +825,7 @@
                     var lokasiFilterGroup = new $.jqx.filter();
                     var lokasiFilter = lokasiFilterGroup.createfilter('stringfilter', filterLokasi, 'EQUAL');
                     lokasiFilterGroup.addfilter(0, lokasiFilter);
-                    $("#jqxGrid").jqxGrid('addfilter', 'path1name', lokasiFilterGroup);
+                    $("#jqxGrid").jqxGrid('addfilter', 'b1_name', lokasiFilterGroup);
                 }
 
                 // Apply filter for Tegangan (path2name)
@@ -1005,7 +833,7 @@
                     var teganganFilterGroup = new $.jqx.filter();
                     var teganganFilter = teganganFilterGroup.createfilter('stringfilter', filterTegangan, 'EQUAL');
                     teganganFilterGroup.addfilter(0, teganganFilter);
-                    $("#jqxGrid").jqxGrid('addfilter', 'path2name', teganganFilterGroup);
+                    $("#jqxGrid").jqxGrid('addfilter', 'b2_name', teganganFilterGroup);
                 }
 
                 // Apply filter for Bay (path3name)
@@ -1013,7 +841,7 @@
                     var bayFilterGroup = new $.jqx.filter();
                     var bayFilter = bayFilterGroup.createfilter('stringfilter', filterBay, 'EQUAL');
                     bayFilterGroup.addfilter(0, bayFilter);
-                    $("#jqxGrid").jqxGrid('addfilter', 'path3name', bayFilterGroup);
+                    $("#jqxGrid").jqxGrid('addfilter', 'b3_name', bayFilterGroup);
                 }
 
                 // Apply filter for Element (path4name)
@@ -1021,10 +849,10 @@
                     var elementFilterGroup = new $.jqx.filter();
                     var elementFilter = elementFilterGroup.createfilter('stringfilter', filterElement, 'EQUAL');
                     elementFilterGroup.addfilter(0, elementFilter);
-                    $("#jqxGrid").jqxGrid('addfilter', 'path4name', elementFilterGroup);
+                    $("#jqxGrid").jqxGrid('addfilter', 'el_name', elementFilterGroup);
                 }
 
-                // Apply filter for Info (Info name)
+                // Apply filter for Element (path4name)
                 if (filterInfo) {
                     var infoFilterGroup = new $.jqx.filter();
                     var infoFilter = infoFilterGroup.createfilter('stringfilter', filterInfo, 'EQUAL');
@@ -1041,7 +869,7 @@
                         'EQUAL'
                     );
                     hitungKinerjaFilterGroup.addfilter(0, hitungKinerjaFilter);
-                    $("#jqxGrid").jqxGrid('addfilter', 'kinerja', hitungKinerjaFilterGroup);
+                    $("#jqxGrid").jqxGrid('addfilter', 'hitung_kinerja', hitungKinerjaFilterGroup);
                 }
 
                 // Apply all filters
@@ -1141,6 +969,8 @@
                 formData.append("columns[]", "aoc");
                 formData.append("columns[]", "kinerja");
                 formData.append("columns[]", "region");
+                // formData.append("columns[]", "tm_harian");
+                formData.append("columns[]", "faktor");
 
                 formData.append("unique_by[]", "b1_name");
                 formData.append("unique_by[]", "b2_name");
@@ -1285,6 +1115,8 @@
             params.append("columns[]", "aoc");
             params.append("columns[]", "kinerja");
             params.append("columns[]", "region");
+            // params.append("columns[]", "tm_harian");
+            params.append("columns[]", "faktor");
 
             const res = await fetch(mainServerUrl + `/import/downloadTemplate?${params.toString()}`);
 

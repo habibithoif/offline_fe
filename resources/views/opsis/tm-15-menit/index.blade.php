@@ -199,7 +199,7 @@
                     { name: 'datum', type: 'string' },
                     { name: 'value', type: 'string' },
                 ],
-                url: '{{ route("opsis.tm-15-menit.read") }}',
+                url: '{{ route("opsis.tm-15m.read") }}',
                 cache: false,
                 data: filterParams,
                 root: 'Rows',
@@ -298,16 +298,7 @@
         $('#startDate').val(formatWIB(now));
         $('#endDate').val(formatWIB(plus1Hour));
         
-        let filterParams = {
-            tanggal1: $('#startDate').val(),
-            tanggal2: $('#endDate').val(),
-            id_region: $('#filterRegion').val(),
-            b1_name: $('#filterLokasi').val(),
-            b2_name: $('#filterTegangan').val(),
-            b3_name: $('#filterBay').val(),
-            el_name: $('#filterElement').val(),
-            info_name: $('#filterInfo').val()
-        };
+        
         
         function applyCustomFilters() {
             var filterParams = {
@@ -362,6 +353,17 @@
 
         $(document).ready(function() {
             // Initialize grid first time
+
+            let filterParams = {
+                tanggal1: $('#startDate').val(),
+                tanggal2: $('#endDate').val(),
+                id_region: $('#filterRegion').val(),
+                b1_name: $('#filterLokasi').val(),
+                b2_name: $('#filterTegangan').val(),
+                b3_name: $('#filterBay').val(),
+                el_name: $('#filterElement').val(),
+                info_name: $('#filterInfo').val()
+            };
             initializeGrid(filterParams);
             
             // Initialize select2 controls
@@ -559,7 +561,21 @@
         
         // Export to Excel
         $('#downloadButton').on('click', function() {
-           exportGridAll('#jqxGrid','telemetering-15-menit','csv');
+            const baseHeaders = [
+                { field: 'datum', label: 'Tanggal' },
+                { field: 'b1_name', label: 'B1 Name' },
+                { field: 'b2_name', label: 'B2 Name' },
+                { field: 'b3_name', label: 'B3 Name' },
+                { field: 'el_name', label: 'Element Name' },
+                { field: 'info_name', label: 'Info Name' },
+                { field: 'b1_text', label: 'B1 Text' },
+                { field: 'b2_text', label: 'B2 Text' },
+                { field: 'b3_text', label: 'B3 Text' },
+                { field: 'el_text', label: 'Element Text' },
+                { field: 'info_text', label: 'Info Text' },
+                { field: 'value', label: 'Value' },
+            ];
+           exportGridAll('#jqxGrid','telemetering-15-menit','csv',baseHeaders);
         });
         
         // List view button (toggle view or implement custom view)

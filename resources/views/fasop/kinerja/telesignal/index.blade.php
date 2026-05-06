@@ -325,16 +325,6 @@
         let tgl = new Date().toISOString().slice(0,7);
         $('#startDate').val(tgl);
 
-        let filterParams = {
-            tanggal: $('#startDate').val(),
-            id_region: $('#filterRegion').val(),
-            b1_name: $('#filterLokasi').val(),
-            b2_name: $('#filterTegangan').val(),
-            b3_name: $('#filterBay').val(),
-            el_name: $('#filterElement').val(),
-            info_name: $('#filterInfo').val()
-        };
-
         function applyCustomFilters() {
             var filterParams = {
                 tanggal: $('#startDate').val(),
@@ -357,6 +347,15 @@
 
         $(document).ready(function() {
             // Initialize grid first time
+            let filterParams = {
+                tanggal: $('#startDate').val(),
+                id_region: $('#filterRegion').val(),
+                b1_name: $('#filterLokasi').val(),
+                b2_name: $('#filterTegangan').val(),
+                b3_name: $('#filterBay').val(),
+                el_name: $('#filterElement').val(),
+                info_name: $('#filterInfo').val()
+            };
             initializeGrid(filterParams);
             // Initialize select2 controls
             // $('.select2').select2();

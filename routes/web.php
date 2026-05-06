@@ -285,13 +285,14 @@ Route::middleware([GlobalMiddleware::class])->group(function () {
     Route::prefix('opsis')->group(function () {
         Route::get('/tm-30-col', [Tm30ColController::class, 'index'])->name('opsis.tm-30-col.index');
         Route::get('/tm-30-col/read', [Tm30ColController::class, 'read'])->name('opsis.tm-30-col.read');
+        Route::get('/tm-30-col/download', [Tm30ColController::class, 'read'])->name('opsis.tm-30-col.download');
 
         Route::get('/tm-30-row', [Tm30RowController::class, 'index'])->name('opsis.tm-30-row.index');
         Route::get('/tm-30-row/read', [Tm30RowController::class, 'read'])->name('opsis.tm-30-row.read');
-        Route::get('/tm-15-menit', [Tm15MenitController::class, 'index'])->name('opsis.tm-15-menit.index');
-        Route::get('/tm-15-menit/read', [Tm15MenitController::class, 'index'])->name('opsis.tm-15-menit.read');
-        Route::get('/tm-30-menit', [Tm30MenitController::class, 'index'])->name('opsis.tm-30-menit.index');
-        Route::get('/tm-30-menit/read', [Tm30MenitController::class, 'index'])->name('opsis.tm-30-menit.read');
+        Route::get('/tm-15-menit', [Tm15MenitController::class, 'index'])->name('opsis.tm-15m.index');
+        Route::get('/tm-15-menit/read', [Tm15MenitController::class, 'read'])->name('opsis.tm-15m.read');
+        Route::get('/tm-30-menit', [Tm30MenitController::class, 'index'])->name('opsis.tm-30m.index');
+        Route::get('/tm-30-menit/read', [Tm30MenitController::class, 'read'])->name('opsis.tm-30m.read');
     });
 
     Route::post('/import/review', [ImportController::class, 'review']);

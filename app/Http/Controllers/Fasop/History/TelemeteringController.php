@@ -49,7 +49,8 @@ class TelemeteringController extends Controller
     public function read(Request $request)
     {
         $payload = $request->all();
-        $payload['point_type'] = 'TELEMETERING';
+        // print_r($request->tanggal1);
+        // $payload['point_type'] = 'TELEMETERING';
         $response = $this->apiRequest('get', 'fasop/history/tm', $payload);
         
         return $response;

@@ -35,7 +35,7 @@ class RoleController extends Controller
 
     public function index()
     {
-        return view('Setting.role.role-index', ['data' => $this->data]);
+        return view('setting.role.role-index', ['data' => $this->data]);
     }
 
     public function read(Request $request)

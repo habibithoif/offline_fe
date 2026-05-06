@@ -48,7 +48,7 @@ class Tm15MenitController extends Controller
     public function read(Request $request)
     {
         $payload = $request->all();
-        $response = $this->apiRequest('get', 'opsis/tm-15-menit', $payload);
+        $response = $this->apiRequest('get', 'opsis/tm-15m', $payload);
         
         return $response;
     }

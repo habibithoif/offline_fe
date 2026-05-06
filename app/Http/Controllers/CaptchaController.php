@@ -60,7 +60,7 @@ class CaptchaController extends Controller
         }
 
         // Text with slight rotation per character and random color
-        $fontPath = public_path('fonts/arial/ARIAL.TTF');
+        $fontPath = public_path('fonts/arial/arial.ttf');
         $fontSize = 23;
         $startX = 25;
         $y = 18;
@@ -81,7 +81,39 @@ class CaptchaController extends Controller
         return response($image->encode(new PngEncoder()))
             ->header('Content-Type', 'image/png');
     }
+    // public function image()
+    // {
+    //     try {
+    //         $code = strtoupper(substr(md5(now()), 0, 5));
+    //         Session::put('captcha_code', $code);
+
+    //         $manager = new ImageManager(new Driver());
+    //         $image = $manager->create(150, 40)->fill('#e0e7ef');
+
+    //         $fontPath = public_path('fonts/arial/arial.ttf');
+
+    //         if (!file_exists($fontPath)) {
+    //             return response("Font not found: " . $fontPath, 500);
+    //         }
+
+    //         $image->text($code, 75, 20, function ($font) use ($fontPath) {
+    //             $font->filename($fontPath);
+    //             $font->size(22);
+    //             $font->color('#000');
+    //             $font->align('center');
+    //             $font->valign('middle');
+    //         });
+
+    //         return response($image->encode(new PngEncoder()))
+    //             ->header('Content-Type', 'image/png');
+
+    //     } catch (\Throwable $e) {
+    //         return response($e->getMessage(), 500);
+    //     }
+    // }
 }
+
+
 
 // class CaptchaController extends Controller
 // {

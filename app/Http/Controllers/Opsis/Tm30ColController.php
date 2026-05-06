@@ -50,8 +50,15 @@ class Tm30ColController extends Controller
     {
         $payload = $request->all();
         $payload['point_type'] = 'TELEMETERING';
-        $response = $this->apiRequest('get', 'fasop/telemetering', $payload);
+        $response = $this->apiRequest('get', 'opsis/telemetering', $payload);
         
+        return $response;
+    }
+
+    public function download(Request $request)
+    {
+        $payload = $request->all();
+        $response = $this->apiRequest('get', 'opsis/telemetering/download', $payload);
         return $response;
     }
 }

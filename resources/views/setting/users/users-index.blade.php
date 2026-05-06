@@ -483,7 +483,8 @@
             });
             
             $('#downloadButton').on('click', function() {
-                $("#jqxGrid").jqxGrid('exportdata', 'xlsx', 'TelemetryData');
+                // $("#jqxGrid").jqxGrid('exportdata', 'xlsx', 'TelemetryData');
+                exportGridAll('#jqxGrid','pengguna','xls');
             });
             
             $('#listViewButton').on('click', function() {

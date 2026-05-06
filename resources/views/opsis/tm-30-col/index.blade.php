@@ -174,8 +174,8 @@
             <div class="row">
                 <!-- <div class="col-md-2"> -->
                     <div class="form-group col-6">
-                        <label for="startDate">Tanggal</label>
-                        <input type="date" id="startDate" class="form-control form-control-sm" required>
+                        <label for="tanggal">Tanggal</label>
+                        <input type="date" id="tanggal" class="form-control form-control-sm" required>
                     </div>
                     <div class="form-group col-3">
                         <label>Jam Awal</label>
@@ -212,18 +212,33 @@
             const select = document.getElementById(selectId);
             select.innerHTML = '';
 
-            for (let h = 0; h < 24; h++) {
-                for (let m = 0; m < 60; m += 30) {
-                    let hh = String(h).padStart(2,'0');
-                    let mm = String(m).padStart(2,'0');
-                    let time = `${hh}:${mm}`;
-                    
-                    let opt = document.createElement('option');
-                    opt.value = time;
-                    opt.text = time;
+            let h = 0;
+            let m = 30; // 🔥 mulai dari 00:30
 
-                    select.appendChild(opt);
+            while (true) {
+
+                let hh = String(h).padStart(2, '0');
+                let mm = String(m).padStart(2, '0');
+                let time = `${hh}:${mm}`;
+
+                let opt = document.createElement('option');
+                opt.value = time;
+                opt.text = time;
+
+                select.appendChild(opt);
+
+                // 🔥 stop di 24:00
+                if (h === 24 && m === 0) break;
+
+                // increment 30 menit
+                m += 30;
+                if (m === 60) {
+                    m = 0;
+                    h += 1;
                 }
+
+                // 🔥 safety (hindari infinite loop)
+                if (h > 24) break;
             }
         }
 
@@ -258,7 +273,7 @@
                     { name: 'el_text', type: 'string' },
                     { name: 'info_text', type: 'string' },
                     { name: 'datum', type: 'string' },
-                    { name: 'm0030', type: 'string' },
+                    { name: 'm0030', type: 'float' },
                     { name: 'm0100', type: 'string' },
                     { name: 'm0130', type: 'string' },
                     { name: 'm0200', type: 'string' },
@@ -307,7 +322,7 @@
                     { name: 'm2330', type: 'string' },
                     { name: 'm2400', type: 'string' },
                 ],
-                url: '{{ route("fasop.histories.telemetering.read") }}',
+                url: '{{ route("opsis.tm-30-col.read") }}',
                 cache: false,
                 data: filterParams,
                 root: 'Rows',
@@ -351,54 +366,54 @@
                     { text: 'B3 Name', datafield: 'b3_namr', width: 200 },
                     { text: 'Element Name', datafield: 'el_name', width: 100 },
                     { text: 'Info Name', datafield: 'info_name', width: 100 },
-                    { text: '00:30', datafield: '0030', width: 100, cellsalign: 'center' },
-                    { text: '01:00', datafield: '0100', width: 100, cellsalign: 'center' },
-                    { text: '01:30', datafield: '0130', width: 100, cellsalign: 'center' },
-                    { text: '02:00', datafield: '0200', width: 100, cellsalign: 'center' },
-                    { text: '02:30', datafield: '0230', width: 100, cellsalign: 'center' },
-                    { text: '03:00', datafield: '0300', width: 100, cellsalign: 'center' },
-                    { text: '03:30', datafield: '0330', width: 100, cellsalign: 'center' },
-                    { text: '04:00', datafield: '0400', width: 100, cellsalign: 'center' },
-                    { text: '04:30', datafield: '0430', width: 100, cellsalign: 'center' },
-                    { text: '05:00', datafield: '0500', width: 100, cellsalign: 'center' },
-                    { text: '05:30', datafield: '0530', width: 100, cellsalign: 'center' },
-                    { text: '06:00', datafield: '0600', width: 100, cellsalign: 'center' },
-                    { text: '06:30', datafield: '0630', width: 100, cellsalign: 'center' },
-                    { text: '07:00', datafield: '0700', width: 100, cellsalign: 'center' },
-                    { text: '07:30', datafield: '0730', width: 100, cellsalign: 'center' },
-                    { text: '08:00', datafield: '0800', width: 100, cellsalign: 'center' },
-                    { text: '08:30', datafield: '0830', width: 100, cellsalign: 'center' },
-                    { text: '09:00', datafield: '0900', width: 100, cellsalign: 'center' },
-                    { text: '09:30', datafield: '0930', width: 100, cellsalign: 'center' },
-                    { text: '10:00', datafield: '1000', width: 100, cellsalign: 'center' },
-                    { text: '10:30', datafield: '1030', width: 100, cellsalign: 'center' },
-                    { text: '11:00', datafield: '1100', width: 100, cellsalign: 'center' },
-                    { text: '11:30', datafield: '1130', width: 100, cellsalign: 'center' },
-                    { text: '12:00', datafield: '1200', width: 100, cellsalign: 'center' },
-                    { text: '12:30', datafield: '1230', width: 100, cellsalign: 'center' },
-                    { text: '13:00', datafield: '1300', width: 100, cellsalign: 'center' },
-                    { text: '13:30', datafield: '1330', width: 100, cellsalign: 'center' },
-                    { text: '14:00', datafield: '1400', width: 100, cellsalign: 'center' },
-                    { text: '14:30', datafield: '1430', width: 100, cellsalign: 'center' },
-                    { text: '15:00', datafield: '1500', width: 100, cellsalign: 'center' },
-                    { text: '15:30', datafield: '1530', width: 100, cellsalign: 'center' },
-                    { text: '16:00', datafield: '1600', width: 100, cellsalign: 'center' },
-                    { text: '16:30', datafield: '1630', width: 100, cellsalign: 'center' },
-                    { text: '17:00', datafield: '1700', width: 100, cellsalign: 'center' },
-                    { text: '17:30', datafield: '1730', width: 100, cellsalign: 'center' },
-                    { text: '18:00', datafield: '1800', width: 100, cellsalign: 'center' },
-                    { text: '18:30', datafield: '1830', width: 100, cellsalign: 'center' },
-                    { text: '19:00', datafield: '1900', width: 100, cellsalign: 'center' },
-                    { text: '19:30', datafield: '1930', width: 100, cellsalign: 'center' },
-                    { text: '20:00', datafield: '2000', width: 100, cellsalign: 'center' },
-                    { text: '20:30', datafield: '2030', width: 100, cellsalign: 'center' },
-                    { text: '21:00', datafield: '2100', width: 100, cellsalign: 'center' },
-                    { text: '21:30', datafield: '2130', width: 100, cellsalign: 'center' },
-                    { text: '22:00', datafield: '2200', width: 100, cellsalign: 'center' },
-                    { text: '22:30', datafield: '2230', width: 100, cellsalign: 'center' },
-                    { text: '23:00', datafield: '2300', width: 100, cellsalign: 'center' },
-                    { text: '23:30', datafield: '2330', width: 100, cellsalign: 'center' },
-                    { text: '24:00', datafield: '2400', width: 100, cellsalign: 'center' },
+                    { text: '00:30', datafield: 'm0030', width: 100, cellsalign: 'center' },
+                    { text: '01:00', datafield: 'm0100', width: 100, cellsalign: 'center' },
+                    { text: '01:30', datafield: 'm0130', width: 100, cellsalign: 'center' },
+                    { text: '02:00', datafield: 'm0200', width: 100, cellsalign: 'center' },
+                    { text: '02:30', datafield: 'm0230', width: 100, cellsalign: 'center' },
+                    { text: '03:00', datafield: 'm0300', width: 100, cellsalign: 'center' },
+                    { text: '03:30', datafield: 'm0330', width: 100, cellsalign: 'center' },
+                    { text: '04:00', datafield: 'm0400', width: 100, cellsalign: 'center' },
+                    { text: '04:30', datafield: 'm0430', width: 100, cellsalign: 'center' },
+                    { text: '05:00', datafield: 'm0500', width: 100, cellsalign: 'center' },
+                    { text: '05:30', datafield: 'm0530', width: 100, cellsalign: 'center' },
+                    { text: '06:00', datafield: 'm0600', width: 100, cellsalign: 'center' },
+                    { text: '06:30', datafield: 'm0630', width: 100, cellsalign: 'center' },
+                    { text: '07:00', datafield: 'm0700', width: 100, cellsalign: 'center' },
+                    { text: '07:30', datafield: 'm0730', width: 100, cellsalign: 'center' },
+                    { text: '08:00', datafield: 'm0800', width: 100, cellsalign: 'center' },
+                    { text: '08:30', datafield: 'm0830', width: 100, cellsalign: 'center' },
+                    { text: '09:00', datafield: 'm0900', width: 100, cellsalign: 'center' },
+                    { text: '09:30', datafield: 'm0930', width: 100, cellsalign: 'center' },
+                    { text: '10:00', datafield: 'm1000', width: 100, cellsalign: 'center' },
+                    { text: '10:30', datafield: 'm1030', width: 100, cellsalign: 'center' },
+                    { text: '11:00', datafield: 'm1100', width: 100, cellsalign: 'center' },
+                    { text: '11:30', datafield: 'm1130', width: 100, cellsalign: 'center' },
+                    { text: '12:00', datafield: 'm1200', width: 100, cellsalign: 'center' },
+                    { text: '12:30', datafield: 'm1230', width: 100, cellsalign: 'center' },
+                    { text: '13:00', datafield: 'm1300', width: 100, cellsalign: 'center' },
+                    { text: '13:30', datafield: 'm1330', width: 100, cellsalign: 'center' },
+                    { text: '14:00', datafield: 'm1400', width: 100, cellsalign: 'center' },
+                    { text: '14:30', datafield: 'm1430', width: 100, cellsalign: 'center' },
+                    { text: '15:00', datafield: 'm1500', width: 100, cellsalign: 'center' },
+                    { text: '15:30', datafield: 'm1530', width: 100, cellsalign: 'center' },
+                    { text: '16:00', datafield: 'm1600', width: 100, cellsalign: 'center' },
+                    { text: '16:30', datafield: 'm1630', width: 100, cellsalign: 'center' },
+                    { text: '17:00', datafield: 'm1700', width: 100, cellsalign: 'center' },
+                    { text: '17:30', datafield: 'm1730', width: 100, cellsalign: 'center' },
+                    { text: '18:00', datafield: 'm1800', width: 100, cellsalign: 'center' },
+                    { text: '18:30', datafield: 'm1830', width: 100, cellsalign: 'center' },
+                    { text: '19:00', datafield: 'm1900', width: 100, cellsalign: 'center' },
+                    { text: '19:30', datafield: 'm1930', width: 100, cellsalign: 'center' },
+                    { text: '20:00', datafield: 'm2000', width: 100, cellsalign: 'center' },
+                    { text: '20:30', datafield: 'm2030', width: 100, cellsalign: 'center' },
+                    { text: '21:00', datafield: 'm2100', width: 100, cellsalign: 'center' },
+                    { text: '21:30', datafield: 'm2130', width: 100, cellsalign: 'center' },
+                    { text: '22:00', datafield: 'm2200', width: 100, cellsalign: 'center' },
+                    { text: '22:30', datafield: 'm2230', width: 100, cellsalign: 'center' },
+                    { text: '23:00', datafield: 'm2300', width: 100, cellsalign: 'center' },
+                    { text: '23:30', datafield: 'm2330', width: 100, cellsalign: 'center' },
+                    { text: '24:00', datafield: 'm2400', width: 100, cellsalign: 'center' },
                 ],
                 pagermode: 'default',
                 pagesize: 20,
@@ -423,15 +438,7 @@
         let now =  new Date().toISOString().slice(0, 10);
         $('#startDate').val(now);
 
-        let filterParams = {
-            startDate: $('#startDate').val(),
-            id_region: $('#filterRegion').val(),
-            lokasi: $('#filterLokasi').val(),
-            tegangan: $('#filterTegangan').val(),
-            bay: $('#filterBay').val(),
-            element: $('#filterElement').val(),
-            info: $('#filterInfo').val(),
-        };
+        
 
         function applyCustomFilters() {
             var filterParams = {
@@ -454,6 +461,15 @@
 
         $(document).ready(function() {
             // Initialize grid first time
+            let filterParams = {
+                startDate: $('#startDate').val(),
+                id_region: $('#filterRegion').val(),
+                lokasi: $('#filterLokasi').val(),
+                tegangan: $('#filterTegangan').val(),
+                bay: $('#filterBay').val(),
+                element: $('#filterElement').val(),
+                info: $('#filterInfo').val(),
+            };
             initializeGrid(filterParams);
 
             generateTimeOptions('jam_awal');
@@ -468,6 +484,8 @@
                     this.value = '';
                 }
             });
+
+            
 
             // Initialize select2 controls
             // $('.select2').select2();
@@ -673,11 +691,13 @@
             // $("#jqxGrid").jqxGrid('exportdata', 'xlsx', 'TelemetryData');
             resetForm('#form-data');
             $('#form-data').validate().resetForm();
-            
+            let tgl =  new Date( $('#startDate').val()).toISOString().slice(0, 10);
+            $('#tanggal').val(tgl);
+
             // Clear any previous validation errors
             $('.is-invalid').removeClass('is-invalid');
 
-            $('#modal-data-title').text('Download Data');
+            $('#modalDataLabel').text('Download Data');
             urlAction = baseUrl+'/download';
             actionMethod = 'GET';
             toggleForm('#form-data', true);
@@ -691,6 +711,51 @@
             console.log("List view toggle clicked");
         });
 
+        function generateTimeHeadersByRange(jamAwal, jamAkhir) {
+
+            function toField(jam) {
+                return 'm' + jam.replace(':', '');
+            }
+
+            function next30Menit(jam) {
+                let [h, m] = jam.split(':').map(Number);
+
+                m += 30;
+                if (m === 60) {
+                    m = 0;
+                    h += 1;
+                }
+
+                return String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0');
+            }
+
+            let headers = [];
+            let current = jamAwal;
+
+            let safety = 0;
+
+            while (true) {
+
+                headers.push({
+                    field: toField(current),
+                    label: current
+                });
+
+                // 🔥 handle khusus 24:00
+                if (current === jamAkhir) break;
+
+                current = next30Menit(current);
+
+                safety++;
+                if (safety > 100) {
+                    console.error('Loop tidak berhenti');
+                    break;
+                }
+            }
+
+            return headers;
+        }
+
         // Form validation
         $('#form-data').validate({
             rules: {
@@ -701,11 +766,28 @@
             messages: {
                 tanggal: { required: "Kolom Tanggal wajib diisi." },
                 jam_awal: { required: "Kolom jam awal wajib diisi." },
-                jam_ahir: { required: "Kolom jam ahir wajib diisi." }
+                jam_ahir: { required: "Kolom jam akhir wajib diisi." }
             },
             submitHandler: function (form) {
-                var reqData = new FormData(form);
-                ajaxData(urlAction, reqData, refresh, true, true);
+
+                const formData = new FormData(form);
+
+                const jam_awal = formData.get('jam_awal');
+                const jam_ahir = formData.get('jam_akhir');
+
+                const baseHeaders = [
+                    { field: 'datum', label: 'Tanggal' },
+                    { field: 'b1_name', label: 'B1 Name' },
+                    { field: 'b2_name', label: 'B2 Name' },
+                    { field: 'b3_name', label: 'B3 Name' },
+                    { field: 'el_name', label: 'Element Name' },
+                    { field: 'info_name', label: 'Info Name' }
+                ];
+
+                const timeHeaders = generateTimeHeadersByRange(jam_awal, jam_ahir);
+                const headers = [...baseHeaders, ...timeHeaders];
+                exportGridAll('#jqxGrid', 'tm_harian', 'xlsx', headers);
+                $('#modal-data').modal('hide');
             }
         });
     </script>

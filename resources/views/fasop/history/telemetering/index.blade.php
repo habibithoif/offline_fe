@@ -170,7 +170,7 @@
         var baseUrl = mainServerUrl + currentPath;
         var tableData = [];
         var dataAdapter; // Make dataAdapter global to access it later
-
+        
         function initializeGrid(filterParams = {}) {
             // CSRF Token setup
             $.ajaxSetup({
@@ -287,23 +287,24 @@
 
         //set tanggal
         let now = new Date();
-        let plus1Hour = new Date(now.getTime() + 60 * 60 * 1000);
+        let plus1Hour = new Date(now.getTime() - 60 * 60 * 1000);
 
-        $('#startDate').val(formatWIB(now));
-        $('#endDate').val(formatWIB(plus1Hour));
+        $('#startDate').val(formatWIB(plus1Hour));
+        $('#endDate').val(formatWIB(now));
 
-        let filterParams = {
-            tanggal1: $('#startDate').val(),
-            tanggal2: $('#endDate').val(),
-            id_region: $('#filterRegion').val(),
-            b1_name: $('#filterLokasi').val(),
-            b2_name: $('#filterTegangan').val(),
-            b3_name: $('#filterBay').val(),
-            el_name: $('#filterElement').val(),
-            info_name: $('#filterInfo').val()
-        };
+        
         
         function applyCustomFilters() {
+            let filterParams = {
+                tanggal1: $('#startDate').val(),
+                tanggal2: $('#endDate').val(),
+                id_region: $('#filterRegion').val(),
+                b1_name: $('#filterLokasi').val(),
+                b2_name: $('#filterTegangan').val(),
+                b3_name: $('#filterBay').val(),
+                el_name: $('#filterElement').val(),
+                info_name: $('#filterInfo').val()
+            };
             refreshGrid(filterParams);
         }
 
@@ -346,6 +347,16 @@
 
         $(document).ready(function() {
             // Initialize grid first time
+            let filterParams = {
+                tanggal1: $('#startDate').val(),
+                tanggal2: $('#endDate').val(),
+                id_region: $('#filterRegion').val(),
+                b1_name: $('#filterLokasi').val(),
+                b2_name: $('#filterTegangan').val(),
+                b3_name: $('#filterBay').val(),
+                el_name: $('#filterElement').val(),
+                info_name: $('#filterInfo').val()
+            };
             initializeGrid(filterParams);
         });
 

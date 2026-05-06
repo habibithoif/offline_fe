@@ -39,7 +39,7 @@ class MenuController extends Controller
     {
         $this->data->icons = $this->apiRequest('get', 'icons')['data'];
         $data = $this->data;
-        return view('Setting.menu.menu-index', compact('data'));
+        return view('setting.menu.menu-index', compact('data'));
     }
 
     public function read(Request $request)

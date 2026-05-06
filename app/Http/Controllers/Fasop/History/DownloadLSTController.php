@@ -93,27 +93,75 @@ class DownloadLSTController extends Controller
     //     ]);
     // }
 
-    public function download(Request $request)
-    {
-        $files = $request->input('path'); 
-        $name = $request->input('name'); 
-        $type = $request->input('type'); 
-        $data = [
-            'files' => $files,
-            'name' => $name
-        ];
-        if ($type == 'folder'){
-            $response = $this->apiRequest('get', "files/downloadFolder", $data);
-            $name = $name.'.zip';
-        }else{
-            $response = $this->apiRequest('get', "files/download", $data);
-        }
+    // public function download(Request $request)
+    // {
+    //     $files = $request->input('path'); 
+    //     $name = $request->input('name'); 
+    //     $type = $request->input('type'); 
+    //     $data = [
+    //         'files' => $files,
+    //         'name' => $name
+    //     ];
+    //     if ($type == 'folder'){
+    //         $response = $this->apiRequest('get', "files/downloadFolder", $data);
+    //         $name = $name.'.zip';
+    //     }else{
+    //         $response = $this->apiRequest('get', "files/download", $data);
+    //     }
         
 
-        return response()->streamDownload(function () use ($response) {
-            echo $response->getBody()->getContents();
-        }, $name, [
-            'Content-Type' => $response->getHeaderLine('Content-Type')
+    //     return response()->streamDownload(function () use ($response) {
+    //         echo $response->getBody()->getContents();
+    //     }, $name, [
+    //         'Content-Type' => $response->getHeaderLine('Content-Type')
+    //     ]);
+    // }
+
+    public function download(Request $request)
+    {
+        $path = $request->input('path');
+        $name = $request->input('name');
+        $type = $request->input('type');
+
+        $data = [
+            'files' => $path,
+            'name'  => $name
+        ];
+
+        // 🔥 WAJIB: pakai RAW response (true)
+        if ($type == 'folder') {
+            $response = $this->apiRequest('get', "files/downloadFolder", $data, [], null, true);
+        } else {
+            $response = $this->apiRequest('get', "files/download", $data, [], null, true);
+        }
+
+        // 🔥 pastikan response object
+        if (!is_object($response)) {
+            dd("Response bukan object", $response);
+        }
+
+        $stream = $response->getBody();
+
+        // 🔥 ambil filename dari header API (DINAMIS)
+        $disposition = $response->getHeaderLine('Content-Disposition');
+
+        $downloadName = $name; // fallback
+
+        if ($disposition && preg_match('/filename="?([^"]+)"?/', $disposition, $matches)) {
+            $downloadName = $matches[1];
+        } else {
+            // fallback manual
+            $downloadName = $type === 'folder'
+                ? $name . '.zip'
+                : basename($name);
+        }
+
+        return response()->streamDownload(function () use ($stream) {
+            while (!$stream->eof()) {
+                echo $stream->read(1024);
+            }
+        }, $downloadName, [
+            'Content-Type' => $response->getHeaderLine('Content-Type') ?: 'application/octet-stream'
         ]);
     }
 }
