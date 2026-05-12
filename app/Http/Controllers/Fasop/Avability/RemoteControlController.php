@@ -1,0 +1,50 @@
+<?php
+
+namespace App\Http\Controllers\Fasop\Avability;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use App\Services\ApiService;
+use App\Services\ApplicationService;
+use Carbon\Carbon;
+
+class RemoteControlController extends Controller
+{
+    protected $apiService;
+    protected $applicationService;
+    private $data;
+    public $userAccess;
+
+    public function __construct(ApiService $apiService, ApplicationService $applicationService)
+    {
+        $this->apiService = $apiService;
+        $this->applicationService = $applicationService;
+
+        // Initialize the data by calling the service method
+        $this->data = $this->applicationService->initializeData(request()->path());
+        $this->userAccess = $this->data->accesses;
+    }
+
+    private function apiRequest($method, $endpoint, $data = [])
+    {
+        $headers = ['Content-Type' => 'application/json'];
+        $accessToken = session()->get('access_token');
+        return $this->apiService->$method($endpoint, $data, $headers, $accessToken);
+    }
+
+    public function index()
+    {
+        $ref_region = $this->apiRequest('get', 'ref-region', $params = []);
+        $this->data->ref_region = $ref_region['data']['Rows'] ?? [];
+        return view('fasop.kinerja.avability.rc.index', ['data' => $this->data]);
+    }
+
+    public function read(Request $request)
+    {
+        $payload = $request->all();
+        // $response = $this->apiRequest('get', 'fasop/kinerja/rc', $payload);  
+        $response = $this->apiRequest('get', 'fasopkinrc', $payload);   
+        // print_r($response);   
+        return $response;
+    }
+}

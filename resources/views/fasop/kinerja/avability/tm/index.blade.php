@@ -32,12 +32,6 @@
                         <div class="row">
                             <div class="col-md-2">
                                 <div class="form-group">
-                                    <label for="startDate">Bulan</label>
-                                    <input type="month" id="startDate" class="form-control form-control-sm">
-                                </div>
-                            </div>
-                            <div class="col-md-2">
-                                <div class="form-group">
                                     <label>Region</label>
                                     <select class="form-control form-control-sm select2" id="filterRegion" style="width: 100%;">
                                         <option value="">--Pilih Region--</option>
@@ -49,45 +43,31 @@
                             </div> 
                             <div class="col-md-2">
                                 <div class="form-group">
-                                    <label>B1 Name</label>
-                                    <div class="input-group input-group-sm">
-                                        <input class="form-control form-control-sm input" id="filterLokasi"></input>
-                                    </div>
+                                    <label>Kinerja</label>
+                                    <select class="form-control form-control-sm select2" id="filterKinerja" style="width: 100%;">
+                                        <option value="">--Pilih Kinerja--</option>
+                                        <option value="harian">Harian</option>
+                                        <option value="bulanan">Bulanan</option>
+                                    </select>
+                                </div>
+                            </div> 
+                            <div class="col-md-2" id="start" style="display:none;">
+                                <div class="form-group">
+                                    <label for="startDate">Start Date</label>
+                                    <input type="date" id="startDate" class="form-control form-control-sm">
                                 </div>
                             </div>
-                            
-                            <div class="col-md-2">
+                        
+                            <div class="col-md-2" id="end" style="display:none;">
                                 <div class="form-group">
-                                    <label>B2 Name</label>
-                                    <div class="input-group input-group-sm">
-                                        <input class="form-control form-control-sm input" id="filterTegangan"></input>
-                                    </div>
+                                    <label for="endDate">End Date</label>
+                                    <input type="date" id="endDate" class="form-control form-control-sm">
                                 </div>
                             </div>
-                            
-                            <div class="col-md-2">
+                            <div class="col-md-2" id="bulan" style="display:none;">
                                 <div class="form-group">
-                                    <label>B3 Name</label>
-                                    <div class="input-group input-group-sm">
-                                        <input class="form-control form-control-sm input" id="filterBay"></input>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="col-md-2">
-                                <div class="form-group">
-                                    <label>Element</label>
-                                    <div class="input-group input-group-sm">
-                                        <input class="form-control form-control-sm input" id="filterElement"></input>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-2">
-                                <div class="form-group">
-                                    <label>Info</label>
-                                    <div class="input-group input-group-sm">
-                                        <input class="form-control form-control-sm input" id="filterInfo"></input>
-                                    </div>
+                                    <label for="filterBulan">Bulan</label>
+                                    <input type="month" id="filterBulan" class="form-control form-control-sm">
                                 </div>
                             </div>
                         </div>
@@ -99,6 +79,34 @@
                         <button id="resetFilters" class="btn btn-secondary btn-sm float-right mr-2">
                             <i class="fas fa-undo mr-1"></i> Reset
                         </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Tabel 1 -->
+            <div class="col-md-6 mb-3">
+                <div class="card">
+                    <div class="card-body p-2">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-sm text-center">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Jumlah Telemetering</th>
+                                        <th>Jumlah Telemetering Yang Tidak Akurat</th>
+                                        <th>Jumlah Prosentase Akurasi Telemetering (%)</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabel_rekap">
+                                    <!-- <tr>
+                                        <td>0</td>
+                                        <td>0</td>
+                                        <td>100</td>
+                                    </tr> -->
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -172,6 +180,35 @@
         var tableData = [];
         var dataAdapter; // Make dataAdapter global to access it later
 
+        //set tanggal
+        let thisday = new Date().toISOString().slice(0,10);
+        let yesterday = new Date();
+        yesterday.setDate(yesterday.getDate() - 1);
+        let daybefore = yesterday.toISOString().slice(0, 10);
+        let tgl = new Date().toISOString().slice(0,7);
+
+        $('#startDate').val(formatWIB(daybefore));
+        $('#endDate').val(thisday);
+        $('#filterBulan').val(formatWIB(tgl));
+        $('#filterRegion').val(0);
+
+        //show or hide tanggal
+        $('#filterKinerja').on('change', function () {
+            if ($(this).val() === 'harian') {
+                $('#start').show();
+                $('#end').show();
+                $('#bulan').hide();
+            } else if ($(this).val() === 'bulanan') {
+                $('#start').hide();
+                $('#end').hide();
+                $('#bulan').show();
+            }else{
+                $('#start').hide();
+                $('#end').hide();
+                $('#bulan').hide();
+            }
+        });
+
         function initializeGrid(filterParams = {}) {
             // CSRF Token setup
             $.ajaxSetup({
@@ -206,19 +243,30 @@
                     { name: 'down', type: 'string' },
                     { name: 'uptime', type: 'string' },
                     { name: 'downtime', type: 'string' },
-                    { name: 'normaltime', type: 'string' },
+                    { name: 'alltime', type: 'string' },
                     { name: 'faktor', type: 'string' },
                     { name: 'ava', type: 'string' },
                     { name: 'durasi', type: 'string' },
                 ],
-                url: '{{ route("fasop.kinerja.telemetering.read") }}',
+                url: '{{ route("fasop.avability.telemetering.read") }}',
                 cache: false,
                 data: filterParams,
-                root: 'Rows',
+                root: 'detail',
                 beforeprocessing: function(data) {
-                    if (data && data.data && data.data.Rows) {
-                        tableData = data.data.Rows;
-                        source.totalrecords = data.data.TotalRows;
+                    
+                    var data_rekap = data.payload.rekap;
+                    $('#tabel_rekap').append(`
+                        <tr>
+                            <td>${data_rekap.total_up}</td>
+                            <td>${data_rekap.total_down}</td>
+                            <td>${data_rekap.total_ava}</td>
+                        </tr>
+                    `);
+
+
+                    if (data && data.payload && data.payload.detail) {
+                        tableData = data.payload.detail;
+                        source.totalrecords = tableData.length;
                     } else {
                         console.error('Invalid data structure:', data);
                         tableData = [];
@@ -262,7 +310,7 @@
                     { text: 'Faktor Kinerja', datafield: 'faktor', width: 100 },
                     { text: 'Up', datafield: 'up', width: 100 },
                     { text: 'Down', datafield: 'down', width: 100 },
-                    { text: 'Normal Time', datafield: 'normaltime', width: 100 },
+                    { text: 'Normal Time', datafield: 'alltime', width: 100 },
                     { text: 'Up Time', datafield: 'uptime', width: 100 },
                     { text: 'Down Time', datafield: 'downtime', width: 100 },
                     { text: 'Ava(%)', datafield: 'ava', width: 100 },
@@ -287,19 +335,38 @@
             // Clear previous data
             dataAdapter.dataBind();
         }
-        
-        let tgl = new Date().toISOString().slice(0,7);
-        $('#startDate').val(tgl);
 
         function applyCustomFilters() {
+            if($('#filterKinerja').val()==='bulanan'){
+                var tgl = $('#filterBulan').val();
+                var mulai = tgl +'-01';
+
+                const [year, month] = tgl.split('-').map(Number);
+                const lastDate = new Date(year, month, 0);
+
+                const selesai =
+                    `${lastDate.getFullYear()}-${
+                        String(lastDate.getMonth() + 1).padStart(2, '0')
+                    }-${
+                        String(lastDate.getDate()).padStart(2, '0')
+                    }`;
+                var rekap='bulan';
+            }else{
+                var mulai = $('#startDate').val();
+                var selesai = $('#endDate').val();
+                var rekap = 'hari';
+            }
+            console.log(mulai);
             var filterParams = {
-                tanggal: $('#startDate').val(),
+                tmulai: mulai,
+                selesai: selesai,
+                rekap: rekap,
                 id_region: $('#filterRegion').val(),
-                b1_name: $('#filterLokasi').val(),
-                b2_name: $('#filterTegangan').val(),
-                b3_name: $('#filterBay').val(),
-                el_name: $('#filterElement').val(),
-                info_name: $('#filterInfo').val()
+                // b1_name: $('#filterLokasi').val(),
+                // b2_name: $('#filterTegangan').val(),
+                // b3_name: $('#filterBay').val(),
+                // el_name: $('#filterElement').val(),
+                // info_name: $('#filterInfo').val()
             };
             
             refreshGrid(filterParams);
@@ -313,8 +380,30 @@
 
         $(document).ready(function() {
             // Initialize grid first time
+            if($('#filterKinerja').val()==='bulanan'){
+                var tgl = $('#filterBulan').val();
+                var mulai = tgl +'-01';
+
+                const [year, month] = tgl.split('-').map(Number);
+                const lastDate = new Date(year, month, 0);
+
+                const selesai =
+                    `${lastDate.getFullYear()}-${
+                        String(lastDate.getMonth() + 1).padStart(2, '0')
+                    }-${
+                        String(lastDate.getDate()).padStart(2, '0')
+                    }`;
+                var rekap='bulan';
+            }else{
+                var mulai = $('#startDate').val();
+                var selesai = $('#endDate').val();
+                var rekap = 'hari';
+            }
+            
             var filterParams = {
-                tanggal: $('#startDate').val(),
+                mulai: mulai,
+                selesai: selesai,
+                rekap: rekap,
                 id_region: $('#filterRegion').val(),
                 b1_name: $('#filterLokasi').val(),
                 b2_name: $('#filterTegangan').val(),

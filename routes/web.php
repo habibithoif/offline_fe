@@ -41,6 +41,13 @@ use App\Http\Controllers\Fasop\Kinerja\RtuController as KinerjaRtuController;
 use App\Http\Controllers\Fasop\Kinerja\RemoteControlController as KinerjaRemoteControlController;
 use App\Http\Controllers\Fasop\Kinerja\TripController as KinerjaTripController;
 
+use App\Http\Controllers\Fasop\Avability\TelemeteringController as AVATMController;
+use App\Http\Controllers\Fasop\Avability\TelesignalController as AVATSController;
+use App\Http\Controllers\Fasop\Avability\MeterStationController as AVAMSController;
+use App\Http\Controllers\Fasop\Avability\RtuController as AVARTUController;
+use App\Http\Controllers\Fasop\Avability\RemoteControlController as AVARCController;
+// use App\Http\Controllers\Fasop\Kinerja\TripController as KinerjaTripController;
+
 
 use App\Http\Controllers\Dashboard\MonitoringrtuController;
 
@@ -264,6 +271,28 @@ Route::middleware([GlobalMiddleware::class])->group(function () {
 
             Route::get('/trip', [KinerjaTripController::class, 'index'])->name('fasop.kinerja.trip.index');
             Route::get('/trip/read', [KinerjaTripController::class, 'read'])->name('fasop.kinerja.trip.read');
+
+            Route::get('/ava-tm', [AVATMController::class, 'index'])->name('fasop.avability.telemetering.index');
+            Route::get('/ava-tm/read', [AVATMController::class, 'read'])->name('fasop.avability.telemetering.read');
+
+            Route::get('/ava-ts', [AVATSController::class, 'index'])->name('fasop.avability.telesignals.index');
+            Route::get('/ava-ts/read', [AVATSController::class, 'read'])->name('fasop.avability.telesignals.read');
+
+            Route::get('/ava-rtu', [AVARTUController::class, 'index'])->name('fasop.avability.rtu.index');
+            Route::get('/ava-rtu/read', [AVARTUController::class, 'read'])->name('fasop.avability.rtu.read');
+
+            Route::get('/ava-ms', [AVAMSController::class, 'index'])->name('fasop.avability.master-stations.index');
+            Route::get('/ava-ms/read', [AVAMSController::class, 'read'])->name('fasop.avability.master-stations.read');
+
+            Route::get('/ava-rc', [AVARCController::class, 'index'])->name('fasop.avability.remote-control.index');
+            Route::get('/ava-rc/read', [AVARCController::class, 'read'])->name('fasop.avability.remote-control.read');
+        });
+
+        Route::prefix('avability')->group(function () {
+            
+
+            // Route::get('/trip', [avabilityTripController::class, 'index'])->name('fasop.avability.trip.index');
+            // Route::get('/trip/read', [avabilityTripController::class, 'read'])->name('fasop.avability.trip.read');
         });
 
         Route::prefix('realtime')->group(function () {

@@ -47,7 +47,7 @@
                                     </select>
                                 </div>
                             </div> 
-                            <div class="col-md-2">
+                            <!-- <div class="col-md-2">
                                 <div class="form-group">
                                     <label>B1 Name</label>
                                     <div class="input-group input-group-sm">
@@ -89,7 +89,7 @@
                                         <input class="form-control form-control-sm input" id="filterInfo"></input>
                                     </div>
                                 </div>
-                            </div>
+                            </div> -->
                         </div>
                     </div>
                     <div class="card-footer">
@@ -104,12 +104,107 @@
             </div>
         </div>
 
+        <div class="row">
+            <!-- Tabel 1 -->
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-body p-2">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-sm text-center">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Jumlah Sukses RC</th>
+                                        <th>Jumlah Gagal RC</th>
+                                        <th>Performance (%)</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbl_rekap">
+                                    <!-- <tr>
+                                        <td>0</td>
+                                        <td>0</td>
+                                        <td>100</td>
+                                    </tr> -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabel 2 -->
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-body p-2">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-sm text-center">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>No</th>
+                                        <th>Keterangan</th>
+                                        <th>Jumlah RC</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabel_status_rc">
+                                    <tr>
+                                        <td>1</td>
+                                        <td>OPEN/CLOSE RC</td>
+                                        <td>0</td>
+                                    </tr>
+                                    <tr>
+                                        <td>2</td>
+                                        <td>DISTURBE RC</td>
+                                        <td>0</td>
+                                    </tr>
+                                    <tr>
+                                        <td>3</td>
+                                        <td>Jumlah Total RC</td>
+                                        <td>0</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabel 3 -->
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-body p-2">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-sm text-center">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>No</th>
+                                        <th>Keterangan</th>
+                                        <th>Jumlah NE</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabel_status_ne">
+                                    <tr>
+                                        <td>1</td>
+                                        <td>NE Belum ada filter</td>
+                                        <td>0</td>
+                                    </tr>
+                                    <tr>
+                                        <td>2</td>
+                                        <td>Disturbe yang muncul NE</td>
+                                        <td>0</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Main Grid Card -->
         <div class="row">
-            <div class="col-md-12">
+            <div class="col-md-6">
                 <div class="card shadow-sm rounded">
                     <div class="card-header bg-info text-white">
-                        <h3 class="card-title mb-0">KINERJA - TELEMETERING</h3>
+                        <h3 class="card-title mb-0">GAGAL REMOTE CONTROL</h3>
                         <div class="card-tools">
                             <button id="refreshButton" class="btn btn-default btn-sm" title="Refresh">
                                 <i class="fas fa-sync"></i>
@@ -131,12 +226,37 @@
                     </div>
                 </div>
             </div>
-        </div>        
-        <div class="row">
-            <div class="col-md-12">
+            <div class="col-md-6">
                 <div class="card shadow-sm rounded">
                     <div class="card-header bg-info text-white">
-                        <h3 class="card-title mb-0">DETAIL KINERJA - TELEMETERING</h3>
+                        <h3 class="card-title mb-0">REMOTE CONTROL DISTURBE KELUAR NE</h3>
+                        <div class="card-tools">
+                            <button id="refreshButton" class="btn btn-default btn-sm" title="Refresh">
+                                <i class="fas fa-sync"></i>
+                            </button>
+                            
+                            <!-- <button id="listViewButton" class="btn btn-default btn-sm" title="List View">
+                                <i class="fas fa-list"></i>
+                            </button>
+                            <div id="columnDropdown" style="display:none; position:absolute; right:0; z-index:99999;">
+                                <div id="columnListBox"></div>
+                            </div>  -->
+                            <button id="downloadButton" class="btn btn-default btn-sm" title="Download">
+                                <i class="fas fa-download"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body p-3">
+                        <div id="jqxGrid_disturbe" style="width: 100%;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card shadow-sm rounded">
+                    <div class="card-header bg-info text-white">
+                        <h3 class="card-title mb-0">EVENT REMOTE CONTROL</h3>
                         <div class="card-tools">
                             <button id="refreshDetailButton" class="btn btn-default btn-sm" title="Refresh">
                                 <i class="fas fa-sync"></i>
@@ -158,7 +278,32 @@
                     </div>
                 </div>
             </div>
-        </div>        
+            <div class="col-md-6">
+                <div class="card shadow-sm rounded">
+                    <div class="card-header bg-info text-white">
+                        <h3 class="card-title mb-0">EVENT REMOTE CONTROL</h3>
+                        <div class="card-tools">
+                            <button id="refreshDetailButton" class="btn btn-default btn-sm" title="Refresh">
+                                <i class="fas fa-sync"></i>
+                            </button>
+                            
+                            <!-- <button id="listViewDetailButton" class="btn btn-default btn-sm" title="List View">
+                                <i class="fas fa-list"></i>
+                            </button>
+                            <div id="columnDetailDropdown" style="display:none; position:absolute; right:0; z-index:99999;">
+                                <div id="columnListBoxDetail"></div>
+                            </div>  -->
+                            <button id="downloaddDetailButton" class="btn btn-default btn-sm" title="Download">
+                                <i class="fas fa-download"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body p-3">
+                        <div id="jqxGridDetail_DC" style="width: 100%;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>           
     </div>
 </section>
 
@@ -211,14 +356,27 @@
                     { name: 'ava', type: 'string' },
                     { name: 'durasi', type: 'string' },
                 ],
-                url: '{{ route("fasop.kinerja.telemetering.read") }}',
+                url: '{{ route("fasop.avability.remote-control.read") }}',
                 cache: false,
                 data: filterParams,
-                root: 'Rows',
+                root: 'detail_gagal',
                 beforeprocessing: function(data) {
-                    if (data && data.data && data.data.Rows) {
-                        tableData = data.data.Rows;
-                        source.totalrecords = data.data.TotalRows;
+                    // console.log(data.payload.rekap);
+                    $.each(data.payload.rekap, function(i, row){
+
+                        $('#tbl_rekap').append(`
+                            <tr>
+                                <td>${row.berhasil}</td>
+                                <td>${row.gagal}</td>
+                                <td>${row.ava}</td>
+                            </tr>
+                        `);
+
+                    });
+
+                    if (data && data.payload && data.payload.detail_gagal) {
+                        tableData = data.payload.detail_gagal;
+                        source.totalrecords = tableData.length;
                     } else {
                         console.error('Invalid data structure:', data);
                         tableData = [];
@@ -286,14 +444,31 @@
             
             // Clear previous data
             dataAdapter.dataBind();
+            
+            // Refresh the grid
+            // $("#jqxGrid").jqxGrid('updatebounddata');
         }
-        
+
         let tgl = new Date().toISOString().slice(0,7);
         $('#startDate').val(tgl);
-
+        
         function applyCustomFilters() {
+            var tgl = $('#startDate').val();
+            const [year, month] = tgl.split('-').map(Number);
+            var mulai = tgl +'-01';
+            const lastDate = new Date(year, month, 0);
+
+            const formatted =
+                `${lastDate.getFullYear()}-${
+                    String(lastDate.getMonth() + 1).padStart(2, '0')
+                }-${
+                    String(lastDate.getDate()).padStart(2, '0')
+                }`;
+
             var filterParams = {
-                tanggal: $('#startDate').val(),
+                mulai: mulai,
+                selesai: formatted,
+                rekap:'bulan',
                 id_region: $('#filterRegion').val(),
                 b1_name: $('#filterLokasi').val(),
                 b2_name: $('#filterTegangan').val(),
@@ -313,8 +488,22 @@
 
         $(document).ready(function() {
             // Initialize grid first time
+            var tgl = $('#startDate').val();
+            const [year, month] = tgl.split('-').map(Number);
+
+            const lastDate = new Date(year, month, 0);
+
+            const formatted =
+                `${lastDate.getFullYear()}-${
+                    String(lastDate.getMonth() + 1).padStart(2, '0')
+                }-${
+                    String(lastDate.getDate()).padStart(2, '0')
+                }`;
+
             var filterParams = {
-                tanggal: $('#startDate').val(),
+                mulai: tgl +'-01',
+                selesai: formatted,
+                rekap:'bulan',
                 id_region: $('#filterRegion').val(),
                 b1_name: $('#filterLokasi').val(),
                 b2_name: $('#filterTegangan').val(),
@@ -323,6 +512,183 @@
                 info_name: $('#filterInfo').val()
             };
             initializeGrid(filterParams);
+            // Initialize select2 controls
+            // $('.select2').select2();
+
+            // Set up event handlers
+            // $('#applyFilters').on('click', applyCustomFilters);
+            // $('#resetFilters').on('click', resetFilters);
+            // $('#refreshButton').on('click', function() {
+            //     refreshGrid();
+            // });
+
+            // Rest of your select2 initialization code...
+            // $('#filterLokasi').select2({
+            //     ajax: {
+            //         url: '{{ route("cpoint.findValueBy") }}',
+            //         dataType: 'json',
+            //         delay: 250,
+            //         data: function (params) {
+            //             return {
+            //                 keyword: params.term, 
+            //                 page: params.page || 1,
+            //                 field: 'path1'
+            //             };
+            //         },
+            //         processResults: function (data, params) {
+            //             params.page = params.page || 1;
+            //             const response = data.data.data;
+            //             return {
+            //                 results: response.map(function(item) {
+            //                     return {
+            //                         id: item, 
+            //                         text: item 
+            //                     };
+            //                 }),
+            //                 pagination: {
+            //                     more: (params.page * 10) < data.total  
+            //                 }
+            //             };
+            //         },
+            //         cache: true
+            //     },
+            //     allowClear: true,
+            //     placeholder: '--Pilih B1 Name--',
+            // });
+
+            // $('#filterTegangan').select2({
+            //     ajax: {
+            //         url: '{{ route("cpoint.findValueBy") }}',
+            //         dataType: 'json',
+            //         delay: 250,
+            //         data: function (params) {
+            //             return {
+            //                 keyword: params.term,  
+            //                 page: params.page || 1,
+            //                 field: 'path2' 
+            //             };
+            //         },
+            //         processResults: function (data, params) {
+            //             params.page = params.page || 1;
+            //             const response = data.data.data;
+            //             return {
+            //                 results: response.map(function(item) {
+            //                     return {
+            //                         id: item, 
+            //                         text: item 
+            //                     };
+            //                 }),
+            //                 pagination: {
+            //                     more: (params.page * 10) < data.total  
+            //                 }
+            //             };
+            //         },
+            //         cache: true
+            //     },
+            //     allowClear: true,
+            //     placeholder: '--Pilih B2 Name--'
+            // });
+
+            // $('#filterBay').select2({
+            //     ajax: {
+            //         url: '{{ route("cpoint.findValueBy") }}',
+            //         dataType: 'json',
+            //         delay: 250,
+            //         data: function (params) {
+            //             return {
+            //                 keyword: params.term,  
+            //                 page: params.page || 1,
+            //                 field: 'path3' 
+            //             };
+            //         },
+            //         processResults: function (data, params) {
+            //             params.page = params.page || 1;
+            //             const response = data.data.data;
+            //             return {
+            //                 results: response.map(function(item) {
+            //                     return {
+            //                         id: item, 
+            //                         text: item 
+            //                     };
+            //                 }),
+            //                 pagination: {
+            //                     more: (params.page * 10) < data.total  
+            //                 }
+            //             };
+            //         },
+            //         cache: true
+            //     },
+            //     allowClear: true,
+            //     placeholder: '--Pilih B3 Name--'
+            // });
+
+            // $('#filterElement').select2({
+            //     ajax: {
+            //         url: '{{ route("cpoint.findValueBy") }}',
+            //         dataType: 'json',
+            //         delay: 250,
+            //         data: function (params) {
+            //             return {
+            //                 keyword: params.term,  
+            //                 page: params.page || 1,
+            //                 field: 'path4' 
+            //             };
+            //         },
+            //         processResults: function (data, params) {
+            //             params.page = params.page || 1;
+            //             const response = data.data.data;
+            //             return {
+            //                 results: response.map(function(item) {
+            //                     return {
+            //                         id: item, 
+            //                         text: item 
+            //                     };
+            //                 }),
+            //                 pagination: {
+            //                     more: (params.page * 10) < data.total  
+            //                 }
+            //             };
+            //         },
+            //         cache: true
+            //     },
+            //     allowClear: true,
+            //     placeholder: '--Pilih Element--'
+            // });
+
+            // $('#filterInfo').select2({
+            //     ajax: {
+            //         url: '{{ route("cpoint.findValueBy") }}',
+            //         dataType: 'json',
+            //         delay: 250,
+            //         data: function (params) {
+            //             return {
+            //                 keyword: params.term,  
+            //                 page: params.page || 1,
+            //                 field: 'path5' 
+            //             };
+            //         },
+            //         processResults: function (data, params) {
+            //             params.page = params.page || 1;
+            //             const response = data.data.data;
+            //             return {
+            //                 results: response.map(function(item) {
+            //                     return {
+            //                         id: item, 
+            //                         text: item 
+            //                     };
+            //                 }),
+            //                 pagination: {
+            //                     more: (params.page * 10) < data.total  
+            //                 }
+            //             };
+            //         },
+            //         cache: true
+            //     },
+            //     allowClear: true,
+            //     placeholder: '--Pilih Element--'
+            // });
+
+            
         });
 
         // Apply filters button
@@ -337,29 +703,23 @@
         
         // Refresh button functionality
         $('#refreshButton').on('click', function() {
-            $("#jqxGrid").jqxGrid('clearselection');
             $("#jqxGrid").jqxGrid('updatebounddata');
         });
         
         // Export to Excel
         $('#downloadButton').on('click', function() {
-            exportGridAll('#jqxGrid','kinerja-telemetering','csv');
+            // $("#jqxGrid").jqxGrid('exportdata', 'xls', 'TelemetryData');
+            // $.ajaxSetup({
+            //     headers: {
+            //         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            //     }
+            // });
+            // $("#jqxGrid").jqxGrid('exportdata', 'xls', 'TelemetryData', true, null, true, '/export/save-file');
+            exportGridAll('#jqxGrid','kinerja-rc','csv');
 
         });
-        function getLastDateFromYYYYMM(str) {
-            const [year, month] = str.split('-').map(Number);
-            const lastDate = new Date(year, month, 0);
 
-            return lastDate.toISOString().slice(0, 10);
-        }
         $("#jqxGrid").on('rowselect', function (event) {
-            var tgl1 = $('#startDate').val();
-            var tanggal1 = tgl1 +'-01';
-            // function getLastDayFromYYYYMM(str) {
-            //     const [year, month] = str.split('-').map(Number);
-            //     return new Date(year, month, 0).getDate();
-            // }
-            var tanggal2  = getLastDateFromYYYYMM(tgl1);
             var selectedRowData = event.args.row;
             var detailParams = {   "b1_nameoperator" : "and",
                                     "filtervalue0" : selectedRowData.b1_name,
@@ -386,9 +746,7 @@
                                     "filtercondition4" : "EQUAL",
                                     "filteroperator4" : 1,
                                     "filterdatafield4" : "a.info_name",
-                                    "filterscount" : 5,
-                                    "tanggal1": tanggal1,
-                                    "tanggal2": tanggal2,
+                                    "filterscount" : 5
                             };
            initializeGridDetail(detailParams);
         });
@@ -401,8 +759,7 @@
                 }
             });
 
-            // Create data source
-            var sourceDetail = {
+            var source = {
                 datatype: "json",
                 datafields: [
                     { name: 'id', type: 'string' },
@@ -422,59 +779,62 @@
                     { name: 'kinerja', type: 'string' },
                     { name: 'rtu_datetime', type: 'string' },
                     { name: 'system_datetime', type: 'string' },
+                    { name: 'rtu_datetime_2', type: 'string' },
+                    { name: 'system_datetime_2', type: 'string' },
+                    { name: 'kesimpulan', type: 'string' },
                     { name: 'durasi', type: 'string' },
                 ],
-                url: '{{ route("fasop.histories.telemetering.read") }}',
+                url: '{{ route("fasop.histories.remote-control.read") }}',
                 cache: false,
                 data: filterParams,
                 root: 'Rows',
                 beforeprocessing: function(data) {
                     if (data && data.data && data.data.Rows) {
                         tableData = data.data.Rows;
-                        sourceDetail.totalrecords = data.data.TotalRows;
+                        source.totalrecords = data.data.TotalRows;
                     } else {
                         console.error('Invalid data structure:', data);
                         tableData = [];
-                        sourceDetail.totalrecords = 0;
+                        source.totalrecords = 0;
                     }
                 }
             };
 
-            // Create data adapter
-            dataAdapterDetail = new $.jqx.dataAdapter(sourceDetail);
+            dataAdapter = new $.jqx.dataAdapter(source);
 
-            // Initialize grid
-            $("#jqxGridDetail").jqxGrid({
+            $("#jqxGrid").jqxGrid({
                 width: '100%',
-                source: dataAdapterDetail,
+                source: dataAdapter,
                 pageable: true,
                 virtualmode: true,
                 autorowheight: true,
                 autoheight: false,
                 showtoolbar: false,
                 rendergridrows: function() {
-                    return dataAdapterDetail.records;
+                    return dataAdapter.records;
                 },
                 columns: [
                     { text: 'No', width: 50, cellsalign: 'center', align: 'center',
-                        cellsrenderer: function (row) {
-                            return "<div style='padding: 5px;'>" + (row + 1) + "</div>";
-                        }
+                      cellsrenderer: function (row) {
+                          return "<div style='padding: 5px;'>" + (row + 1) + "</div>";
+                      }
                     },
                     { text: 'Region', datafield: 'nama_region', width: 150 },
                     { text: 'B1 Name', datafield: 'b1_name', width: 150 },
                     { text: 'B2 Name', datafield: 'b2_name', width: 100 },
                     { text: 'B3 Name', datafield: 'b3_name', width: 150 },
                     { text: 'Element Name', datafield: 'el_name', width: 150 },
-                    { text: 'Info Name', datafield: 'info_name', width: 100 },
-                    { text: 'B1 Text', datafield: 'b1_text', width:150 },
+                    { text: 'Info Name', datafield: 'Info_name', width: 100 },
+                    { text: 'B1 Text', datafield: 'b1_text', width:200 },
                     { text: 'B2 Text', datafield: 'b2_text', width: 100 },
                     { text: 'B3 Text', datafield: 'b3_text', width: 150 },
-                    { text: 'Element Text', datafield: 'el_text', width: 150 },
-                    { text: 'Info Text', datafield: 'info_text', width: 100 },
-                    { text: 'Datetime RTU', datafield: 'rtu_datetime', width: 200 },
-                    { text: 'Datetime Sistem', datafield: 'system_datetime', width: 200 },
-                    { text: 'Status', datafield: 'status', width: 200 },
+                    { text: 'Element Text', datafield: 'el_text', width: 100 },
+                    { text: 'Info Text', datafield: 'Info_text', width: 100 },
+                    { text: 'Dateime RTU', datafield: 'rtu_datetime', width: 200,columngroup: 'eksekusi' },
+                    { text: 'Eksekusi', datafield: 'status', width: 100,columngroup: 'eksekusi' },
+                    { text: 'Dateime RTU', datafield: 'rtu_datetime_2', width: 200,columngroup: 'respons' },
+                    { text: 'Response', datafield: 'status_2', width: 100,columngroup: 'respons' },
+                    { text: 'Kesimpulan', datafield: 'kesimpulan', width: 100 },
                 ],
                 pagermode: 'default',
                 pagesize: 20,
@@ -483,7 +843,11 @@
                 filterable: true,
                 showfilterrow: true,
                 filtermode: 'excel',
-                theme: 'material'
+                theme: 'material',
+                columngroups: [
+                    { text: 'Eksekusi', name: 'eksekusi', align:'center' },
+                    { text: 'Response', name: 'respons', align:'center' }
+                ],
             });
         }
 
@@ -498,7 +862,6 @@
             exportGridAll('#jqxGridDetail','Detail-kinerja-telemetering','csv');
 
         });
-
         // columns = $("#jqxGrid").jqxGrid('columns');
         
         // // Init jqxListBox

@@ -5,15 +5,15 @@
 <x-content-header 
     :title="$data->page['name']" 
     :breadcrumbs="[
-        ['label' => 'Home', 'url' => '#'],
-        ['label' => 'Opsis', 'url' => '#'],
+        ['label' => 'Home', 'url' => '/dashboard/monitoringrtu'],
+        ['label' => 'FASOP', 'url' => '#'],
+        ['label' => 'Kinerja', 'url' => '#'],
         ['label' => $data->page['name'], 'url' => '#']
     ]" 
 />
 
 <section class="content">
     <div class="container-fluid">
-        <!-- Filter Card -->
         <div class="row mb-3">
             <div class="col-md-12">
                 <div class="card card-outline card-primary">
@@ -31,42 +31,6 @@
                         <div class="row">
                             <div class="col-md-2">
                                 <div class="form-group">
-                                    <label for="startDate">Start Date</label>
-                                    <input type="datetime-local" id="startDate" class="form-control form-control-sm">
-                                </div>
-                            </div>
-                        
-                            <!-- End Date -->
-                            <div class="col-md-2">
-                                <div class="form-group">
-                                    <label for="endDate">End Date</label>
-                                    <input type="datetime-local" id="endDate" class="form-control form-control-sm">
-                                </div>
-                            </div>
-                            <!-- <div class="col-md-2">
-                                <div class="form-group">
-                                    <label>Tipe Point</label>
-                                    <select class="form-control form-control-sm select2" id="filterTipePoint" style="width: 100%;">
-                                        <option value="">--Pilih Tipe Point--</option>
-                                        @foreach ($data->point_types as $item)
-                                            <option value="{{ $item['id'] }}">{{ $item['name'] }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-2">
-                                <div class="form-group">
-                                    <label>Durasi</label>
-                                    <select class="form-control form-control-sm select2" id="filterDurasi" style="width: 100%;">
-                                        <option value="">--Pilih Durasi--</option>
-                                        <option value="2">2 Jam</option>
-                                        <option value="4">4 Jam</option>
-                                        <option value="6">6 Jam</option>
-                                    </select>
-                                </div>
-                            </div> -->
-                            <div class="col-md-2">
-                                <div class="form-group">
                                     <label>Region</label>
                                     <select class="form-control form-control-sm select2" id="filterRegion" style="width: 100%;">
                                         <option value="">--Pilih Region--</option>
@@ -78,45 +42,31 @@
                             </div> 
                             <div class="col-md-2">
                                 <div class="form-group">
-                                    <label>B1 Name</label>
-                                    <div class="input-group input-group-sm">
-                                        <input class="form-control form-control-sm input" id="filterLokasi"></input>
-                                    </div>
+                                    <label>Kinerja</label>
+                                    <select class="form-control form-control-sm select2" id="filterKinerja" style="width: 100%;">
+                                        <option value="">--Pilih Kinerja--</option>
+                                        <option value="harian">Harian</option>
+                                        <option value="bulanan">Bulanan</option>
+                                    </select>
+                                </div>
+                            </div> 
+                            <div class="col-md-2" id="start" style="display:none;">
+                                <div class="form-group">
+                                    <label for="startDate">Start Date</label>
+                                    <input type="date" id="startDate" class="form-control form-control-sm">
                                 </div>
                             </div>
-                            
-                            <div class="col-md-2">
+                        
+                            <div class="col-md-2" id="end" style="display:none;">
                                 <div class="form-group">
-                                    <label>B2 Name</label>
-                                    <div class="input-group input-group-sm">
-                                        <input class="form-control form-control-sm input" id="filterTegangan"></input>
-                                    </div>
+                                    <label for="endDate">End Date</label>
+                                    <input type="date" id="endDate" class="form-control form-control-sm">
                                 </div>
                             </div>
-                            
-                            <div class="col-md-2">
+                            <div class="col-md-2" id="bulan" style="display:none;">
                                 <div class="form-group">
-                                    <label>B3 Name</label>
-                                    <div class="input-group input-group-sm">
-                                        <input class="form-control form-control-sm input" id="filterBay"></input>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="col-md-2">
-                                <div class="form-group">
-                                    <label>Element</label>
-                                    <div class="input-group input-group-sm">
-                                        <input class="form-control form-control-sm input" id="filterElement"></input>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-2">
-                                <div class="form-group">
-                                    <label>Info</label>
-                                    <div class="input-group input-group-sm">
-                                        <input class="form-control form-control-sm input" id="filterInfo"></input>
-                                    </div>
+                                    <label for="filterBulan">Bulan</label>
+                                    <input type="month" id="filterBulan" class="form-control form-control-sm">
                                 </div>
                             </div>
                         </div>
@@ -138,14 +88,18 @@
             <div class="col-md-12">
                 <div class="card shadow-sm rounded">
                     <div class="card-header bg-info text-white">
-                        <h3 class="card-title mb-0">OPSIS - TELEMETERING 30 MENIT</h3>
+                        <h3 class="card-title mb-0">KINERJA - RTU</h3>
                         <div class="card-tools">
                             <button id="refreshButton" class="btn btn-default btn-sm" title="Refresh">
                                 <i class="fas fa-sync"></i>
                             </button>
+                            
                             <!-- <button id="listViewButton" class="btn btn-default btn-sm" title="List View">
                                 <i class="fas fa-list"></i>
-                            </button> -->
+                            </button>
+                            <div id="columnDropdown" style="display:none; position:absolute; right:0; z-index:99999;">
+                                <div id="columnListBox"></div>
+                            </div>  -->
                             <button id="downloadButton" class="btn btn-default btn-sm" title="Download">
                                 <i class="fas fa-download"></i>
                             </button>
@@ -153,6 +107,33 @@
                     </div>
                     <div class="card-body p-3">
                         <div id="jqxGrid" style="width: 100%;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card shadow-sm rounded">
+                    <div class="card-header bg-info text-white">
+                        <h3 class="card-title mb-0">DETAIL KINERJA - RTU</h3>
+                        <div class="card-tools">
+                            <button id="refreshDetailButton" class="btn btn-default btn-sm" title="Refresh">
+                                <i class="fas fa-sync"></i>
+                            </button>
+                            
+                            <!-- <button id="listViewDetailButton" class="btn btn-default btn-sm" title="List View">
+                                <i class="fas fa-list"></i>
+                            </button>
+                            <div id="columnDetailDropdown" style="display:none; position:absolute; right:0; z-index:99999;">
+                                <div id="columnListBoxDetail"></div>
+                            </div>  -->
+                            <button id="downloaddDetailButton" class="btn btn-default btn-sm" title="Download">
+                                <i class="fas fa-download"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body p-3">
+                        <div id="jqxGridDetail" style="width: 100%;"></div>
                     </div>
                 </div>
             </div>
@@ -170,6 +151,35 @@
         var tableData = [];
         var dataAdapter; // Make dataAdapter global to access it later
 
+        //set tanggal
+        let thisday = new Date().toISOString().slice(0,10);
+        let yesterday = new Date();
+        yesterday.setDate(yesterday.getDate() - 1);
+        let daybefore = yesterday.toISOString().slice(0, 10);
+        let tgl = new Date().toISOString().slice(0,7);
+
+        $('#startDate').val(formatWIB(daybefore));
+        $('#endDate').val(thisday);
+        $('#filterBulan').val(formatWIB(tgl));
+        $('#filterRegion').val(0);
+
+        //show or hide tanggal
+        $('#filterKinerja').on('change', function () {
+            if ($(this).val() === 'harian') {
+                $('#start').show();
+                $('#end').show();
+                $('#bulan').hide();
+            } else if ($(this).val() === 'bulanan') {
+                $('#start').hide();
+                $('#end').hide();
+                $('#bulan').show();
+            }else{
+                $('#start').hide();
+                $('#end').hide();
+                $('#bulan').hide();
+            }
+        });
+
         function initializeGrid(filterParams = {}) {
             // CSRF Token setup
             $.ajaxSetup({
@@ -178,6 +188,7 @@
                 }
             });
 
+            // Create data source
             var source = {
                 datatype: "json",
                 datafields: [
@@ -194,28 +205,21 @@
                     { name: 'b3_text', type: 'string' },
                     { name: 'el_text', type: 'string' },
                     { name: 'info_text', type: 'string' },
-                    { name: 'datum', type: 'string' },
-                    { name: 'value', type: 'string' },
+                    { name: 'status', type: 'string' },
+                    { name: 'kinerja', type: 'string' },
                     { name: 'rtu_datetime', type: 'string' },
                     { name: 'system_datetime', type: 'string' },
-                    { name: 'quality_blocked', type: 'string' },
-                    { name: 'quality_blocked_calculated', type: 'string' },
-                    { name: 'quality_blocked_substituted', type: 'string' },
-                    { name: 'quality_blocked_se_replaced', type: 'string' },
-                    { name: 'quality_exinvalid', type: 'string' },
-                    { name: 'quality_exist', type: 'string' },
-                    { name: 'quality_ext_blocked_se_replaced', type: 'string' },
-                    { name: 'quality_ext_se_replaced', type: 'string' },
-                    { name: 'quality_external_blocked', type: 'string' },
-                    { name: 'quality_external_notrenew', type: 'string' },
-                    { name: 'quality_inconsist', type: 'string' },
-                    { name: 'quality_invalid', type: 'string' },
-                    { name: 'quality_novalue', type: 'string' },
-                    { name: 'quality_notexist', type: 'string' },
-                    { name: 'quality_notrenew', type: 'string' },
-                    { name: 'quality_se_replaced', type: 'string' },
+                    { name: 'status', type: 'string' },
+                    { name: 'up', type: 'string' },
+                    { name: 'down', type: 'string' },
+                    { name: 'uptime', type: 'string' },
+                    { name: 'downtime', type: 'string' },
+                    { name: 'normaltime', type: 'string' },
+                    { name: 'faktor', type: 'string' },
+                    { name: 'ava', type: 'string' },
+                    { name: 'durasi', type: 'string' },
                 ],
-                url: '{{ route("opsis.tm-30m.read") }}',
+                url: '{{ route("fasop.kinerja.rtu.read") }}',
                 cache: false,
                 data: filterParams,
                 root: 'Rows',
@@ -231,8 +235,10 @@
                 }
             };
 
+            // Create data adapter
             dataAdapter = new $.jqx.dataAdapter(source);
 
+            // Initialize grid
             $("#jqxGrid").jqxGrid({
                 width: '100%',
                 source: dataAdapter,
@@ -245,49 +251,30 @@
                     return dataAdapter.records;
                 },
                 columns: [
-                    { text: 'No', width: 50, cellsalign: 'center', align: 'center',
-                      cellsrenderer: function (row) {
-                          return "<div style='padding: 5px;'>" + (row + 1) + "</div>";
-                      }
+                    { text: 'No', width: '3%', cellsalign: 'center', align: 'center',datafield: 'id',
+                    cellsrenderer: function (row) {
+                        return "<div style='padding: 5px;'>" + (row + 1) + "</div>";
+                    }
                     },
-                    { text: 'Region', datafield: 'nama_region', width: 150 },
-                    { text: 'Datetime', datafield: 'datum', width: 200 },
-                    { text: 'B1 Name', datafield: 'b1_name', width: 150 },
-                    { text: 'B2 Name', datafield: 'b2_name', width: 100 },
-                    { text: 'B3 Name', datafield: 'b3_name', width: 150 },
-                    { text: 'Element Name', datafield: 'el_name', width: 100 },
-                    { text: 'Info Name', datafield: 'Info_name', width: 100 },
-                    { text: 'B1 Text', datafield: 'b1_text', width:200 },
-                    { text: 'B2 Text', datafield: 'b2_text', width: 100 },
-                    { text: 'B3 Text', datafield: 'b3_text', width: 150 },
-                    { text: 'Element', datafield: 'el_text', width: 100 },
-                    { text: 'Info Text', datafield: 'Info_text', width: 100 },
-                    // { text: 'Datetime RTU', datafield: 'rtu_datetime', width: 200 },
-                    // { text: 'Datetime Sistem', datafield: 'system_datetime', width: 200 },
-                    { text: 'Value', datafield: 'value', width: 100 },
-                    // { text: 'Quality Blocked', datafield: 'quality_blocked', width: 100 },
-                    // { text: 'Quality Exist', datafield: 'quality_exist', width: 100 },
-                    // { text: 'Kesimpulan', datafield: 'kesimpulan', width: 100, cellsalign: 'center',
-                    //     cellsrenderer: function (row, columnfield, value, defaulthtml, columnproperties) {
-                    //         var color = '';
-                    //         if (value === 'VALID') {
-                    //             color = 'badge-success';
-                    //         } else if (value === 'INVALID') {
-                    //             color = 'badge-danger';
-                    //         }
-
-                    //         var container = $('<div style="display: flex; justify-content: center; gap: 5px; margin-top: 3px;"></div>');
-                            
-                    //         var badge = '<span class="badge ' + color + '">' + value + '</span>';
-                    //         container.append(badge);
-                            
-                    //         if (container.children().length === 0) {
-                    //             return '<div style="padding: 5px;">-</div>';
-                    //         }
-                            
-                    //         return container[0].outerHTML;
-                    //     }
-                    // },
+                    { text: 'Region', datafield: 'nama_region', width: '10%' },
+                    { text: 'GI', datafield: 'b1_name', width: '15%' },
+                    { text: 'Nama', datafield: 'b2_name', width: '15%' },
+                    { text: 'kV', datafield: 'b3_name', width: '5%' },
+                    { text: 'RTU', datafield: 'el_name', width: '10%' },
+                    { text: 'Durasi', datafield: 'Info_name', width: '15%' },
+                    { text: 'Kali Gangguan', datafield: 'b1_text', width:'10%' },
+                    { text: 'Performance (%)', datafield: 'b2_text', width: '15%' },
+                    // { text: 'B3 Text', datafield: 'b3_text', width: 150 },
+                    // { text: 'Element Text', datafield: 'el_text', width: 150 },
+                    // { text: 'Info Text', datafield: 'info_text', width: 100 },
+                    // { text: 'Faktor Kinerja', datafield: 'faktor', width: 100 },
+                    // { text: 'Up', datafield: 'up', width: 100 },
+                    // { text: 'Down', datafield: 'down', width: 100 },
+                    // { text: 'Normal Time', datafield: 'normaltime', width: 100 },
+                    // { text: 'Up Time', datafield: 'uptime', width: 100 },
+                    // { text: 'Down Time', datafield: 'downtime', width: 100 },
+                    // { text: 'Ava(%)', datafield: 'ava', width: 100 },
+                    // { text: 'Kinerja', datafield: 'kinerja', width: 100 }
                 ],
                 pagermode: 'default',
                 pagesize: 20,
@@ -312,18 +299,9 @@
             // $("#jqxGrid").jqxGrid('updatebounddata');
         }
 
-        let now = new Date();
-        let plus1Hour = new Date(now.getTime() + 60 * 60 * 1000);
-
-        $('#startDate').val(formatWIB(now));
-        $('#endDate').val(formatWIB(plus1Hour));
-
-        
-        
         function applyCustomFilters() {
             var filterParams = {
-                tanggal1: $('#startDate').val(),
-                tanggal2: $('#endDate').val(),
+                tanggal: $('#startDate').val(),
                 id_region: $('#filterRegion').val(),
                 b1_name: $('#filterLokasi').val(),
                 b2_name: $('#filterTegangan').val(),
@@ -337,45 +315,14 @@
 
         function resetFilters() {
             $('.select2').val('').trigger('change');
+            $('.input').val('').trigger('change');
             refreshGrid();
-        }
-
-        function validateDateRange() {
-
-            let startVal = $('#startDate').val();
-            let endVal   = $('#endDate').val();
-
-            if (!startVal || !endVal) {
-                alert('Start Date dan End Date wajib diisi');
-                return false;
-            }
-
-            let startDate = new Date(startVal);
-            let endDate   = new Date(endVal);
-
-            // 1. start tidak boleh lebih dari end
-            if (startDate > endDate) {
-                alert('Start Date tidak boleh lebih besar dari End Date');
-                return false;
-            }
-
-            // 2. range tidak boleh lebih dari 1 bulan (30 hari)
-            let diffTime = endDate - startDate;
-            let diffDays = diffTime / (1000 * 60 * 60 * 24);
-
-            if (diffDays > 31) {
-                alert('Range tanggal tidak boleh lebih dari 1 bulan');
-                return false;
-            }
-
-            return true;
         }
 
         $(document).ready(function() {
             // Initialize grid first time
             let filterParams = {
-                tanggal1: $('#startDate').val(),
-                tanggal2: $('#endDate').val(),
+                tanggal: $('#startDate').val(),
                 id_region: $('#filterRegion').val(),
                 b1_name: $('#filterLokasi').val(),
                 b2_name: $('#filterTegangan').val(),
@@ -384,7 +331,6 @@
                 info_name: $('#filterInfo').val()
             };
             initializeGrid(filterParams);
-            
             // Initialize select2 controls
             // $('.select2').select2();
 
@@ -560,11 +506,12 @@
             //     allowClear: true,
             //     placeholder: '--Pilih Element--'
             // });
+
+            
         });
 
         // Apply filters button
         $('#applyFilters').on('click', function() {
-            if (!validateDateRange()) return;
             applyCustomFilters();
         });
         
@@ -580,30 +527,187 @@
         
         // Export to Excel
         $('#downloadButton').on('click', function() {
-            
-            const baseHeaders = [
-                { field: 'datum', label: 'Tanggal' },
-                { field: 'b1_name', label: 'B1 Name' },
-                { field: 'b2_name', label: 'B2 Name' },
-                { field: 'b3_name', label: 'B3 Name' },
-                { field: 'el_name', label: 'Element Name' },
-                { field: 'info_name', label: 'Info Name' },
-                { field: 'b1_text', label: 'B1 Text' },
-                { field: 'b2_text', label: 'B2 Text' },
-                { field: 'b3_text', label: 'B3 Text' },
-                { field: 'el_text', label: 'Element Text' },
-                { field: 'info_text', label: 'Info Text' },
-                { field: 'value', label: 'Value' },
-            ];
-           exportGridAll('#jqxGrid','telemetering-30-menit','csv',baseHeaders);
-           
+            // $("#jqxGrid").jqxGrid('exportdata', 'xls', 'TelemetryData');
+            // $.ajaxSetup({
+            //     headers: {
+            //         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            //     }
+            // });
+            // $("#jqxGrid").jqxGrid('exportdata', 'xls', 'TelemetryData', true, null, true, '/export/save-file');
+            exportGridAll('#jqxGrid','kinerja-rtu','csv');
+
+        });
+
+        $("#jqxGrid").on('rowselect', function (event) {
+            var selectedRowData = event.args.row;
+            var detailParams = {   "b1_nameoperator" : "and",
+                                    "filtervalue0" : selectedRowData.b1_name,
+                                    "filtercondition0" : "EQUAL",
+                                    "filteroperator0" : 1,
+                                    "filterdatafield0" : "a.b1_name",
+                                    "b2_nameoperator" : "and",
+                                    "filtervalue1" : selectedRowData.b2_name,
+                                    "filtercondition1" : "EQUAL",
+                                    "filteroperator1" : 1,
+                                    "filterdatafield1" : "a.b2_name",
+                                    "b3_nameoperator" : "and",
+                                    "filtervalue2" : selectedRowData.b3_name,
+                                    "filtercondition2" : "EQUAL",
+                                    "filteroperator2" : 1,
+                                    "filterdatafield2" : "a.b3_name",
+                                    "el_nameoperator" : "and",
+                                    "filtervalue3" : selectedRowData.el_name,
+                                    "filtercondition3" : "EQUAL",
+                                    "filteroperator3" : 1,
+                                    "filterdatafield3" : "a.el_name",
+                                    "info_nameoperator" : "and",
+                                    "filtervalue4" : selectedRowData.info_name,
+                                    "filtercondition4" : "EQUAL",
+                                    "filteroperator4" : 1,
+                                    "filterdatafield4" : "a.info_name",
+                                    "filterscount" : 5
+                            };
+           initializeGridDetail(detailParams);
+        });
+
+        function initializeGridDetail(filterParams = {}) {
+            // CSRF Token setup
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+
+            var source = {
+                datatype: "json",
+                datafields: [
+                    { name: 'id', type: 'string' },
+                    { name: 'id_region', type: 'string' },
+                    { name: 'nama_region', type: 'string' },
+                    { name: 'b1_name', type: 'string' },
+                    { name: 'b2_name', type: 'string' },
+                    { name: 'b3_name', type: 'string' },
+                    { name: 'el_name', type: 'string' },
+                    { name: 'info_name', type: 'string' },
+                    { name: 'b1_text', type: 'string' },
+                    { name: 'b2_text', type: 'string' },
+                    { name: 'b3_text', type: 'string' },
+                    { name: 'el_text', type: 'string' },
+                    { name: 'info_text', type: 'string' },
+                    { name: 'status', type: 'string' },
+                    { name: 'kinerja', type: 'string' },
+                    { name: 'rtu_datetime', type: 'string' },
+                    { name: 'system_datetime', type: 'string' },
+                    { name: 'durasi', type: 'string' },
+                ],
+                url: '{{ route("fasop.histories.rtu.read") }}',
+                cache: false,
+                data: filterParams,
+                root: 'Rows',
+                beforeprocessing: function(data) {
+                    if (data && data.data && data.data.Rows) {
+                        tableData = data.data.Rows;
+                        source.totalrecords = data.data.TotalRows;
+                    } else {
+                        console.error('Invalid data structure:', data);
+                        tableData = [];
+                        source.totalrecords = 0;
+                    }
+                }
+            };
+
+            dataAdapter = new $.jqx.dataAdapter(source);
+
+            $("#jqxGrid").jqxGrid({
+                width: '100%',
+                source: dataAdapter,
+                pageable: true,
+                virtualmode: true,
+                autorowheight: true,
+                autoheight: false,
+                showtoolbar: false,
+                rendergridrows: function() {
+                    return dataAdapter.records;
+                },
+                columns: [
+                    { text: 'No', width: 50, cellsalign: 'center', align: 'center',
+                      cellsrenderer: function (row) {
+                          return "<div style='padding: 5px;'>" + (row + 1) + "</div>";
+                      }
+                    },
+                    { text: 'Region', datafield: 'nama_region', width: 150 },
+                    { text: 'B1 Name', datafield: 'b1_name', width: 150 },
+                    { text: 'B2 Name', datafield: 'b2_name', width: 100 },
+                    { text: 'B3 Name', datafield: 'b3_name', width: 150 },
+                    { text: 'Element Name', datafield: 'el_name', width: 150 },
+                    { text: 'Info Name', datafield: 'info_name', width: 100 },
+                    { text: 'B1 Text', datafield: 'b1_text', width:150 },
+                    { text: 'B2 Text', datafield: 'b2_text', width: 100 },
+                    { text: 'B3 Text', datafield: 'b3_text', width: 150 },
+                    { text: 'Element Text', datafield: 'el_text', width: 150 },
+                    { text: 'Info Text', datafield: 'info_text', width: 100 },
+                    { text: 'Datetime RTU', datafield: 'rtu_datetime', width: 200 },
+                    { text: 'Datetime Sistem', datafield: 'system_datetime', width: 200 },
+                    { text: 'Status', datafield: 'status', width: 200 },
+                ],
+                pagermode: 'default',
+                pagesize: 20,
+                pagesizeoptions: ['5', '10', '20', '50'],
+                sortable: true,
+                filterable: true,
+                showfilterrow: true,
+                filtermode: 'excel',
+                theme: 'material'
+            });
+        }
+
+        // Refresh button functionality
+        $('#refreshDetailButton').on('click', function() {
+            $("#jqxGridDetail").jqxGrid('clearselection');
+            $("#jqxGridDetail").jqxGrid('updatebounddata');
         });
         
-        // List view button (toggle view or implement custom view)
-        $('#listViewButton').on('click', function() {
-            // Implement custom view toggle here
-            console.log("List view toggle clicked");
+        // Export to Excel
+        $('#downloadDetailButton').on('click', function() {
+            exportGridAll('#jqxGridDetail','Detail-kinerja-telemetering','csv');
+
         });
+        // columns = $("#jqxGrid").jqxGrid('columns');
         
+        // // Init jqxListBox
+        // const listBoxData = columns.map(col => ({
+        //     label: col.text,
+        //     value: col.datafield,
+        //     checked: true
+        // }));
+
+        // $("#columnListBox").jqxListBox({
+        //     source: listBoxData,
+        //     checkboxes: true,
+        //     width: 200,
+        //     height: 250
+        // });
+
+        // // List view button (toggle view or implement custom view)
+        // $('#listViewButton').on('click', function() {
+        //     $('#columnDropdown').toggle();
+        // });
+
+        // // Hide when clicking outside
+        // $(document).on('click', function (e) {
+        //     if (!$(e.target).closest('#listViewButton, #columnDropdown').length) {
+        //         $('#columnDropdown').hide();
+        //     }
+        // });
+        
+        // // Column show/hide on check/uncheck
+        // $('#columnListBox').on('checkChange', function (event) {
+        //     const item = event.args.item;
+        //     if (item.checked) {
+        //         $("#jqxGrid").jqxGrid('showcolumn', item.value);
+        //     } else {
+        //         $("#jqxGrid").jqxGrid('hidecolumn', item.value);
+        //     }
+        // });
     </script>
 @endpush

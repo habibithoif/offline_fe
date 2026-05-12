@@ -39,7 +39,7 @@
 // }
 
 function exportGridAll(gridId, filename='tm', type='xlsx', headers=null, formData=null) {
-
+    $('#modal-loading').fadeIn('fast');
     const grid = $(gridId);
     const source = grid.jqxGrid('source');
 
@@ -114,7 +114,7 @@ function exportGridAll(gridId, filename='tm', type='xlsx', headers=null, formDat
         XLSX.utils.book_append_sheet(wb, ws, "data");
 
         XLSX.writeFile(wb, `${filename}.${type}`);
-
+        $('#modal-loading').fadeOut('fast');
         console.timeEnd('excel');
 
     }).catch(err => {
