@@ -110,7 +110,8 @@
             $("#treeGrid").jqxTreeGrid({
                 width: '100%',
                 source: dataAdapter,
-
+                filterable: true,
+                filterMode: 'simple',
                 columns: [
                     {
                         text: 'Name',

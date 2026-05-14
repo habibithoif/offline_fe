@@ -562,8 +562,15 @@
             exportGridAll('#jqxGrid','kinerja-master-station','csv');
 
         });
-
+        function getlastdayofmonth(str){
+            const[year,month] = str.split('-').map(Number);
+            const lastdate = new Date(year,month,0);
+            return lastdate.toISOString().slice(0,10);
+        }
         $("#jqxGrid").on('rowselect', function (event) {
+            var tgl1 = $('#startDate').val();
+            var tanggal1 = tgl1+'-01T00:00:00';
+            var tanggal2 = getlastdayofmonth(tgl1)+'T23:59:59';
             var selectedRowData = event.args.row;
             var detailParams = {   "b1_nameoperator" : "and",
                                     "filtervalue0" : selectedRowData.b1_name,
@@ -590,7 +597,9 @@
                                     "filtercondition4" : "EQUAL",
                                     "filteroperator4" : 1,
                                     "filterdatafield4" : "a.info_name",
-                                    "filterscount" : 5
+                                    "filterscount" : 5,
+                                    "tanggal1" : tanggal1,
+                                    "tanggal2" : tanggal2
                             };
            initializeGridDetail(detailParams);
         });

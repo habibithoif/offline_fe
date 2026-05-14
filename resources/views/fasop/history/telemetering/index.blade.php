@@ -185,6 +185,7 @@
                 datafields: [
                     { name: 'id', type: 'string' },
                     { name: 'id_region', type: 'string' },
+                    { name: 'nim_set', type: 'string' },
                     { name: 'nama_region', type: 'string' },
                     { name: 'b1_name', type: 'string' },
                     { name: 'b2_name', type: 'string' },
@@ -240,6 +241,7 @@
                     }
                     },
                     { text: 'Region', datafield: 'nama_region', width: 150 },
+                    { text: 'Nimset', datafield: 'nim_set', width: 150 },
                     { text: 'B1 Name', datafield: 'b1_name', width: 150 },
                     { text: 'B2 Name', datafield: 'b2_name', width: 100 },
                     { text: 'B3 Name', datafield: 'b3_name', width: 150 },

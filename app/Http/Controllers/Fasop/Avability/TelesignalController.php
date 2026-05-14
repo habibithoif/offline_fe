@@ -42,7 +42,7 @@ class TelesignalController extends Controller
     public function read(Request $request)
     {
         $payload = $request->all();
-        $response = $this->apiRequest('get', 'fasop/kinerja/ts', $payload);        
+        $response = $this->apiRequest('get', 'fasopkinscada', $payload);        
         return $response;
     }
 }

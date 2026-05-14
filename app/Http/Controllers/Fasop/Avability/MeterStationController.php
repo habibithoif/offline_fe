@@ -42,7 +42,7 @@ class MeterStationController extends Controller
     public function read(Request $request)
     {
         $payload = $request->all();
-        $response = $this->apiRequest('get', 'fasop/kinerja/ms', $payload);
+        $response = $this->apiRequest('get', 'fasopkinscada', $payload);
         
         return $response;
     }

@@ -229,7 +229,7 @@
             <div class="col-md-6">
                 <div class="card shadow-sm rounded">
                     <div class="card-header bg-info text-white">
-                        <h3 class="card-title mb-0">REMOTE CONTROL DISTURBE KELUAR NE</h3>
+                        <h3 class="card-title mb-0">SUKSES REMOTE CONTROL</h3>
                         <div class="card-tools">
                             <button id="refreshButton" class="btn btn-default btn-sm" title="Refresh">
                                 <i class="fas fa-sync"></i>
@@ -247,12 +247,12 @@
                         </div>
                     </div>
                     <div class="card-body p-3">
-                        <div id="jqxGrid_disturbe" style="width: 100%;"></div>
+                        <div id="jqxGridDetail" style="width: 100%;"></div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="row">
+        <!-- <div class="row">
             <div class="col-md-6">
                 <div class="card shadow-sm rounded">
                     <div class="card-header bg-info text-white">
@@ -267,7 +267,7 @@
                             </button>
                             <div id="columnDetailDropdown" style="display:none; position:absolute; right:0; z-index:99999;">
                                 <div id="columnListBoxDetail"></div>
-                            </div>  -->
+                            </div>  
                             <button id="downloaddDetailButton" class="btn btn-default btn-sm" title="Download">
                                 <i class="fas fa-download"></i>
                             </button>
@@ -292,7 +292,7 @@
                             </button>
                             <div id="columnDetailDropdown" style="display:none; position:absolute; right:0; z-index:99999;">
                                 <div id="columnListBoxDetail"></div>
-                            </div>  -->
+                            </div>  
                             <button id="downloaddDetailButton" class="btn btn-default btn-sm" title="Download">
                                 <i class="fas fa-download"></i>
                             </button>
@@ -303,7 +303,7 @@
                     </div>
                 </div>
             </div>
-        </div>           
+        </div>            -->
     </div>
 </section>
 
@@ -317,7 +317,7 @@
         var tableData = [];
         var dataAdapter; // Make dataAdapter global to access it later
 
-        function initializeGrid(filterParams = {}) {
+        function initializeGrid() {
             // CSRF Token setup
             $.ajaxSetup({
                 headers: {
@@ -354,25 +354,32 @@
                     { name: 'normaltime', type: 'string' },
                     { name: 'faktor', type: 'string' },
                     { name: 'ava', type: 'string' },
-                    { name: 'durasi', type: 'string' },
+                    { name: 'detail_berhasil', type: 'array' },
+                    { name: 'detail_gagal', type: 'array' },
                 ],
-                url: '{{ route("fasop.avability.remote-control.read") }}',
                 cache: false,
-                data: filterParams,
                 root: 'detail_gagal',
                 beforeprocessing: function(data) {
-                    // console.log(data.payload.rekap);
-                    $.each(data.payload.rekap, function(i, row){
+                    const tbody = document.getElementById('tbl_rekap');
 
-                        $('#tbl_rekap').append(`
+                    // kosongkan isi tabel dulu
+                    tbody.innerHTML = '';
+
+                    let html = '';
+
+                    var data_rekap = data.payload.rekap;
+                    if(data_rekap.length != 0){
+                        html += `
                             <tr>
-                                <td>${row.berhasil}</td>
-                                <td>${row.gagal}</td>
-                                <td>${row.ava}</td>
+                                <td>${data_rekap.berhasil}</td>
+                                <td>${data_rekap.gagal}</td>
+                                <td>${data_rekap.ava}</td>
                             </tr>
-                        `);
-
-                    });
+                        `;
+                    }
+                    
+                    // replace isi baru
+                    tbody.innerHTML = html;
 
                     if (data && data.payload && data.payload.detail_gagal) {
                         tableData = data.payload.detail_gagal;
@@ -438,15 +445,15 @@
         }
 
         function refreshGrid(filterParams = {}) {
-            // Update the dataAdapter with new parameters
+            var url = '{{ route("fasop.avability.remote-control.read") }}';
+            dataAdapter._source.url= url;
             dataAdapter.data = filterParams;
             dataAdapter._source.data = filterParams;
-            
-            // Clear previous data
-            dataAdapter.dataBind();
-            
-            // Refresh the grid
-            // $("#jqxGrid").jqxGrid('updatebounddata');
+            $("#jqxGrid").jqxGrid('updatebounddata');
+            dataAdapterDetail.data = filterParams;
+            dataAdapterDetail._source.data = filterParams;
+            $("#jqxGridDetail").jqxGrid('updatebounddata');
+
         }
 
         let tgl = new Date().toISOString().slice(0,7);
@@ -469,12 +476,7 @@
                 mulai: mulai,
                 selesai: formatted,
                 rekap:'bulan',
-                id_region: $('#filterRegion').val(),
-                b1_name: $('#filterLokasi').val(),
-                b2_name: $('#filterTegangan').val(),
-                b3_name: $('#filterBay').val(),
-                el_name: $('#filterElement').val(),
-                info_name: $('#filterInfo').val()
+                region: $('#filterRegion').val()
             };
             
             refreshGrid(filterParams);
@@ -483,212 +485,14 @@
         function resetFilters() {
             $('.select2').val('').trigger('change');
             $('.input').val('').trigger('change');
-            refreshGrid();
+            applyCustomFilters();
         }
 
         $(document).ready(function() {
             // Initialize grid first time
-            var tgl = $('#startDate').val();
-            const [year, month] = tgl.split('-').map(Number);
-
-            const lastDate = new Date(year, month, 0);
-
-            const formatted =
-                `${lastDate.getFullYear()}-${
-                    String(lastDate.getMonth() + 1).padStart(2, '0')
-                }-${
-                    String(lastDate.getDate()).padStart(2, '0')
-                }`;
-
-            var filterParams = {
-                mulai: tgl +'-01',
-                selesai: formatted,
-                rekap:'bulan',
-                id_region: $('#filterRegion').val(),
-                b1_name: $('#filterLokasi').val(),
-                b2_name: $('#filterTegangan').val(),
-                b3_name: $('#filterBay').val(),
-                el_name: $('#filterElement').val(),
-                info_name: $('#filterInfo').val()
-            };
-            initializeGrid(filterParams);
-            // Initialize select2 controls
-            // $('.select2').select2();
-
-            // Set up event handlers
-            // $('#applyFilters').on('click', applyCustomFilters);
-            // $('#resetFilters').on('click', resetFilters);
-            // $('#refreshButton').on('click', function() {
-            //     refreshGrid();
-            // });
-
-            // Rest of your select2 initialization code...
-            // $('#filterLokasi').select2({
-            //     ajax: {
-            //         url: '{{ route("cpoint.findValueBy") }}',
-            //         dataType: 'json',
-            //         delay: 250,
-            //         data: function (params) {
-            //             return {
-            //                 keyword: params.term, 
-            //                 page: params.page || 1,
-            //                 field: 'path1'
-            //             };
-            //         },
-            //         processResults: function (data, params) {
-            //             params.page = params.page || 1;
-            //             const response = data.data.data;
-            //             return {
-            //                 results: response.map(function(item) {
-            //                     return {
-            //                         id: item, 
-            //                         text: item 
-            //                     };
-            //                 }),
-            //                 pagination: {
-            //                     more: (params.page * 10) < data.total  
-            //                 }
-            //             };
-            //         },
-            //         cache: true
-            //     },
-            //     allowClear: true,
-            //     placeholder: '--Pilih B1 Name--',
-            // });
-
-            // $('#filterTegangan').select2({
-            //     ajax: {
-            //         url: '{{ route("cpoint.findValueBy") }}',
-            //         dataType: 'json',
-            //         delay: 250,
-            //         data: function (params) {
-            //             return {
-            //                 keyword: params.term,  
-            //                 page: params.page || 1,
-            //                 field: 'path2' 
-            //             };
-            //         },
-            //         processResults: function (data, params) {
-            //             params.page = params.page || 1;
-            //             const response = data.data.data;
-            //             return {
-            //                 results: response.map(function(item) {
-            //                     return {
-            //                         id: item, 
-            //                         text: item 
-            //                     };
-            //                 }),
-            //                 pagination: {
-            //                     more: (params.page * 10) < data.total  
-            //                 }
-            //             };
-            //         },
-            //         cache: true
-            //     },
-            //     allowClear: true,
-            //     placeholder: '--Pilih B2 Name--'
-            // });
-
-            // $('#filterBay').select2({
-            //     ajax: {
-            //         url: '{{ route("cpoint.findValueBy") }}',
-            //         dataType: 'json',
-            //         delay: 250,
-            //         data: function (params) {
-            //             return {
-            //                 keyword: params.term,  
-            //                 page: params.page || 1,
-            //                 field: 'path3' 
-            //             };
-            //         },
-            //         processResults: function (data, params) {
-            //             params.page = params.page || 1;
-            //             const response = data.data.data;
-            //             return {
-            //                 results: response.map(function(item) {
-            //                     return {
-            //                         id: item, 
-            //                         text: item 
-            //                     };
-            //                 }),
-            //                 pagination: {
-            //                     more: (params.page * 10) < data.total  
-            //                 }
-            //             };
-            //         },
-            //         cache: true
-            //     },
-            //     allowClear: true,
-            //     placeholder: '--Pilih B3 Name--'
-            // });
-
-            // $('#filterElement').select2({
-            //     ajax: {
-            //         url: '{{ route("cpoint.findValueBy") }}',
-            //         dataType: 'json',
-            //         delay: 250,
-            //         data: function (params) {
-            //             return {
-            //                 keyword: params.term,  
-            //                 page: params.page || 1,
-            //                 field: 'path4' 
-            //             };
-            //         },
-            //         processResults: function (data, params) {
-            //             params.page = params.page || 1;
-            //             const response = data.data.data;
-            //             return {
-            //                 results: response.map(function(item) {
-            //                     return {
-            //                         id: item, 
-            //                         text: item 
-            //                     };
-            //                 }),
-            //                 pagination: {
-            //                     more: (params.page * 10) < data.total  
-            //                 }
-            //             };
-            //         },
-            //         cache: true
-            //     },
-            //     allowClear: true,
-            //     placeholder: '--Pilih Element--'
-            // });
-
-            // $('#filterInfo').select2({
-            //     ajax: {
-            //         url: '{{ route("cpoint.findValueBy") }}',
-            //         dataType: 'json',
-            //         delay: 250,
-            //         data: function (params) {
-            //             return {
-            //                 keyword: params.term,  
-            //                 page: params.page || 1,
-            //                 field: 'path5' 
-            //             };
-            //         },
-            //         processResults: function (data, params) {
-            //             params.page = params.page || 1;
-            //             const response = data.data.data;
-            //             return {
-            //                 results: response.map(function(item) {
-            //                     return {
-            //                         id: item, 
-            //                         text: item 
-            //                     };
-            //                 }),
-            //                 pagination: {
-            //                     more: (params.page * 10) < data.total  
-            //                 }
-            //             };
-            //         },
-            //         cache: true
-            //     },
-            //     allowClear: true,
-            //     placeholder: '--Pilih Element--'
-            // });
-
-            
+            initializeGrid();
+            initializeGridDetail();
+            applyCustomFilters();
         });
 
         // Apply filters button
@@ -708,59 +512,44 @@
         
         // Export to Excel
         $('#downloadButton').on('click', function() {
-            // $("#jqxGrid").jqxGrid('exportdata', 'xls', 'TelemetryData');
-            // $.ajaxSetup({
-            //     headers: {
-            //         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            //     }
-            // });
-            // $("#jqxGrid").jqxGrid('exportdata', 'xls', 'TelemetryData', true, null, true, '/export/save-file');
             exportGridAll('#jqxGrid','kinerja-rc','csv');
-
         });
 
-        $("#jqxGrid").on('rowselect', function (event) {
-            var selectedRowData = event.args.row;
-            var detailParams = {   "b1_nameoperator" : "and",
-                                    "filtervalue0" : selectedRowData.b1_name,
-                                    "filtercondition0" : "EQUAL",
-                                    "filteroperator0" : 1,
-                                    "filterdatafield0" : "a.b1_name",
-                                    "b2_nameoperator" : "and",
-                                    "filtervalue1" : selectedRowData.b2_name,
-                                    "filtercondition1" : "EQUAL",
-                                    "filteroperator1" : 1,
-                                    "filterdatafield1" : "a.b2_name",
-                                    "b3_nameoperator" : "and",
-                                    "filtervalue2" : selectedRowData.b3_name,
-                                    "filtercondition2" : "EQUAL",
-                                    "filteroperator2" : 1,
-                                    "filterdatafield2" : "a.b3_name",
-                                    "el_nameoperator" : "and",
-                                    "filtervalue3" : selectedRowData.el_name,
-                                    "filtercondition3" : "EQUAL",
-                                    "filteroperator3" : 1,
-                                    "filterdatafield3" : "a.el_name",
-                                    "info_nameoperator" : "and",
-                                    "filtervalue4" : selectedRowData.info_name,
-                                    "filtercondition4" : "EQUAL",
-                                    "filteroperator4" : 1,
-                                    "filterdatafield4" : "a.info_name",
-                                    "filterscount" : 5
-                            };
-           initializeGridDetail(detailParams);
-        });
+        // $("#jqxGrid").on('rowselect', function (event) {
+        //     var selectedRowData = event.args.row;
+        //     var detailParams = {   "b1_nameoperator" : "and",
+        //                             "filtervalue0" : selectedRowData.b1_name,
+        //                             "filtercondition0" : "EQUAL",
+        //                             "filteroperator0" : 1,
+        //                             "filterdatafield0" : "a.b1_name",
+        //                             "b2_nameoperator" : "and",
+        //                             "filtervalue1" : selectedRowData.b2_name,
+        //                             "filtercondition1" : "EQUAL",
+        //                             "filteroperator1" : 1,
+        //                             "filterdatafield1" : "a.b2_name",
+        //                             "b3_nameoperator" : "and",
+        //                             "filtervalue2" : selectedRowData.b3_name,
+        //                             "filtercondition2" : "EQUAL",
+        //                             "filteroperator2" : 1,
+        //                             "filterdatafield2" : "a.b3_name",
+        //                             "el_nameoperator" : "and",
+        //                             "filtervalue3" : selectedRowData.el_name,
+        //                             "filtercondition3" : "EQUAL",
+        //                             "filteroperator3" : 1,
+        //                             "filterdatafield3" : "a.el_name",
+        //                             "info_nameoperator" : "and",
+        //                             "filtervalue4" : selectedRowData.info_name,
+        //                             "filtercondition4" : "EQUAL",
+        //                             "filteroperator4" : 1,
+        //                             "filterdatafield4" : "a.info_name",
+        //                             "filterscount" : 5
+        //                     };
+        //    initializeGridDetail(detailParams);
+        // });
 
-        function initializeGridDetail(filterParams = {}) {
-            // CSRF Token setup
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
-
-            var source = {
-                datatype: "json",
+        function initializeGridDetail() {
+            var sourceDetail = {
+                datatype: "array",
                 datafields: [
                     { name: 'id', type: 'string' },
                     { name: 'id_region', type: 'string' },
@@ -784,34 +573,32 @@
                     { name: 'kesimpulan', type: 'string' },
                     { name: 'durasi', type: 'string' },
                 ],
-                url: '{{ route("fasop.histories.remote-control.read") }}',
                 cache: false,
-                data: filterParams,
-                root: 'Rows',
+                root: 'detail_gagal',
                 beforeprocessing: function(data) {
-                    if (data && data.data && data.data.Rows) {
-                        tableData = data.data.Rows;
-                        source.totalrecords = data.data.TotalRows;
+                    if (data) {
+                        tableData = data;
+                        sourceDetail.totalrecords = data.length;
                     } else {
                         console.error('Invalid data structure:', data);
                         tableData = [];
-                        source.totalrecords = 0;
+                        sourceDetail.totalrecords = 0;
                     }
                 }
             };
 
-            dataAdapter = new $.jqx.dataAdapter(source);
+            dataAdapterDetail = new $.jqx.dataAdapter(sourceDetail);
 
-            $("#jqxGrid").jqxGrid({
+            $("#jqxGridDetail").jqxGrid({
                 width: '100%',
-                source: dataAdapter,
+                source: dataAdapterDetail,
                 pageable: true,
                 virtualmode: true,
                 autorowheight: true,
                 autoheight: false,
                 showtoolbar: false,
                 rendergridrows: function() {
-                    return dataAdapter.records;
+                    return dataAdapterDetail.records;
                 },
                 columns: [
                     { text: 'No', width: 50, cellsalign: 'center', align: 'center',
@@ -862,42 +649,5 @@
             exportGridAll('#jqxGridDetail','Detail-kinerja-telemetering','csv');
 
         });
-        // columns = $("#jqxGrid").jqxGrid('columns');
-        
-        // // Init jqxListBox
-        // const listBoxData = columns.map(col => ({
-        //     label: col.text,
-        //     value: col.datafield,
-        //     checked: true
-        // }));
-
-        // $("#columnListBox").jqxListBox({
-        //     source: listBoxData,
-        //     checkboxes: true,
-        //     width: 200,
-        //     height: 250
-        // });
-
-        // // List view button (toggle view or implement custom view)
-        // $('#listViewButton').on('click', function() {
-        //     $('#columnDropdown').toggle();
-        // });
-
-        // // Hide when clicking outside
-        // $(document).on('click', function (e) {
-        //     if (!$(e.target).closest('#listViewButton, #columnDropdown').length) {
-        //         $('#columnDropdown').hide();
-        //     }
-        // });
-        
-        // // Column show/hide on check/uncheck
-        // $('#columnListBox').on('checkChange', function (event) {
-        //     const item = event.args.item;
-        //     if (item.checked) {
-        //         $("#jqxGrid").jqxGrid('showcolumn', item.value);
-        //     } else {
-        //         $("#jqxGrid").jqxGrid('hidecolumn', item.value);
-        //     }
-        // });
     </script>
 @endpush

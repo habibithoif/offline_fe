@@ -84,7 +84,7 @@
             </div>
         </div>
 
-        <div class="row">
+        <div class="row justify-content-center">
             <!-- Tabel 1 -->
             <div class="col-md-6 mb-3">
                 <div class="card">
@@ -156,7 +156,7 @@
                             <div id="columnDetailDropdown" style="display:none; position:absolute; right:0; z-index:99999;">
                                 <div id="columnListBoxDetail"></div>
                             </div>  -->
-                            <button id="downloaddDetailButton" class="btn btn-default btn-sm" title="Download">
+                            <button id="downloadDetailButton" class="btn btn-default btn-sm" title="Download">
                                 <i class="fas fa-download"></i>
                             </button>
                         </div>
@@ -209,7 +209,7 @@
             }
         });
 
-        function initializeGrid(filterParams = {}) {
+        function initializeGrid() {
             // CSRF Token setup
             $.ajaxSetup({
                 headers: {
@@ -246,24 +246,32 @@
                     { name: 'alltime', type: 'string' },
                     { name: 'faktor', type: 'string' },
                     { name: 'ava', type: 'string' },
-                    { name: 'durasi', type: 'string' },
+                    { name: 'event', type: 'array' },
                 ],
-                url: '{{ route("fasop.avability.telemetering.read") }}',
                 cache: false,
-                data: filterParams,
                 root: 'detail',
                 beforeprocessing: function(data) {
-                    
+                    const tbody = document.getElementById('tabel_rekap');
+
+                    // kosongkan isi tabel dulu
+                    tbody.innerHTML = '';
+
+                    let html = '';
+
                     var data_rekap = data.payload.rekap;
-                    $('#tabel_rekap').append(`
-                        <tr>
-                            <td>${data_rekap.total_up}</td>
-                            <td>${data_rekap.total_down}</td>
-                            <td>${data_rekap.total_ava}</td>
-                        </tr>
-                    `);
-
-
+                    if(data_rekap.length != 0){
+                        html += `
+                            <tr>
+                                <td>${data_rekap.total_up}</td>
+                                <td>${data_rekap.total_down}</td>
+                                <td>${data_rekap.total_ava}</td>
+                            </tr>
+                        `;
+                    }
+                    
+                    // replace isi baru
+                    tbody.innerHTML = html;
+                   
                     if (data && data.payload && data.payload.detail) {
                         tableData = data.payload.detail;
                         source.totalrecords = tableData.length;
@@ -292,9 +300,9 @@
                 },
                 columns: [
                     { text: 'No', width: 50, cellsalign: 'center', align: 'center',datafield: 'id',
-                    cellsrenderer: function (row) {
-                        return "<div style='padding: 5px;'>" + (row + 1) + "</div>";
-                    }
+                        cellsrenderer: function (row) {
+                            return "<div style='padding: 5px;'>" + (row + 1) + "</div>";
+                        }
                     },
                     { text: 'Region', datafield: 'nama_region', width: 150 },
                     { text: 'B1 Name', datafield: 'b1_name', width: 150 },
@@ -329,11 +337,14 @@
 
         function refreshGrid(filterParams = {}) {
             // Update the dataAdapter with new parameters
+            var url = '{{ route("fasop.avability.telemetering.read") }}';
+            dataAdapter._source.url= url;
             dataAdapter.data = filterParams;
             dataAdapter._source.data = filterParams;
             
             // Clear previous data
-            dataAdapter.dataBind();
+            // dataAdapter.dataBind();
+            $("#jqxGrid").jqxGrid('updatebounddata');
         }
 
         function applyCustomFilters() {
@@ -344,50 +355,7 @@
                 const [year, month] = tgl.split('-').map(Number);
                 const lastDate = new Date(year, month, 0);
 
-                const selesai =
-                    `${lastDate.getFullYear()}-${
-                        String(lastDate.getMonth() + 1).padStart(2, '0')
-                    }-${
-                        String(lastDate.getDate()).padStart(2, '0')
-                    }`;
-                var rekap='bulan';
-            }else{
-                var mulai = $('#startDate').val();
-                var selesai = $('#endDate').val();
-                var rekap = 'hari';
-            }
-            console.log(mulai);
-            var filterParams = {
-                tmulai: mulai,
-                selesai: selesai,
-                rekap: rekap,
-                id_region: $('#filterRegion').val(),
-                // b1_name: $('#filterLokasi').val(),
-                // b2_name: $('#filterTegangan').val(),
-                // b3_name: $('#filterBay').val(),
-                // el_name: $('#filterElement').val(),
-                // info_name: $('#filterInfo').val()
-            };
-            
-            refreshGrid(filterParams);
-        }
-
-        function resetFilters() {
-            $('.select2').val('').trigger('change');
-            $('.input').val('').trigger('change');
-            refreshGrid();
-        }
-
-        $(document).ready(function() {
-            // Initialize grid first time
-            if($('#filterKinerja').val()==='bulanan'){
-                var tgl = $('#filterBulan').val();
-                var mulai = tgl +'-01';
-
-                const [year, month] = tgl.split('-').map(Number);
-                const lastDate = new Date(year, month, 0);
-
-                const selesai =
+                var selesai =
                     `${lastDate.getFullYear()}-${
                         String(lastDate.getMonth() + 1).padStart(2, '0')
                     }-${
@@ -404,14 +372,31 @@
                 mulai: mulai,
                 selesai: selesai,
                 rekap: rekap,
-                id_region: $('#filterRegion').val(),
-                b1_name: $('#filterLokasi').val(),
-                b2_name: $('#filterTegangan').val(),
-                b3_name: $('#filterBay').val(),
-                el_name: $('#filterElement').val(),
-                info_name: $('#filterInfo').val()
+                region: $('#filterRegion').val(),
+                tbl: {
+                    "tbl_ref": "scd_ref_tm",
+                    "tbl_his": "scd_his_tm",
+                    "tbl_kin": "scd_kin_tm",
+                    "tbl_rtl_harian": "scd_tm_rtl_harian",
+                    "jenis_kinerja": "TM"
+                }
             };
-            initializeGrid(filterParams);
+            
+            refreshGrid(filterParams);
+        }
+
+        function resetFilters() {
+            $('.select2').val('').trigger('change');
+            $('.input').val('').trigger('change');
+            // refreshGrid();
+            applyCustomFilters();
+        }
+
+        $(document).ready(function() {
+            // Initialize grid first time
+            initializeGrid();
+            applyCustomFilters();
+            initializeGridDetail();
         });
 
         // Apply filters button
@@ -435,64 +420,11 @@
             exportGridAll('#jqxGrid','kinerja-telemetering','csv');
 
         });
-        function getLastDateFromYYYYMM(str) {
-            const [year, month] = str.split('-').map(Number);
-            const lastDate = new Date(year, month, 0);
 
-            return lastDate.toISOString().slice(0, 10);
-        }
-        $("#jqxGrid").on('rowselect', function (event) {
-            var tgl1 = $('#startDate').val();
-            var tanggal1 = tgl1 +'-01';
-            // function getLastDayFromYYYYMM(str) {
-            //     const [year, month] = str.split('-').map(Number);
-            //     return new Date(year, month, 0).getDate();
-            // }
-            var tanggal2  = getLastDateFromYYYYMM(tgl1);
-            var selectedRowData = event.args.row;
-            var detailParams = {   "b1_nameoperator" : "and",
-                                    "filtervalue0" : selectedRowData.b1_name,
-                                    "filtercondition0" : "EQUAL",
-                                    "filteroperator0" : 1,
-                                    "filterdatafield0" : "a.b1_name",
-                                    "b2_nameoperator" : "and",
-                                    "filtervalue1" : selectedRowData.b2_name,
-                                    "filtercondition1" : "EQUAL",
-                                    "filteroperator1" : 1,
-                                    "filterdatafield1" : "a.b2_name",
-                                    "b3_nameoperator" : "and",
-                                    "filtervalue2" : selectedRowData.b3_name,
-                                    "filtercondition2" : "EQUAL",
-                                    "filteroperator2" : 1,
-                                    "filterdatafield2" : "a.b3_name",
-                                    "el_nameoperator" : "and",
-                                    "filtervalue3" : selectedRowData.el_name,
-                                    "filtercondition3" : "EQUAL",
-                                    "filteroperator3" : 1,
-                                    "filterdatafield3" : "a.el_name",
-                                    "info_nameoperator" : "and",
-                                    "filtervalue4" : selectedRowData.info_name,
-                                    "filtercondition4" : "EQUAL",
-                                    "filteroperator4" : 1,
-                                    "filterdatafield4" : "a.info_name",
-                                    "filterscount" : 5,
-                                    "tanggal1": tanggal1,
-                                    "tanggal2": tanggal2,
-                            };
-           initializeGridDetail(detailParams);
-        });
-
-        function initializeGridDetail(filterParams = {}) {
-            // CSRF Token setup
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
-
+        function initializeGridDetail() {
             // Create data source
             var sourceDetail = {
-                datatype: "json",
+                datatype: "array",
                 datafields: [
                     { name: 'id', type: 'string' },
                     { name: 'id_region', type: 'string' },
@@ -513,14 +445,11 @@
                     { name: 'system_datetime', type: 'string' },
                     { name: 'durasi', type: 'string' },
                 ],
-                url: '{{ route("fasop.histories.telemetering.read") }}',
                 cache: false,
-                data: filterParams,
-                root: 'Rows',
                 beforeprocessing: function(data) {
-                    if (data && data.data && data.data.Rows) {
-                        tableData = data.data.Rows;
-                        sourceDetail.totalrecords = data.data.TotalRows;
+                    if (data) {
+                        tableData = data;
+                        sourceDetail.totalrecords = data.length;
                     } else {
                         console.error('Invalid data structure:', data);
                         tableData = [];
@@ -575,6 +504,17 @@
                 theme: 'material'
             });
         }
+        
+        $("#jqxGrid").on('rowselect', function (event) {
+            const row = event.args.row;
+
+            const detail = row.event;
+            dataAdapterDetail._source.data = detail;
+            // Clear previous data
+            // dataAdapterDetail.dataBind();
+            $("#jqxGridDetail").jqxGrid('updatebounddata');
+
+        });
 
         // Refresh button functionality
         $('#refreshDetailButton').on('click', function() {
@@ -584,46 +524,8 @@
         
         // Export to Excel
         $('#downloadDetailButton').on('click', function() {
-            exportGridAll('#jqxGridDetail','Detail-kinerja-telemetering','csv');
-
+            exportGridLocal('#jqxGridDetail','Detail-kinerja-telemetering','csv');
         });
 
-        // columns = $("#jqxGrid").jqxGrid('columns');
-        
-        // // Init jqxListBox
-        // const listBoxData = columns.map(col => ({
-        //     label: col.text,
-        //     value: col.datafield,
-        //     checked: true
-        // }));
-
-        // $("#columnListBox").jqxListBox({
-        //     source: listBoxData,
-        //     checkboxes: true,
-        //     width: 200,
-        //     height: 250
-        // });
-
-        // // List view button (toggle view or implement custom view)
-        // $('#listViewButton').on('click', function() {
-        //     $('#columnDropdown').toggle();
-        // });
-
-        // // Hide when clicking outside
-        // $(document).on('click', function (e) {
-        //     if (!$(e.target).closest('#listViewButton, #columnDropdown').length) {
-        //         $('#columnDropdown').hide();
-        //     }
-        // });
-        
-        // // Column show/hide on check/uncheck
-        // $('#columnListBox').on('checkChange', function (event) {
-        //     const item = event.args.item;
-        //     if (item.checked) {
-        //         $("#jqxGrid").jqxGrid('showcolumn', item.value);
-        //     } else {
-        //         $("#jqxGrid").jqxGrid('hidecolumn', item.value);
-        //     }
-        // });
     </script>
 @endpush

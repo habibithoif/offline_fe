@@ -172,7 +172,24 @@
         var tableData = [];
         var dataAdapter; // Make dataAdapter global to access it later
 
-        function initializeGrid(filterParams = {}) {
+        function secondsToDuration(seconds) {
+            seconds = Number(seconds);
+            const hari = Math.floor(seconds / 86400);
+            const jam = Math.floor((seconds % 86400) / 3600);
+            const menit = Math.floor((seconds % 3600) / 60);
+            const detik = seconds % 60;
+            return `${hari} Hari ${jam} Jam ${menit} Menit ${detik} Detik`;
+        }
+
+        function secondsToHours(seconds) {
+            const hours = Number(seconds) / 3600;
+            return `${hours.toLocaleString('id-ID', {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 3
+            })} Jam`;
+        }
+
+        function initializeGrid() {
             // CSRF Token setup
             $.ajaxSetup({
                 headers: {
@@ -209,21 +226,30 @@
                     { name: 'normaltime', type: 'string' },
                     { name: 'faktor', type: 'string' },
                     { name: 'ava', type: 'string' },
-                    { name: 'durasi', type: 'string' },
+                    { name: 'event', type: 'array' },
                 ],
-                url: '{{ route("fasop.kinerja.master-stations.read") }}',
                 cache: false,
-                data: filterParams,
-                root: 'Rows',
+                root: 'detail',
                 beforeprocessing: function(data) {
-                    if (data && data.data && data.data.Rows) {
-                        tableData = data.data.Rows;
-                        source.totalrecords = data.data.TotalRows;
+                    if (data && data.payload && data.payload.detail) {
+                        tableData = data.payload.detail;
+                        source.totalrecords = tableData.length;
                     } else {
                         console.error('Invalid data structure:', data);
                         tableData = [];
                         source.totalrecords = 0;
                     }
+                },
+                beforeLoadComplete: function(records) {
+                    return records.map(row => {
+                        return {
+                            ...row,
+                            tanggal:  $('#startDate').val(),
+                            time_seconds: row.downtime + " Detik",
+                            time_duration: secondsToDuration(row.downtime),
+                            time_hours: secondsToHours(row.downtime)
+                        };
+                    });
                 }
             };
 
@@ -249,26 +275,11 @@
                     // }
                     // },
                     { text: 'Region', datafield: 'nama_region', width: '15%' },
-                    { text: 'Server / Workstation', datafield: 'faktor', width: '20%' },
-                    { text: 'Waktu', datafield: 'b1_name', width: '10%' },
-                    { text: 'Jumlah Detik Down', datafield: 'b2_name', width: '20%' },
-                    { text: 'Jumlah Waktu Down', datafield: 'b3_name', width: '20%' },
-                    { text: 'Jumlah Down (JAM)', datafield: 'el_name', width: '15%' },
-                    // { text: 'Element', datafield: 'el_name', width: 100 },
-                    // { text: 'Info', datafield: 'Info_name', width: 100 },
-                    // { text: 'B1 Text', datafield: 'b1_text', width:150 },
-                    // { text: 'B2 Text', datafield: 'b2_text', width: 100 },
-                    // { text: 'B3 Text', datafield: 'b3_text', width: 150 },
-                    // { text: 'Element Text', datafield: 'el_text', width: 150 },
-                    // { text: 'Info Text', datafield: 'info_text', width: 100 },
-                    // { text: 'Faktor Kinerja', datafield: 'faktor', width: 100 },
-                    // { text: 'Up', datafield: 'up', width: 100 },
-                    // { text: 'Down', datafield: 'down', width: 100 },
-                    // { text: 'Normal Time', datafield: 'normaltime', width: 100 },
-                    // { text: 'Up Time', datafield: 'uptime', width: 100 },
-                    // { text: 'Down Time', datafield: 'downtime', width: 100 },
-                    // { text: 'Ava(%)', datafield: 'ava', width: 100 },
-                    // { text: 'Kinerja', datafield: 'kinerja', width: 100 }
+                    { text: 'Server / Workstation', datafield: 'b3_name', width: '20%' },
+                    { text: 'Waktu', datafield: 'tanggal', width: '10%' },
+                    { text: 'Jumlah Detik Down', datafield: 'time_seconds', width: '20%' },
+                    { text: 'Jumlah Waktu Down', datafield: 'time_duration', width: '20%' },
+                    { text: 'Jumlah Down (JAM)', datafield: 'time_hours', width: '15%' },
                 ],
                 pagermode: 'default',
                 pagesize: 20,
@@ -283,28 +294,43 @@
 
         function refreshGrid(filterParams = {}) {
             // Update the dataAdapter with new parameters
+            var url = '{{ route("fasop.avability.master-stations.read") }}';
+            dataAdapter._source.url= url;
             dataAdapter.data = filterParams;
             dataAdapter._source.data = filterParams;
-            
-            // Clear previous data
-            dataAdapter.dataBind();
-            
-            // Refresh the grid
-            // $("#jqxGrid").jqxGrid('updatebounddata');
+            $("#jqxGrid").jqxGrid('updatebounddata');
         }
 
         let tgl = new Date().toISOString().slice(0,7);
         $('#startDate').val(tgl);
 
         function applyCustomFilters() {
+            var tgl = $('#startDate').val();
+            var mulai = tgl +'-01';
+
+            const [year, month] = tgl.split('-').map(Number);
+            const lastDate = new Date(year, month, 0);
+
+            var selesai =
+                `${lastDate.getFullYear()}-${
+                    String(lastDate.getMonth() + 1).padStart(2, '0')
+                }-${
+                    String(lastDate.getDate()).padStart(2, '0')
+                }`;
+            var rekap='bulan';
+
             var filterParams = {
-                tanggal: $('#startDate').val(),
-                id_region: $('#filterRegion').val(),
-                b1_name: $('#filterLokasi').val(),
-                b2_name: $('#filterTegangan').val(),
-                b3_name: $('#filterBay').val(),
-                el_name: $('#filterElement').val(),
-                info_name: $('#filterInfo').val()
+                mulai: mulai,
+                selesai: selesai,
+                rekap: rekap,
+                region: $('#filterRegion').val(),
+                tbl: {
+                    "tbl_ref": "scd_ref_ms",
+                    "tbl_his": "scd_his_ms",
+                    "tbl_kin": "scd_kin_ms",
+                    "tbl_rtl_harian": "scd_ms_rtl_harian",
+                    "jenis_kinerja": "MS"
+                }
             };
             
             refreshGrid(filterParams);
@@ -314,197 +340,14 @@
             $('.select2').val('').trigger('change');
             $('.input').val('').trigger('change');
             refreshGrid();
+            applyCustomFilters();
         }
 
         $(document).ready(function() {
             // Initialize grid first time
-            let filterParams = {
-                tanggal: $('#startDate').val(),
-                id_region: $('#filterRegion').val(),
-                b1_name: $('#filterLokasi').val(),
-                b2_name: $('#filterTegangan').val(),
-                b3_name: $('#filterBay').val(),
-                el_name: $('#filterElement').val(),
-                info_name: $('#filterInfo').val()
-            };
-            initializeGrid(filterParams);
-            // Initialize select2 controls
-            // $('.select2').select2();
-
-            // Set up event handlers
-            // $('#applyFilters').on('click', applyCustomFilters);
-            // $('#resetFilters').on('click', resetFilters);
-            // $('#refreshButton').on('click', function() {
-            //     refreshGrid();
-            // });
-
-            // Rest of your select2 initialization code...
-            // $('#filterLokasi').select2({
-            //     ajax: {
-            //         url: '{{ route("cpoint.findValueBy") }}',
-            //         dataType: 'json',
-            //         delay: 250,
-            //         data: function (params) {
-            //             return {
-            //                 keyword: params.term, 
-            //                 page: params.page || 1,
-            //                 field: 'path1'
-            //             };
-            //         },
-            //         processResults: function (data, params) {
-            //             params.page = params.page || 1;
-            //             const response = data.data.data;
-            //             return {
-            //                 results: response.map(function(item) {
-            //                     return {
-            //                         id: item, 
-            //                         text: item 
-            //                     };
-            //                 }),
-            //                 pagination: {
-            //                     more: (params.page * 10) < data.total  
-            //                 }
-            //             };
-            //         },
-            //         cache: true
-            //     },
-            //     allowClear: true,
-            //     placeholder: '--Pilih B1 Name--',
-            // });
-
-            // $('#filterTegangan').select2({
-            //     ajax: {
-            //         url: '{{ route("cpoint.findValueBy") }}',
-            //         dataType: 'json',
-            //         delay: 250,
-            //         data: function (params) {
-            //             return {
-            //                 keyword: params.term,  
-            //                 page: params.page || 1,
-            //                 field: 'path2' 
-            //             };
-            //         },
-            //         processResults: function (data, params) {
-            //             params.page = params.page || 1;
-            //             const response = data.data.data;
-            //             return {
-            //                 results: response.map(function(item) {
-            //                     return {
-            //                         id: item, 
-            //                         text: item 
-            //                     };
-            //                 }),
-            //                 pagination: {
-            //                     more: (params.page * 10) < data.total  
-            //                 }
-            //             };
-            //         },
-            //         cache: true
-            //     },
-            //     allowClear: true,
-            //     placeholder: '--Pilih B2 Name--'
-            // });
-
-            // $('#filterBay').select2({
-            //     ajax: {
-            //         url: '{{ route("cpoint.findValueBy") }}',
-            //         dataType: 'json',
-            //         delay: 250,
-            //         data: function (params) {
-            //             return {
-            //                 keyword: params.term,  
-            //                 page: params.page || 1,
-            //                 field: 'path3' 
-            //             };
-            //         },
-            //         processResults: function (data, params) {
-            //             params.page = params.page || 1;
-            //             const response = data.data.data;
-            //             return {
-            //                 results: response.map(function(item) {
-            //                     return {
-            //                         id: item, 
-            //                         text: item 
-            //                     };
-            //                 }),
-            //                 pagination: {
-            //                     more: (params.page * 10) < data.total  
-            //                 }
-            //             };
-            //         },
-            //         cache: true
-            //     },
-            //     allowClear: true,
-            //     placeholder: '--Pilih B3 Name--'
-            // });
-
-            // $('#filterElement').select2({
-            //     ajax: {
-            //         url: '{{ route("cpoint.findValueBy") }}',
-            //         dataType: 'json',
-            //         delay: 250,
-            //         data: function (params) {
-            //             return {
-            //                 keyword: params.term,  
-            //                 page: params.page || 1,
-            //                 field: 'path4' 
-            //             };
-            //         },
-            //         processResults: function (data, params) {
-            //             params.page = params.page || 1;
-            //             const response = data.data.data;
-            //             return {
-            //                 results: response.map(function(item) {
-            //                     return {
-            //                         id: item, 
-            //                         text: item 
-            //                     };
-            //                 }),
-            //                 pagination: {
-            //                     more: (params.page * 10) < data.total  
-            //                 }
-            //             };
-            //         },
-            //         cache: true
-            //     },
-            //     allowClear: true,
-            //     placeholder: '--Pilih Element--'
-            // });
-
-            // $('#filterInfo').select2({
-            //     ajax: {
-            //         url: '{{ route("cpoint.findValueBy") }}',
-            //         dataType: 'json',
-            //         delay: 250,
-            //         data: function (params) {
-            //             return {
-            //                 keyword: params.term,  
-            //                 page: params.page || 1,
-            //                 field: 'path5' 
-            //             };
-            //         },
-            //         processResults: function (data, params) {
-            //             params.page = params.page || 1;
-            //             const response = data.data.data;
-            //             return {
-            //                 results: response.map(function(item) {
-            //                     return {
-            //                         id: item, 
-            //                         text: item 
-            //                     };
-            //                 }),
-            //                 pagination: {
-            //                     more: (params.page * 10) < data.total  
-            //                 }
-            //             };
-            //         },
-            //         cache: true
-            //     },
-            //     allowClear: true,
-            //     placeholder: '--Pilih Element--'
-            // });
-
-            
+            initializeGrid();
+            applyCustomFilters();
+             initializeGridDetail();
         });
 
         // Apply filters button
@@ -524,60 +367,20 @@
         
         // Export to Excel
         $('#downloadButton').on('click', function() {
-            // $("#jqxGrid").jqxGrid('exportdata', 'xls', 'TelemetryData');
-            // $.ajaxSetup({
-            //     headers: {
-            //         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            //     }
-            // });
-            // $("#jqxGrid").jqxGrid('exportdata', 'xls', 'TelemetryData', true, null, true, '/export/save-file');
-            exportGridAll('#jqxGrid','kinerja-master-station','csv');
-
+            exportGridAll('#jqxGrid','kinerja-master-stations','csv');
         });
 
         $("#jqxGrid").on('rowselect', function (event) {
-            var selectedRowData = event.args.row;
-            var detailParams = {   "b1_nameoperator" : "and",
-                                    "filtervalue0" : selectedRowData.b1_name,
-                                    "filtercondition0" : "EQUAL",
-                                    "filteroperator0" : 1,
-                                    "filterdatafield0" : "a.b1_name",
-                                    "b2_nameoperator" : "and",
-                                    "filtervalue1" : selectedRowData.b2_name,
-                                    "filtercondition1" : "EQUAL",
-                                    "filteroperator1" : 1,
-                                    "filterdatafield1" : "a.b2_name",
-                                    "b3_nameoperator" : "and",
-                                    "filtervalue2" : selectedRowData.b3_name,
-                                    "filtercondition2" : "EQUAL",
-                                    "filteroperator2" : 1,
-                                    "filterdatafield2" : "a.b3_name",
-                                    "el_nameoperator" : "and",
-                                    "filtervalue3" : selectedRowData.el_name,
-                                    "filtercondition3" : "EQUAL",
-                                    "filteroperator3" : 1,
-                                    "filterdatafield3" : "a.el_name",
-                                    "info_nameoperator" : "and",
-                                    "filtervalue4" : selectedRowData.info_name,
-                                    "filtercondition4" : "EQUAL",
-                                    "filteroperator4" : 1,
-                                    "filterdatafield4" : "a.info_name",
-                                    "filterscount" : 5
-                            };
-           initializeGridDetail(detailParams);
+            const row = event.args.row;
+            const detail = row.event;
+            dataAdapterDetail._source.data = detail;
+            $("#jqxGridDetail").jqxGrid('updatebounddata');
         });
 
-        function initializeGridDetail(filterParams = {}) {
-            // CSRF Token setup
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
-
+        function initializeGridDetail() {
             // Create data source
             var sourceDetail = {
-                datatype: "json",
+                datatype: "array",
                 datafields: [
                     { name: 'id', type: 'string' },
                     { name: 'id_region', type: 'string' },
@@ -598,14 +401,11 @@
                     { name: 'system_datetime', type: 'string' },
                     { name: 'durasi', type: 'string' },
                 ],
-                url: '{{ route("fasop.histories.telemetering.read") }}',
                 cache: false,
-                data: filterParams,
-                root: 'Rows',
                 beforeprocessing: function(data) {
-                    if (data && data.data && data.data.Rows) {
-                        tableData = data.data.Rows;
-                        sourceDetail.totalrecords = data.data.TotalRows;
+                    if (data) {
+                        tableData = data;
+                        sourceDetail.totalrecords = data.length;
                     } else {
                         console.error('Invalid data structure:', data);
                         tableData = [];
@@ -640,15 +440,6 @@
                     { text: 'Tanggal', datafield: 'b2_name', width: '20%' },
                     { text: 'Jam', datafield: 'b3_name', width: '20%' },
                     { text: 'Status', datafield: 'el_name', width: '20%' },
-                    // { text: 'Info Name', datafield: 'info_name', width: 100 },
-                    // { text: 'B1 Text', datafield: 'b1_text', width:150 },
-                    // { text: 'B2 Text', datafield: 'b2_text', width: 100 },
-                    // { text: 'B3 Text', datafield: 'b3_text', width: 150 },
-                    // { text: 'Element Text', datafield: 'el_text', width: 150 },
-                    // { text: 'Info Text', datafield: 'info_text', width: 100 },
-                    // { text: 'Datetime RTU', datafield: 'rtu_datetime', width: 200 },
-                    // { text: 'Datetime Sistem', datafield: 'system_datetime', width: 200 },
-                    // { text: 'Status', datafield: 'status', width: 200 },
                 ],
                 pagermode: 'default',
                 pagesize: 20,
@@ -669,46 +460,8 @@
         
         // Export to Excel
         $('#downloadDetailButton').on('click', function() {
-            exportGridAll('#jqxGridDetail','Detail-kinerja-telemetering','csv');
-
+            exportGridLocal('#jqxGridDetail','Detail-kinerja-telemetering','csv');
         });
 
-        // columns = $("#jqxGrid").jqxGrid('columns');
-        
-        // // Init jqxListBox
-        // const listBoxData = columns.map(col => ({
-        //     label: col.text,
-        //     value: col.datafield,
-        //     checked: true
-        // }));
-
-        // $("#columnListBox").jqxListBox({
-        //     source: listBoxData,
-        //     checkboxes: true,
-        //     width: 200,
-        //     height: 250
-        // });
-
-        // // List view button (toggle view or implement custom view)
-        // $('#listViewButton').on('click', function() {
-        //     $('#columnDropdown').toggle();
-        // });
-
-        // // Hide when clicking outside
-        // $(document).on('click', function (e) {
-        //     if (!$(e.target).closest('#listViewButton, #columnDropdown').length) {
-        //         $('#columnDropdown').hide();
-        //     }
-        // });
-        
-        // // Column show/hide on check/uncheck
-        // $('#columnListBox').on('checkChange', function (event) {
-        //     const item = event.args.item;
-        //     if (item.checked) {
-        //         $("#jqxGrid").jqxGrid('showcolumn', item.value);
-        //     } else {
-        //         $("#jqxGrid").jqxGrid('hidecolumn', item.value);
-        //     }
-        // });
     </script>
 @endpush

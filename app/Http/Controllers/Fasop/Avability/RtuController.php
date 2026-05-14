@@ -42,7 +42,7 @@ class RtuController extends Controller
     public function read(Request $request)
     {
         $payload = $request->all();
-        $response = $this->apiRequest('get', 'fasop/kinerja/rtu', $payload);
+        $response = $this->apiRequest('get', 'fasopkinscada', $payload);
         return $response;
     }
 }

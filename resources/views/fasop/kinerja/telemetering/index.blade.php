@@ -346,20 +346,15 @@
             exportGridAll('#jqxGrid','kinerja-telemetering','csv');
 
         });
-        function getLastDateFromYYYYMM(str) {
-            const [year, month] = str.split('-').map(Number);
-            const lastDate = new Date(year, month, 0);
-
-            return lastDate.toISOString().slice(0, 10);
+        function getlastdayofmonth(str){
+            const[year,month] = str.split('-').map(Number);
+            const lastdate = new Date(year,month,0);
+            return lastdate.toISOString().slice(0,10);
         }
         $("#jqxGrid").on('rowselect', function (event) {
             var tgl1 = $('#startDate').val();
-            var tanggal1 = tgl1 +'-01';
-            // function getLastDayFromYYYYMM(str) {
-            //     const [year, month] = str.split('-').map(Number);
-            //     return new Date(year, month, 0).getDate();
-            // }
-            var tanggal2  = getLastDateFromYYYYMM(tgl1);
+            var tanggal1 = tgl1+'-01T00:00:00';
+            var tanggal2 = getlastdayofmonth(tgl1)+'T23:59:59';
             var selectedRowData = event.args.row;
             var detailParams = {   "b1_nameoperator" : "and",
                                     "filtervalue0" : selectedRowData.b1_name,

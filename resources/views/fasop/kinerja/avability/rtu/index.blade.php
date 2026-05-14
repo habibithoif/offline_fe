@@ -180,7 +180,7 @@
             }
         });
 
-        function initializeGrid(filterParams = {}) {
+        function initializeGrid() {
             // CSRF Token setup
             $.ajaxSetup({
                 headers: {
@@ -214,19 +214,17 @@
                     { name: 'down', type: 'string' },
                     { name: 'uptime', type: 'string' },
                     { name: 'downtime', type: 'string' },
-                    { name: 'normaltime', type: 'string' },
+                    { name: 'alltime', type: 'string' },
                     { name: 'faktor', type: 'string' },
                     { name: 'ava', type: 'string' },
-                    { name: 'durasi', type: 'string' },
+                    { name: 'event', type: 'array' },
                 ],
-                url: '{{ route("fasop.kinerja.rtu.read") }}',
                 cache: false,
-                data: filterParams,
-                root: 'Rows',
+                root: 'detail',
                 beforeprocessing: function(data) {
-                    if (data && data.data && data.data.Rows) {
-                        tableData = data.data.Rows;
-                        source.totalrecords = data.data.TotalRows;
+                    if (data && data.payload && data.payload.detail) {
+                        tableData = data.payload.detail;
+                        source.totalrecords = tableData.length;
                     } else {
                         console.error('Invalid data structure:', data);
                         tableData = [];
@@ -257,13 +255,13 @@
                     }
                     },
                     { text: 'Region', datafield: 'nama_region', width: '10%' },
-                    { text: 'GI', datafield: 'b1_name', width: '15%' },
-                    { text: 'Nama', datafield: 'b2_name', width: '15%' },
-                    { text: 'kV', datafield: 'b3_name', width: '5%' },
-                    { text: 'RTU', datafield: 'el_name', width: '10%' },
-                    { text: 'Durasi', datafield: 'Info_name', width: '15%' },
-                    { text: 'Kali Gangguan', datafield: 'b1_text', width:'10%' },
-                    { text: 'Performance (%)', datafield: 'b2_text', width: '15%' },
+                    { text: 'GI', datafield: 'el_name', width: '15%' },
+                    { text: 'Nama', datafield: 'b1_name', width: '15%' },
+                    { text: 'kV', datafield: 'b2_name', width: '5%' },
+                    { text: 'RTU', datafield: 'b3_name', width: '10%' },
+                    { text: 'Durasi', datafield: 'downtime', width: '15%' },
+                    { text: 'Kali Gangguan', datafield: 'down', width:'10%' },
+                    { text: 'Performance (%)', datafield: 'ava', width: '15%' },
                     // { text: 'B3 Text', datafield: 'b3_text', width: 150 },
                     // { text: 'Element Text', datafield: 'el_text', width: 150 },
                     // { text: 'Info Text', datafield: 'info_text', width: 100 },
@@ -289,225 +287,61 @@
 
         function refreshGrid(filterParams = {}) {
             // Update the dataAdapter with new parameters
+            var url = '{{ route("fasop.avability.rtu.read") }}';
+            dataAdapter._source.url= url;
             dataAdapter.data = filterParams;
             dataAdapter._source.data = filterParams;
-            
-            // Clear previous data
-            dataAdapter.dataBind();
-            
-            // Refresh the grid
-            // $("#jqxGrid").jqxGrid('updatebounddata');
+            $("#jqxGrid").jqxGrid('updatebounddata');
         }
 
         function applyCustomFilters() {
-            var filterParams = {
-                tanggal: $('#startDate').val(),
-                id_region: $('#filterRegion').val(),
-                b1_name: $('#filterLokasi').val(),
-                b2_name: $('#filterTegangan').val(),
-                b3_name: $('#filterBay').val(),
-                el_name: $('#filterElement').val(),
-                info_name: $('#filterInfo').val()
-            };
+            if($('#filterKinerja').val()==='bulanan'){
+                var tgl = $('#filterBulan').val();
+                var mulai = tgl +'-01';
+
+                const [year, month] = tgl.split('-').map(Number);
+                const lastDate = new Date(year, month, 0);
+
+                var selesai =
+                    `${lastDate.getFullYear()}-${
+                        String(lastDate.getMonth() + 1).padStart(2, '0')
+                    }-${
+                        String(lastDate.getDate()).padStart(2, '0')
+                    }`;
+                var rekap='bulan';
+            }else{
+                var mulai = $('#startDate').val();
+                var selesai = $('#endDate').val();
+                var rekap = 'hari';
+            }
             
+            var filterParams = {
+                mulai: mulai,
+                selesai: selesai,
+                rekap: rekap,
+                region: $('#filterRegion').val(),
+                tbl: {
+                    "tbl_ref": "scd_ref_rtu",
+                    "tbl_his": "scd_his_rtu",
+                    "tbl_kin": "scd_kin_rtu",
+                    "tbl_rtl_harian": "scd_rtu_rtl_harian",
+                    "jenis_kinerja": "RTU"
+                }
+            };
             refreshGrid(filterParams);
         }
 
         function resetFilters() {
             $('.select2').val('').trigger('change');
             $('.input').val('').trigger('change');
-            refreshGrid();
+            applyCustomFilters();
         }
 
         $(document).ready(function() {
             // Initialize grid first time
-            let filterParams = {
-                tanggal: $('#startDate').val(),
-                id_region: $('#filterRegion').val(),
-                b1_name: $('#filterLokasi').val(),
-                b2_name: $('#filterTegangan').val(),
-                b3_name: $('#filterBay').val(),
-                el_name: $('#filterElement').val(),
-                info_name: $('#filterInfo').val()
-            };
-            initializeGrid(filterParams);
-            // Initialize select2 controls
-            // $('.select2').select2();
-
-            // Set up event handlers
-            // $('#applyFilters').on('click', applyCustomFilters);
-            // $('#resetFilters').on('click', resetFilters);
-            // $('#refreshButton').on('click', function() {
-            //     refreshGrid();
-            // });
-
-            // Rest of your select2 initialization code...
-            // $('#filterLokasi').select2({
-            //     ajax: {
-            //         url: '{{ route("cpoint.findValueBy") }}',
-            //         dataType: 'json',
-            //         delay: 250,
-            //         data: function (params) {
-            //             return {
-            //                 keyword: params.term, 
-            //                 page: params.page || 1,
-            //                 field: 'path1'
-            //             };
-            //         },
-            //         processResults: function (data, params) {
-            //             params.page = params.page || 1;
-            //             const response = data.data.data;
-            //             return {
-            //                 results: response.map(function(item) {
-            //                     return {
-            //                         id: item, 
-            //                         text: item 
-            //                     };
-            //                 }),
-            //                 pagination: {
-            //                     more: (params.page * 10) < data.total  
-            //                 }
-            //             };
-            //         },
-            //         cache: true
-            //     },
-            //     allowClear: true,
-            //     placeholder: '--Pilih B1 Name--',
-            // });
-
-            // $('#filterTegangan').select2({
-            //     ajax: {
-            //         url: '{{ route("cpoint.findValueBy") }}',
-            //         dataType: 'json',
-            //         delay: 250,
-            //         data: function (params) {
-            //             return {
-            //                 keyword: params.term,  
-            //                 page: params.page || 1,
-            //                 field: 'path2' 
-            //             };
-            //         },
-            //         processResults: function (data, params) {
-            //             params.page = params.page || 1;
-            //             const response = data.data.data;
-            //             return {
-            //                 results: response.map(function(item) {
-            //                     return {
-            //                         id: item, 
-            //                         text: item 
-            //                     };
-            //                 }),
-            //                 pagination: {
-            //                     more: (params.page * 10) < data.total  
-            //                 }
-            //             };
-            //         },
-            //         cache: true
-            //     },
-            //     allowClear: true,
-            //     placeholder: '--Pilih B2 Name--'
-            // });
-
-            // $('#filterBay').select2({
-            //     ajax: {
-            //         url: '{{ route("cpoint.findValueBy") }}',
-            //         dataType: 'json',
-            //         delay: 250,
-            //         data: function (params) {
-            //             return {
-            //                 keyword: params.term,  
-            //                 page: params.page || 1,
-            //                 field: 'path3' 
-            //             };
-            //         },
-            //         processResults: function (data, params) {
-            //             params.page = params.page || 1;
-            //             const response = data.data.data;
-            //             return {
-            //                 results: response.map(function(item) {
-            //                     return {
-            //                         id: item, 
-            //                         text: item 
-            //                     };
-            //                 }),
-            //                 pagination: {
-            //                     more: (params.page * 10) < data.total  
-            //                 }
-            //             };
-            //         },
-            //         cache: true
-            //     },
-            //     allowClear: true,
-            //     placeholder: '--Pilih B3 Name--'
-            // });
-
-            // $('#filterElement').select2({
-            //     ajax: {
-            //         url: '{{ route("cpoint.findValueBy") }}',
-            //         dataType: 'json',
-            //         delay: 250,
-            //         data: function (params) {
-            //             return {
-            //                 keyword: params.term,  
-            //                 page: params.page || 1,
-            //                 field: 'path4' 
-            //             };
-            //         },
-            //         processResults: function (data, params) {
-            //             params.page = params.page || 1;
-            //             const response = data.data.data;
-            //             return {
-            //                 results: response.map(function(item) {
-            //                     return {
-            //                         id: item, 
-            //                         text: item 
-            //                     };
-            //                 }),
-            //                 pagination: {
-            //                     more: (params.page * 10) < data.total  
-            //                 }
-            //             };
-            //         },
-            //         cache: true
-            //     },
-            //     allowClear: true,
-            //     placeholder: '--Pilih Element--'
-            // });
-
-            // $('#filterInfo').select2({
-            //     ajax: {
-            //         url: '{{ route("cpoint.findValueBy") }}',
-            //         dataType: 'json',
-            //         delay: 250,
-            //         data: function (params) {
-            //             return {
-            //                 keyword: params.term,  
-            //                 page: params.page || 1,
-            //                 field: 'path5' 
-            //             };
-            //         },
-            //         processResults: function (data, params) {
-            //             params.page = params.page || 1;
-            //             const response = data.data.data;
-            //             return {
-            //                 results: response.map(function(item) {
-            //                     return {
-            //                         id: item, 
-            //                         text: item 
-            //                     };
-            //                 }),
-            //                 pagination: {
-            //                     more: (params.page * 10) < data.total  
-            //                 }
-            //             };
-            //         },
-            //         cache: true
-            //     },
-            //     allowClear: true,
-            //     placeholder: '--Pilih Element--'
-            // });
-
-            
+            initializeGrid();
+            applyCustomFilters();
+            initializeGridDetail();            
         });
 
         // Apply filters button
@@ -527,59 +361,19 @@
         
         // Export to Excel
         $('#downloadButton').on('click', function() {
-            // $("#jqxGrid").jqxGrid('exportdata', 'xls', 'TelemetryData');
-            // $.ajaxSetup({
-            //     headers: {
-            //         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            //     }
-            // });
-            // $("#jqxGrid").jqxGrid('exportdata', 'xls', 'TelemetryData', true, null, true, '/export/save-file');
             exportGridAll('#jqxGrid','kinerja-rtu','csv');
-
         });
 
-        $("#jqxGrid").on('rowselect', function (event) {
-            var selectedRowData = event.args.row;
-            var detailParams = {   "b1_nameoperator" : "and",
-                                    "filtervalue0" : selectedRowData.b1_name,
-                                    "filtercondition0" : "EQUAL",
-                                    "filteroperator0" : 1,
-                                    "filterdatafield0" : "a.b1_name",
-                                    "b2_nameoperator" : "and",
-                                    "filtervalue1" : selectedRowData.b2_name,
-                                    "filtercondition1" : "EQUAL",
-                                    "filteroperator1" : 1,
-                                    "filterdatafield1" : "a.b2_name",
-                                    "b3_nameoperator" : "and",
-                                    "filtervalue2" : selectedRowData.b3_name,
-                                    "filtercondition2" : "EQUAL",
-                                    "filteroperator2" : 1,
-                                    "filterdatafield2" : "a.b3_name",
-                                    "el_nameoperator" : "and",
-                                    "filtervalue3" : selectedRowData.el_name,
-                                    "filtercondition3" : "EQUAL",
-                                    "filteroperator3" : 1,
-                                    "filterdatafield3" : "a.el_name",
-                                    "info_nameoperator" : "and",
-                                    "filtervalue4" : selectedRowData.info_name,
-                                    "filtercondition4" : "EQUAL",
-                                    "filteroperator4" : 1,
-                                    "filterdatafield4" : "a.info_name",
-                                    "filterscount" : 5
-                            };
-           initializeGridDetail(detailParams);
+        $("#jqxGrid").on('rowselect', function (event) {            
+            const row = event.args.row;
+            const detail = row.event;
+            dataAdapterDetail._source.data = detail;
+            $("#jqxGridDetail").jqxGrid('updatebounddata');
         });
 
-        function initializeGridDetail(filterParams = {}) {
-            // CSRF Token setup
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
-
+        function initializeGridDetail() {
             var source = {
-                datatype: "json",
+                datatype: "array",
                 datafields: [
                     { name: 'id', type: 'string' },
                     { name: 'id_region', type: 'string' },
@@ -600,14 +394,11 @@
                     { name: 'system_datetime', type: 'string' },
                     { name: 'durasi', type: 'string' },
                 ],
-                url: '{{ route("fasop.histories.rtu.read") }}',
                 cache: false,
-                data: filterParams,
-                root: 'Rows',
                 beforeprocessing: function(data) {
-                    if (data && data.data && data.data.Rows) {
-                        tableData = data.data.Rows;
-                        source.totalrecords = data.data.TotalRows;
+                    if (data) {
+                        tableData = data;
+                        source.totalrecords = data.length;
                     } else {
                         console.error('Invalid data structure:', data);
                         tableData = [];
@@ -618,7 +409,7 @@
 
             dataAdapter = new $.jqx.dataAdapter(source);
 
-            $("#jqxGrid").jqxGrid({
+            $("#jqxGridDetail").jqxGrid({
                 width: '100%',
                 source: dataAdapter,
                 pageable: true,
@@ -669,45 +460,7 @@
         
         // Export to Excel
         $('#downloadDetailButton').on('click', function() {
-            exportGridAll('#jqxGridDetail','Detail-kinerja-telemetering','csv');
-
+            exportGridLocal('#jqxGridDetail','Detail-kinerja-RTU','csv');
         });
-        // columns = $("#jqxGrid").jqxGrid('columns');
-        
-        // // Init jqxListBox
-        // const listBoxData = columns.map(col => ({
-        //     label: col.text,
-        //     value: col.datafield,
-        //     checked: true
-        // }));
-
-        // $("#columnListBox").jqxListBox({
-        //     source: listBoxData,
-        //     checkboxes: true,
-        //     width: 200,
-        //     height: 250
-        // });
-
-        // // List view button (toggle view or implement custom view)
-        // $('#listViewButton').on('click', function() {
-        //     $('#columnDropdown').toggle();
-        // });
-
-        // // Hide when clicking outside
-        // $(document).on('click', function (e) {
-        //     if (!$(e.target).closest('#listViewButton, #columnDropdown').length) {
-        //         $('#columnDropdown').hide();
-        //     }
-        // });
-        
-        // // Column show/hide on check/uncheck
-        // $('#columnListBox').on('checkChange', function (event) {
-        //     const item = event.args.item;
-        //     if (item.checked) {
-        //         $("#jqxGrid").jqxGrid('showcolumn', item.value);
-        //     } else {
-        //         $("#jqxGrid").jqxGrid('hidecolumn', item.value);
-        //     }
-        // });
     </script>
 @endpush
