@@ -22,3 +22,10 @@
     src: url('../fonts/source-sans-pro/SourceSansPro-Bold.ttf') format('truetype');
     font-weight: 700;
 }
+
+@font-face {
+    font-family: 'Inter';
+    src: url('../fonts/inter/Inter.woff2') format('woff2');
+    font-weight: 300 800;
+    font-display: swap;
+}

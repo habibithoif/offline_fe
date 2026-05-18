@@ -422,7 +422,7 @@
                 filterable: true,
                 showfilterrow: true,
                 filtermode: 'excel',
-                theme: 'material'
+                theme: 'metro'
             });
         }
 

@@ -590,15 +590,18 @@
   $container.append($sidebar_dark_variants)
 
   var active_sidebar_dark_color = null
-  $('.main-sidebar')[0].classList.forEach(function (className) {
+  var $mainSidebar = $('.main-sidebar')[0]
+  if ($mainSidebar) {
+  $mainSidebar.classList.forEach(function (className) {
     var color = className.replace('sidebar-dark-', 'bg-')
     if (sidebar_colors.indexOf(color) > -1 && active_sidebar_dark_color === null) {
       active_sidebar_dark_color = color
     }
   })
 
-  $sidebar_dark_variants.find('option.' + active_sidebar_dark_color).prop('selected', true)
-  $sidebar_dark_variants.removeClass().addClass('custom-select mb-3 text-light border-0 ').addClass(active_sidebar_dark_color)
+    $sidebar_dark_variants.find('option.' + active_sidebar_dark_color).prop('selected', true)
+    $sidebar_dark_variants.removeClass().addClass('custom-select mb-3 text-light border-0 ').addClass(active_sidebar_dark_color)
+  }
 
   $container.append('<h6>Light Sidebar Variants</h6>')
   var $sidebar_variants_light = $('<div />', {
@@ -623,12 +626,15 @@
   $container.append($sidebar_light_variants)
 
   var active_sidebar_light_color = null
-  $('.main-sidebar')[0].classList.forEach(function (className) {
+  var $mainSidebarLight = $('.main-sidebar')[0]
+  if ($mainSidebarLight) {
+  $mainSidebarLight.classList.forEach(function (className) {
     var color = className.replace('sidebar-light-', 'bg-')
     if (sidebar_colors.indexOf(color) > -1 && active_sidebar_light_color === null) {
       active_sidebar_light_color = color
     }
   })
+  }
 
   if (active_sidebar_light_color !== null) {
     $sidebar_light_variants.find('option.' + active_sidebar_light_color).prop('selected', true)

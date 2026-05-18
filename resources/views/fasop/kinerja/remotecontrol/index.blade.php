@@ -305,7 +305,7 @@
                 filterable: true,
                 showfilterrow: true,
                 filtermode: 'excel',
-                theme: 'material'
+                theme: 'metro'
             });
         }
 
@@ -696,7 +696,7 @@
                 filterable: true,
                 showfilterrow: true,
                 filtermode: 'excel',
-                theme: 'material',
+                theme: 'metro',
                 columngroups: [
                     { text: 'Eksekusi', name: 'eksekusi', align:'center' },
                     { text: 'Response', name: 'respons', align:'center' }

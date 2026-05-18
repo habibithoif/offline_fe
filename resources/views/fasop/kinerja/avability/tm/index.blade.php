@@ -331,7 +331,7 @@
                 filterable: true,
                 showfilterrow: true,
                 filtermode: 'excel',
-                theme: 'material'
+                theme: 'metro'
             });
         }
 
@@ -501,7 +501,7 @@
                 filterable: true,
                 showfilterrow: true,
                 filtermode: 'excel',
-                theme: 'material'
+                theme: 'metro'
             });
         }
         

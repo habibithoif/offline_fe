@@ -332,7 +332,7 @@
                 ],
                 sortable: true,
                 filterable: true,
-                theme: 'material'
+                theme: 'metro'
             });
 
             $("#treeGrid").on("bindingcomplete", function () {

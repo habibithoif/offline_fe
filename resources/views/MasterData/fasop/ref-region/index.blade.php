@@ -396,7 +396,7 @@
                 filterable: true,
                 showfilterrow: true,
                 filtermode: 'excel',
-                theme: 'material'
+                theme: 'metro'
             });
 
             $("#jqxGrid").on("bindingcomplete", function () {

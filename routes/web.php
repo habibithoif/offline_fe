@@ -68,6 +68,7 @@ use App\Http\Controllers\Fasop\Dashboard\TargetBulananController;
 
 // OPSIS //
 use App\Http\Controllers\Opsis\Tm30ColController;
+use App\Http\Controllers\Opsis\Tm15ColController;
 use App\Http\Controllers\Opsis\Tm30RowController;
 use App\Http\Controllers\Opsis\Tm15MenitController;
 use App\Http\Controllers\Opsis\Tm30MenitController;
@@ -315,6 +316,10 @@ Route::middleware([GlobalMiddleware::class])->group(function () {
         Route::get('/tm-30-col', [Tm30ColController::class, 'index'])->name('opsis.tm-30-col.index');
         Route::get('/tm-30-col/read', [Tm30ColController::class, 'read'])->name('opsis.tm-30-col.read');
         Route::get('/tm-30-col/download', [Tm30ColController::class, 'read'])->name('opsis.tm-30-col.download');
+
+        Route::get('/tm-15-col', [Tm15ColController::class, 'index'])->name('opsis.tm-15-col.index');
+        Route::get('/tm-15-col/read', [Tm15ColController::class, 'read'])->name('opsis.tm-15-col.read');
+        Route::get('/tm-15-col/download', [Tm15ColController::class, 'download'])->name('opsis.tm-15-col.download');
 
         Route::get('/tm-30-row', [Tm30RowController::class, 'index'])->name('opsis.tm-30-row.index');
         Route::get('/tm-30-row/read', [Tm30RowController::class, 'read'])->name('opsis.tm-30-row.read');

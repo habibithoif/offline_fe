@@ -285,7 +285,7 @@
                 filterable: true,
                 showfilterrow: true,
                 filtermode: 'excel',
-                theme: 'material',
+                theme: 'metro',
                 columngroups: [
                     { text: 'Eksekusi RC', name: 'eksekusi', align:'center' },
                     { text: 'Response RC', name: 'respons', align:'center' }

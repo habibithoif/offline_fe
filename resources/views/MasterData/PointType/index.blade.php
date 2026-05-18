@@ -437,7 +437,7 @@
                 ],
                 sortable: true,
                 filterable: true,
-                theme: 'material'
+                theme: 'metro'
             });
 
             $("#treeGrid").on("bindingcomplete", function () {
@@ -642,7 +642,7 @@
                     filterable: true,
                     showfilterrow: true,
                     filtermode: 'excel',
-                    theme: 'material'
+                    theme: 'metro'
                 });
             } else {
                 // Just update the data and refresh if the grid is already initialized
